@@ -122,6 +122,15 @@ const CrowdlyHeader = () => {
                       New Story Template
                     </Link>
                   </div>
+                  <div>
+                    <Link 
+                      to="/profile" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      Profile
+                    </Link>
+                  </div>
                 </div>
               </div>
             </PopoverContent>

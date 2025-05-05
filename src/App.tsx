@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import SuggestFeature from "./pages/SuggestFeature";
 import AccountAdministration from "./pages/AccountAdministration";
 import NewStoryTemplate from "./pages/NewStoryTemplate";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/suggest-feature" element={<SuggestFeature />} />
           <Route path="/account-administration" element={<AccountAdministration />} />
           <Route path="/new-story-template" element={<NewStoryTemplate />} />
+          <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
