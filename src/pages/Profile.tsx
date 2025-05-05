@@ -189,7 +189,6 @@ const Profile = () => {
         <div className="grid md:grid-cols-2 gap-8 mb-8">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="font-semibold">Picture</div>
               <div className="flex space-x-2">
                 <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
                   <Edit className="h-4 w-4" />
