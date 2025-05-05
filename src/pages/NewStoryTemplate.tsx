@@ -27,7 +27,6 @@ const NewStoryTemplate = () => {
   const [isPublished, setIsPublished] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
   const [selectedRevisions, setSelectedRevisions] = useState<number[]>([]);
-  const [columnChecked, setColumnChecked] = useState<number[]>([]);
   const { toast } = useToast();
 
   const toggleSection = (section: string) => {
@@ -74,16 +73,6 @@ const NewStoryTemplate = () => {
         if (prev.length >= 4) {
           return [...prev.slice(1), revisionId];
         }
-        return [...prev, revisionId];
-      }
-    });
-  };
-
-  const toggleColumnCheckbox = (revisionId: number) => {
-    setColumnChecked(prev => {
-      if (prev.includes(revisionId)) {
-        return prev.filter(id => id !== revisionId);
-      } else {
         return [...prev, revisionId];
       }
     });
@@ -244,13 +233,7 @@ const NewStoryTemplate = () => {
                           />
                         </td>
                         <td className="py-2 text-blue-500">11:28</td>
-                        <td className="py-2 text-center">
-                          <Checkbox 
-                            id={`column-${number}`}
-                            checked={columnChecked.includes(number)}
-                            onCheckedChange={() => toggleColumnCheckbox(number)}
-                          />
-                        </td>
+                        <td className="py-2 text-center">{number}</td>
                       </tr>
                     ))}
                   </tbody>
