@@ -34,7 +34,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   const isEditing = elementData?.isEditing || false;
   
   // Define RTL languages (Arabic and Hebrew only)
-  // Explicitly set Russian and other languages as LTR
+  // All other languages (Russian, Chinese, French, Spanish, Portuguese, etc.) are LTR
   const rtlLanguages = ["Arabic", "Hebrew"];
   const isRTL = rtlLanguages.includes(currentLanguage);
   
@@ -112,8 +112,12 @@ const EditableText: React.FC<EditableTextProps> = ({
       <Component 
         className={className} 
         dir={isRTL ? "rtl" : "ltr"}
-        // Apply minimal style adjustments for proper text direction
-        style={{ textAlign: isRTL ? "right" : "left" }}
+        // Ensure correct text direction and alignment
+        style={{ 
+          direction: isRTL ? "rtl" : "ltr",
+          textAlign: isRTL ? "right" : "left",
+          unicodeBidi: "isolate" // Help maintain text direction within the component
+        }}
       >
         {elementData?.content || localContent || children}
       </Component>
@@ -135,8 +139,12 @@ const EditableText: React.FC<EditableTextProps> = ({
             "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]"
           )}
           dir={isRTL ? "rtl" : "ltr"}
-          // Apply proper text alignment based on language direction
-          style={{ textAlign: isRTL ? "right" : "left" }}
+          // Ensure correct text direction and alignment for editable areas
+          style={{ 
+            direction: isRTL ? "rtl" : "ltr",
+            textAlign: isRTL ? "right" : "left",
+            unicodeBidi: "isolate" // Helps maintain character direction
+          }}
           dangerouslySetInnerHTML={{ __html: localContent }}
         />
         <div className="absolute right-0 top-0 space-x-1 bg-white shadow-sm border border-gray-200 rounded-md p-1">
@@ -168,8 +176,12 @@ const EditableText: React.FC<EditableTextProps> = ({
       )}
       onClick={handleClick}
       dir={isRTL ? "rtl" : "ltr"}
-      // Apply proper text alignment based on language direction
-      style={{ textAlign: isRTL ? "right" : "left" }}
+      // Ensure correct text direction and alignment
+      style={{ 
+        direction: isRTL ? "rtl" : "ltr",
+        textAlign: isRTL ? "right" : "left",
+        unicodeBidi: "isolate" // Help maintain text direction
+      }}
     >
       {elementData?.content || localContent || children}
       <Edit 
