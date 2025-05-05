@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Edit, Settings, Heart, HelpCircle, CircleX, LayoutTemplate, Eye } from "lucide-react";
+import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -167,7 +167,7 @@ const NewStoryTemplate = () => {
               <div className="flex gap-2">
                 <Edit size={16} />
                 <Settings size={16} />
-                <Heart size={16} />
+                <Eye size={16} />
                 <HelpCircle size={16} />
               </div>
             </div>
@@ -361,7 +361,7 @@ const NewStoryTemplate = () => {
                 <div className="flex justify-end gap-2 mt-2 text-xs items-center">
                   <Edit size={14} />
                   <span>5</span>
-                  <Heart size={14} />
+                  <Eye size={14} />
                   <span>10</span>
                 </div>
               </div>
@@ -387,7 +387,7 @@ const NewStoryTemplate = () => {
               <div className="flex gap-2">
                 <Edit size={16} />
                 <Settings size={16} />
-                <Heart size={16} />
+                <Eye size={16} />
                 <HelpCircle size={16} />
               </div>
             </div>
@@ -403,7 +403,7 @@ const NewStoryTemplate = () => {
               <div className="flex gap-2">
                 <Edit size={16} />
                 <Settings size={16} />
-                <Heart size={16} />
+                <Eye size={16} />
                 <HelpCircle size={16} />
               </div>
             </div>
