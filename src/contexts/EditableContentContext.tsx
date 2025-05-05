@@ -43,6 +43,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       if (!currentPath) return;
 
       try {
+        console.log(`Fetching content for path: ${currentPath}, language: ${currentLanguage}`);
         const { data, error } = await supabase
           .from('editable_content')
           .select('*')
@@ -55,6 +56,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
         }
 
         if (data) {
+          console.log(`Retrieved ${data.length} content items for ${currentLanguage}`, data);
           const contentMap: EditableContent = {};
           data.forEach(item => {
             contentMap[item.element_id] = {
@@ -129,6 +131,8 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       const contentData = contents[elementId];
       if (!contentData) return;
 
+      console.log(`Saving content for ${elementId} in ${currentLanguage}`);
+
       // Check if we already have this content in the database for the current language
       const { data: existingData, error: fetchError } = await supabase
         .from('editable_content')
@@ -151,6 +155,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       let result;
       if (existingData) {
         // Update existing record
+        console.log('Updating existing content record:', existingData.id);
         result = await supabase
           .from('editable_content')
           .update({
@@ -160,6 +165,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           .eq('id', existingData.id);
       } else {
         // Insert new record with the current language
+        console.log('Inserting new content record');
         result = await supabase
           .from('editable_content')
           .insert({
@@ -182,6 +188,8 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
         return;
       }
 
+      console.log('Content saved successfully');
+      
       // Update local state, turn off editing for this element
       setContents(prev => ({
         ...prev,

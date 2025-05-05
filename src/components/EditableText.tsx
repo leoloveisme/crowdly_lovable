@@ -33,6 +33,9 @@ const EditableText: React.FC<EditableTextProps> = ({
   const elementData = contents[id];
   const isEditing = elementData?.isEditing || false;
   
+  // Determine if we need RTL direction based on language
+  const isRTL = currentLanguage === "Arabic" || currentLanguage === "Hebrew";
+  
   // Initialize content from children when the component mounts
   useEffect(() => {
     // If children is a string, use it directly
@@ -102,7 +105,10 @@ const EditableText: React.FC<EditableTextProps> = ({
   // If not admin or not in editing mode, just render the content
   if (!isAdmin || !isEditingEnabled) {
     return (
-      <Component className={className}>
+      <Component 
+        className={className} 
+        dir={isRTL ? "rtl" : "ltr"}
+      >
         {elementData?.content || localContent || children}
       </Component>
     );
@@ -122,6 +128,7 @@ const EditableText: React.FC<EditableTextProps> = ({
             className,
             "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]"
           )}
+          dir={isRTL ? "rtl" : "ltr"}
           dangerouslySetInnerHTML={{ __html: localContent }}
         />
         <div className="absolute right-0 top-0 space-x-1 bg-white shadow-sm border border-gray-200 rounded-md p-1">
@@ -152,6 +159,7 @@ const EditableText: React.FC<EditableTextProps> = ({
         "hover:bg-blue-50 hover:outline-dashed hover:outline-1 hover:outline-blue-300 cursor-pointer relative group"
       )}
       onClick={handleClick}
+      dir={isRTL ? "rtl" : "ltr"}
     >
       {elementData?.content || localContent || children}
       <Edit 
