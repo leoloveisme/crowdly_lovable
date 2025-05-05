@@ -256,11 +256,6 @@ const CrowdlyHeader = () => {
               <Button type="submit" className="w-full" disabled={isLoggingIn}>
                 {isLoggingIn ? "Logging in..." : "Login"}
               </Button>
-              <div className="mt-2 text-xs text-center text-gray-500">
-                <strong>Test credentials already filled in:</strong><br/>
-                Email: leoforce@example.com<br/>
-                Password: 12345678qwas!
-              </div>
             </form>
           </div>
         </div>

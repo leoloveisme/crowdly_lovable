@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const { user, hasRole } = useAuth();
-  const isAdmin = hasRole('platform_admin');
+  const isAdmin = user && hasRole('platform_admin');
 
   return (
     <div className="min-h-screen flex flex-col">

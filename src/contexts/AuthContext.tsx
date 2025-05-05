@@ -41,11 +41,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        const userRoles = data.map(row => row.role) as UserRole[];
-        setRoles(userRoles);
+        if (data && data.length > 0) {
+          const userRoles = data.map(row => row.role) as UserRole[];
+          setRoles(userRoles);
 
-        // Update user with roles
-        setUser(prev => prev ? { ...prev, roles: userRoles } : null);
+          // Update user with roles
+          setUser(prev => prev ? { ...prev, roles: userRoles } : null);
+        } else {
+          console.log('No roles found for user');
+          setRoles([]);
+        }
       } catch (error) {
         console.error('Error in fetchUserRoles:', error);
       }
@@ -98,6 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('Attempting login with:', email);
       setLoading(true);
       
+      // Perform a direct API call to log in
       const { data, error } = await supabase.auth.signInWithPassword({ 
         email, 
         password 
@@ -114,6 +120,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       console.log('Login successful for:', data.user?.email);
+      
+      // Update the user and session immediately
+      setUser(data.user ?? null);
+      setSession(data.session);
+      
+      // Fetch user roles right away
+      if (data.user) {
+        await fetchUserRoles(data.user.id);
+      }
+      
       toast({
         title: "Login successful",
         description: "Welcome back!"
@@ -124,6 +140,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw error;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUserRoles = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Error fetching user roles:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const userRoles = data.map(row => row.role) as UserRole[];
+        console.log('Fetched roles:', userRoles);
+        setRoles(userRoles);
+        setUser(prev => prev ? { ...prev, roles: userRoles } : null);
+      } else {
+        console.log('No roles found for user');
+        setRoles([]);
+      }
+    } catch (error) {
+      console.error('Error in fetchUserRoles:', error);
     }
   };
 
