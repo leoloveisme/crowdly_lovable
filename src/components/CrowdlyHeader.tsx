@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -310,7 +309,7 @@ const CrowdlyHeader = () => {
               />
             </div>
             
-            <Select value={language} onValueChange={setLanguage}>
+            <Select value={currentLanguage} onValueChange={handleLanguageChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Language" />
               </SelectTrigger>
