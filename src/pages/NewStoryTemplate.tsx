@@ -12,6 +12,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 
 const NewStoryTemplate = () => {
   const [visibilityOpen, setVisibilityOpen] = useState(false);
@@ -20,6 +25,7 @@ const NewStoryTemplate = () => {
   const [layoutOptionsOpen, setLayoutOptionsOpen] = useState(true);
   const [branchesOpen, setBranchesOpen] = useState(true);
   const [isPublished, setIsPublished] = useState(false);
+  const [compareOpen, setCompareOpen] = useState(false);
   const { toast } = useToast();
 
   const toggleSection = (section: string) => {
@@ -51,6 +57,10 @@ const NewStoryTemplate = () => {
         : "Your story is now visible to others",
       duration: 3000,
     });
+  };
+
+  const toggleCompare = () => {
+    setCompareOpen(!compareOpen);
   };
 
   return (
@@ -208,16 +218,69 @@ const NewStoryTemplate = () => {
                   </tbody>
                 </table>
                 <div className="mt-2 flex items-center gap-1">
-                  <button className="text-blue-500 text-sm hover:underline">compare</button>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <HelpCircle size={14} className="text-gray-400" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>You can compare up to 4 revisions</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <button 
+                    className="text-blue-500 text-sm hover:underline"
+                    onClick={toggleCompare}
+                  >
+                    compare
+                  </button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <HelpCircle size={14} className="text-gray-400" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>You can compare up to 4 revisions</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
+                
+                {/* Comparison Container */}
+                {compareOpen && (
+                  <div className="mt-4 border rounded-md p-2 bg-gray-50">
+                    <h4 className="font-medium mb-2">Compare Revisions</h4>
+                    
+                    <ResizablePanelGroup
+                      direction="horizontal"
+                      className="min-h-[200px] max-w-full border rounded"
+                    >
+                      <ResizablePanel defaultSize={33}>
+                        <div className="p-2 h-full bg-white">
+                          <div className="text-sm font-medium mb-1">Revision 1</div>
+                          <div className="text-xs">
+                            <p>Original text content from revision 1.</p>
+                            <p>This shows the first version.</p>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+                      
+                      <ResizableHandle withHandle />
+                      
+                      <ResizablePanel defaultSize={33}>
+                        <div className="p-2 h-full bg-white">
+                          <div className="text-sm font-medium mb-1">Revision 2</div>
+                          <div className="text-xs">
+                            <p>Modified text content from revision 2.</p>
+                            <p>This shows the changes made.</p>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+                      
+                      <ResizableHandle withHandle />
+                      
+                      <ResizablePanel defaultSize={33}>
+                        <div className="p-2 h-full bg-white">
+                          <div className="text-sm font-medium mb-1">Revision 3</div>
+                          <div className="text-xs">
+                            <p>Latest text content from revision 3.</p>
+                            <p>This shows the most recent changes.</p>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+                    </ResizablePanelGroup>
+                  </div>
+                )}
               </div>
             )}
           </div>
