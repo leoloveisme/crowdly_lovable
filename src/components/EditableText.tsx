@@ -73,8 +73,39 @@ const EditableText: React.FC<EditableTextProps> = ({
   useEffect(() => {
     if (isEditing && editableRef.current) {
       editableRef.current.focus();
+      
+      // Set text input direction and cursor position based on language
+      const div = editableRef.current;
+      if (div) {
+        // Place cursor at the beginning for RTL languages, end for LTR languages
+        const range = document.createRange();
+        const sel = window.getSelection();
+        
+        if (isRTL) {
+          // For RTL, set cursor at the beginning
+          range.setStart(div, 0);
+          range.collapse(true);
+        } else {
+          // For LTR, set cursor at the end
+          if (div.childNodes.length > 0) {
+            const lastNode = div.childNodes[div.childNodes.length - 1];
+            if (lastNode.nodeType === Node.TEXT_NODE) {
+              range.setStart(lastNode, lastNode.textContent?.length || 0);
+            } else {
+              range.setStartAfter(lastNode);
+            }
+            range.collapse(true);
+          } else {
+            range.setStart(div, 0);
+            range.collapse(true);
+          }
+        }
+        
+        sel?.removeAllRanges();
+        sel?.addRange(range);
+      }
     }
-  }, [isEditing]);
+  }, [isEditing, isRTL]);
 
   const handleClick = () => {
     if (isAdmin && isEditingEnabled && !isEditing) {
@@ -111,6 +142,7 @@ const EditableText: React.FC<EditableTextProps> = ({
       <Component 
         className={className} 
         dir={isRTL ? "rtl" : "ltr"}
+        style={{ textAlign: isRTL ? "right" : "left" }}
       >
         {elementData?.content || localContent || children}
       </Component>
@@ -132,6 +164,7 @@ const EditableText: React.FC<EditableTextProps> = ({
             "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]"
           )}
           dir={isRTL ? "rtl" : "ltr"}
+          style={{ textAlign: isRTL ? "right" : "left" }}
           dangerouslySetInnerHTML={{ __html: localContent }}
         />
         <div className="absolute right-0 top-0 space-x-1 bg-white shadow-sm border border-gray-200 rounded-md p-1">
@@ -163,6 +196,7 @@ const EditableText: React.FC<EditableTextProps> = ({
       )}
       onClick={handleClick}
       dir={isRTL ? "rtl" : "ltr"}
+      style={{ textAlign: isRTL ? "right" : "left" }}
     >
       {elementData?.content || localContent || children}
       <Edit 
