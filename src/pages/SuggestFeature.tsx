@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -161,148 +160,156 @@ const SuggestFeature = () => {
             </div>
           </div>
           
-          {/* Name Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <Label htmlFor="firstName">First name</Label>
-              <Input 
-                id="firstName"
-                type="text" 
-                placeholder="Input text" 
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-            <div>
-              <Label htmlFor="lastName">Last name</Label>
-              <Input 
-                id="lastName"
-                type="text" 
-                placeholder="Input text" 
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="mt-1"
-              />
-            </div>
-          </div>
-          
-          {/* Contact Information Section */}
-          <div className="bg-gray-200 p-4 rounded mb-6">
-            <div className="text-gray-700 mb-4">
-              This section won't be displayed on the feature suggestion output page
-            </div>
-            
+          {/* Name Fields - Conditionally rendered */}
+          {visibilityOption !== "anonymous" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="firstName">First name</Label>
                 <Input 
-                  id="email"
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="firstName"
+                  type="text" 
+                  placeholder="Input text" 
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   className="mt-1"
                 />
               </div>
               <div>
-                <Label htmlFor="telephone">Telephone</Label>
+                <Label htmlFor="lastName">Last name</Label>
                 <Input 
-                  id="telephone"
-                  type="tel" 
-                  value={telephone}
-                  onChange={(e) => setTelephone(e.target.value)}
+                  id="lastName"
+                  type="text" 
+                  placeholder="Input text" 
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                   className="mt-1"
                 />
               </div>
             </div>
-            
-            <div className="mb-4">
-              <Label className="block mb-2">Can we contact you? (in case we have questions)</Label>
-              <RadioGroup value={canContact} onValueChange={setCanContact} className="flex space-x-4">
-                <div className="flex items-center space-x-1">
-                  <RadioGroupItem value="yes" id="yes" />
-                  <Label htmlFor="yes">Yes</Label>
+          )}
+          
+          {/* Contact Information Section - Conditionally rendered */}
+          {visibilityOption !== "anonymous" && (
+            <div className="bg-gray-200 p-4 rounded mb-6">
+              <div className="text-gray-700 mb-4">
+                This section won't be displayed on the feature suggestion output page
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input 
+                    id="email"
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1"
+                  />
                 </div>
-                <div className="flex items-center space-x-1">
-                  <RadioGroupItem value="no" id="no" />
-                  <Label htmlFor="no">No</Label>
-                </div>
-              </RadioGroup>
-            </div>
-            
-            {canContact === "yes" && (
-              <div className="mb-4">
-                <Label className="block mb-2">What is your preferred way of contacting you?</Label>
-                <div className="flex space-x-4">
-                  <div className="flex items-center space-x-1">
-                    <Checkbox id="contactEmail" checked={contactMethod === "email"} onCheckedChange={() => setContactMethod("email")} />
-                    <Label htmlFor="contactEmail">Email</Label>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Checkbox id="contactPhone" checked={contactMethod === "telephone"} onCheckedChange={() => setContactMethod("telephone")} />
-                    <Label htmlFor="contactPhone">Telephone</Label>
-                  </div>
+                <div>
+                  <Label htmlFor="telephone">Telephone</Label>
+                  <Input 
+                    id="telephone"
+                    type="tel" 
+                    value={telephone}
+                    onChange={(e) => setTelephone(e.target.value)}
+                    className="mt-1"
+                  />
                 </div>
               </div>
-            )}
-          </div>
-          
-          {/* Account Creation Section */}
-          <div className="mb-6">
-            <div className="flex items-center mb-2">
-              <Label htmlFor="createAccount" className="mr-2">Would you like to create an account?</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info size={16} className="text-gray-400 cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>You can create an account on this platform</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Select value={createAccount} onValueChange={setCreateAccount}>
-                <SelectTrigger>
-                  <SelectValue placeholder="No" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="no">No</SelectItem>
-                  <SelectItem value="yes">Yes</SelectItem>
-                </SelectContent>
-              </Select>
               
-              {createAccount === "yes" && (
-                <div className="flex items-center space-x-2">
-                  <div className="relative flex-grow">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                    >
-                      <Eye size={16} />
-                    </button>
+              <div className="mb-4">
+                <Label className="block mb-2">Can we contact you? (in case we have questions)</Label>
+                <RadioGroup value={canContact} onValueChange={setCanContact} className="flex space-x-4">
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="yes" id="yes" />
+                    <Label htmlFor="yes">Yes</Label>
                   </div>
-                  <Button>Save</Button>
+                  <div className="flex items-center space-x-1">
+                    <RadioGroupItem value="no" id="no" />
+                    <Label htmlFor="no">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              {canContact === "yes" && (
+                <div className="mb-4">
+                  <Label className="block mb-2">What is your preferred way of contacting you?</Label>
+                  <div className="flex space-x-4">
+                    <div className="flex items-center space-x-1">
+                      <Checkbox id="contactEmail" checked={contactMethod === "email"} onCheckedChange={() => setContactMethod("email")} />
+                      <Label htmlFor="contactEmail">Email</Label>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Checkbox id="contactPhone" checked={contactMethod === "telephone"} onCheckedChange={() => setContactMethod("telephone")} />
+                      <Label htmlFor="contactPhone">Telephone</Label>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-          </div>
+          )}
           
-          <div className="mb-2">
-            <p className="text-sm">
-              In case you already have an account you can{" "}
-              <a href="/login" className="text-blue-500">Login</a>
-            </p>
-          </div>
+          {/* Account Creation Section - Conditionally rendered */}
+          {visibilityOption !== "anonymous" && (
+            <div className="mb-6">
+              <div className="flex items-center mb-2">
+                <Label htmlFor="createAccount" className="mr-2">Would you like to create an account?</Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info size={16} className="text-gray-400 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>You can create an account on this platform</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Select value={createAccount} onValueChange={setCreateAccount}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="No" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="no">No</SelectItem>
+                    <SelectItem value="yes">Yes</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                {createAccount === "yes" && (
+                  <div className="flex items-center space-x-2">
+                    <div className="relative flex-grow">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                      >
+                        <Eye size={16} />
+                      </button>
+                    </div>
+                    <Button>Save</Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {visibilityOption !== "anonymous" && (
+            <div className="mb-2">
+              <p className="text-sm">
+                In case you already have an account you can{" "}
+                <a href="/login" className="text-blue-500">Login</a>
+              </p>
+            </div>
+          )}
           
           {/* Feature Description */}
           <div className="mb-6">
