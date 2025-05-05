@@ -17,13 +17,17 @@ const Login = () => {
     }
   }, [user, navigate]);
 
+  const handleClose = () => {
+    navigate("/");
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <CrowdlyHeader />
       <main className="flex-1 container max-w-screen-xl mx-auto p-4 py-8">
         <div className="max-w-md mx-auto">
           <h1 className="text-3xl font-bold text-center mb-8">Welcome Back</h1>
-          <LoginForm />
+          <LoginForm onClose={handleClose} />
         </div>
       </main>
       <CrowdlyFooter />

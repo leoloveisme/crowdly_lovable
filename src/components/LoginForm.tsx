@@ -6,9 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, X } from "lucide-react";
 
-const LoginForm = () => {
+interface LoginFormProps {
+  onClose?: () => void;
+}
+
+const LoginForm = ({ onClose }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +37,18 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto relative">
+      {onClose && (
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="absolute right-2 top-2 h-8 w-8 z-10" 
+          onClick={onClose}
+          aria-label="Close"
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      )}
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold">Log in</CardTitle>
         <CardDescription>

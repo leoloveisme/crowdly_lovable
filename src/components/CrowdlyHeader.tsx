@@ -247,48 +247,8 @@ const CrowdlyHeader = () => {
 
       {showLogin && !user && (
         <div className="container mx-auto mt-2">
-          <div className="w-full md:w-64 p-4 bg-white border rounded shadow-md md:absolute md:right-4 md:top-16 z-10">
-            <form onSubmit={handleLogin}>
-              <div className="mb-4">
-                <label htmlFor="email" className="block mb-1 text-sm font-medium">
-                  <EditableText id="form-email-label">Email</EditableText>
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="password" className="block mb-1 text-sm font-medium">
-                  <EditableText id="form-password-label">Password</EditableText>
-                </label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pr-10"
-                    required
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    <Eye size={16} />
-                  </button>
-                </div>
-              </div>
-              <Button type="submit" className="w-full" disabled={isLoggingIn}>
-                <EditableText id="form-login-button">
-                  {isLoggingIn ? "Logging in..." : "Login"}
-                </EditableText>
-              </Button>
-            </form>
+          <div className="w-full md:w-64 p-4 bg-white border rounded shadow-md md:absolute md:right-4 md:top-16 z-10 relative">
+            <LoginForm onClose={() => setShowLogin(false)} />
           </div>
         </div>
       )}
