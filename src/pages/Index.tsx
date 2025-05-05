@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -7,7 +7,19 @@ import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const { user, hasRole } = useAuth();
+  const { user, hasRole, roles } = useAuth();
+  
+  // Debug logging
+  useEffect(() => {
+    if (user) {
+      console.log("Current user:", user?.email);
+      console.log("User roles:", roles);
+      console.log("Is admin?", hasRole('platform_admin'));
+    } else {
+      console.log("No user is logged in");
+    }
+  }, [user, roles, hasRole]);
+  
   const isAdmin = user && hasRole('platform_admin');
 
   return (
