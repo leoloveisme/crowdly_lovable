@@ -89,6 +89,30 @@ const NewStoryTemplate = () => {
       }
     });
   };
+  
+  const handleEditClick = (section: string) => {
+    toast({
+      title: "Edit mode activated",
+      description: `You are now editing ${section}`,
+      duration: 3000,
+    });
+  };
+  
+  const handleSettingsClick = (section: string) => {
+    toast({
+      title: "Settings opened",
+      description: `Settings for ${section} opened`,
+      duration: 3000,
+    });
+  };
+  
+  const handleEyeClick = (section: string) => {
+    toast({
+      title: "Preview mode activated",
+      description: `Previewing ${section}`,
+      duration: 3000,
+    });
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -166,9 +190,15 @@ const NewStoryTemplate = () => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold">Intro</h3>
               <div className="flex gap-2">
-                <Edit size={16} />
-                <Settings size={16} />
-                <Eye size={16} />
+                <button onClick={() => handleEditClick("Intro")} className="cursor-pointer hover:text-blue-500">
+                  <Edit size={16} />
+                </button>
+                <button onClick={() => handleSettingsClick("Intro")} className="cursor-pointer hover:text-blue-500">
+                  <Settings size={16} />
+                </button>
+                <button onClick={() => handleEyeClick("Intro")} className="cursor-pointer hover:text-blue-500">
+                  <Eye size={16} />
+                </button>
                 <HelpCircle size={16} />
               </div>
             </div>
@@ -386,9 +416,15 @@ const NewStoryTemplate = () => {
                 <p className="text-lg">The day I was conceived</p>
               </div>
               <div className="flex gap-2">
-                <Edit size={16} />
-                <Settings size={16} />
-                <Eye size={16} />
+                <button onClick={() => handleEditClick("Chapter 1")} className="cursor-pointer hover:text-blue-500">
+                  <Edit size={16} />
+                </button>
+                <button onClick={() => handleSettingsClick("Chapter 1")} className="cursor-pointer hover:text-blue-500">
+                  <Settings size={16} />
+                </button>
+                <button onClick={() => handleEyeClick("Chapter 1")} className="cursor-pointer hover:text-blue-500">
+                  <Eye size={16} />
+                </button>
                 <HelpCircle size={16} />
               </div>
             </div>
@@ -402,9 +438,15 @@ const NewStoryTemplate = () => {
                 <p className="text-lg">The day I was born</p>
               </div>
               <div className="flex gap-2">
-                <Edit size={16} />
-                <Settings size={16} />
-                <Eye size={16} />
+                <button onClick={() => handleEditClick("Chapter 2")} className="cursor-pointer hover:text-blue-500">
+                  <Edit size={16} />
+                </button>
+                <button onClick={() => handleSettingsClick("Chapter 2")} className="cursor-pointer hover:text-blue-500">
+                  <Settings size={16} />
+                </button>
+                <button onClick={() => handleEyeClick("Chapter 2")} className="cursor-pointer hover:text-blue-500">
+                  <Eye size={16} />
+                </button>
                 <HelpCircle size={16} />
               </div>
             </div>
