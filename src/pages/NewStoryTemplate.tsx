@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart } from "lucide-react";
+import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, Columns4, LayoutGrid, LayoutList, Grid2x2, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -29,6 +28,7 @@ const NewStoryTemplate = () => {
   const [compareOpen, setCompareOpen] = useState(false);
   const [selectedRevisions, setSelectedRevisions] = useState<number[]>([]);
   const [columnChecked, setColumnChecked] = useState<number[]>([]);
+  const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
   const { toast } = useToast();
 
   const toggleSection = (section: string) => {
@@ -110,6 +110,15 @@ const NewStoryTemplate = () => {
     toast({
       title: "Preview mode activated",
       description: `Previewing ${section}`,
+      duration: 3000,
+    });
+  };
+
+  const handleLayoutOptionClick = (layoutIndex: number) => {
+    setActiveLayoutOption(layoutIndex);
+    toast({
+      title: "Layout changed",
+      description: `Layout option ${layoutIndex + 1} selected`,
       duration: 3000,
     });
   };
@@ -303,6 +312,87 @@ const NewStoryTemplate = () => {
                 {compareOpen && (
                   <div className="mt-4 border rounded-md p-2 bg-gray-50">
                     <h4 className="font-medium mb-2">Compare Revisions</h4>
+                    
+                    {/* Layout options */}
+                    <div className="mb-4">
+                      <h5 className="text-sm font-medium mb-2">7 viewing options:</h5>
+                      
+                      <div className="grid grid-cols-7 gap-2">
+                        {/* Option 1: one horizontal and two vertical */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(0)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 0 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="One horizontal and two vertical"
+                        >
+                          <LayoutDashboard size={24} />
+                        </button>
+                        
+                        {/* Option 2: two horizontal and two vertical */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(1)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 1 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Two horizontal and two vertical"
+                        >
+                          <Grid2x2 size={24} />
+                        </button>
+                        
+                        {/* Option 3: four vertical */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(2)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 2 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Four vertical"
+                        >
+                          <Columns4 size={24} />
+                        </button>
+                        
+                        {/* Option 4: horizontal */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(3)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 3 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Horizontal"
+                        >
+                          <LayoutList size={24} />
+                        </button>
+                        
+                        {/* Option 5: four squares within a square */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(4)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 4 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Four squares within a square"
+                        >
+                          <LayoutGrid size={24} />
+                        </button>
+                        
+                        {/* Option 6: two vertical and two horizontal */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(5)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 5 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Two vertical and two horizontal"
+                        >
+                          <Columns3 size={24} />
+                        </button>
+                        
+                        {/* Option 7: two vertical and one horizontal */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(6)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 6 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Two vertical and one horizontal"
+                        >
+                          <Columns2 size={24} />
+                        </button>
+                      </div>
+                      
+                      {/* Layout descriptions */}
+                      <div className="mt-2 text-xs text-gray-500">
+                        <p>1. One horizontal and two vertical (for the case 3 versions were chosen to compare)</p>
+                        <p>2. Two horizontal and two vertical (if 4 versions were chosen)</p>
+                        <p>3. Four vertical (from one to four chosen)</p>
+                        <p>4. Horizontal (from one to four chosen)</p>
+                        <p>5. Four squares within a square</p>
+                        <p>6. Two vertical and two horizontal</p>
+                        <p>7. Two vertical and one horizontal</p>
+                      </div>
+                    </div>
                     
                     <ResizablePanelGroup
                       direction="horizontal"
