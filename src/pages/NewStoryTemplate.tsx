@@ -208,7 +208,7 @@ const NewStoryTemplate = () => {
                   </tbody>
                 </table>
                 <div className="mt-2 flex items-center gap-1">
-                  <button className="text-blue-500 text-sm hover:underline">Compare</button>
+                  <button className="text-blue-500 text-sm hover:underline">compare</button>
                   <Tooltip>
                     <TooltipTrigger>
                       <HelpCircle size={14} className="text-gray-400" />
