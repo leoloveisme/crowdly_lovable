@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -126,7 +125,6 @@ const CrowdlyHeader = () => {
             </div>
           </div>
           
-          {/* Hamburger menu icon - visible on all screen sizes */}
           <Popover open={showPopover} onOpenChange={setShowPopover}>
             <PopoverTrigger asChild>
               <Button variant="ghost" size="icon" className="h-10 w-10">
