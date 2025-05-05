@@ -387,7 +387,7 @@ const NewStoryTemplate = () => {
               <div className="flex gap-2">
                 <Edit size={16} />
                 <Settings size={16} />
-                <Heart size={16} />
+                <Eye size={16} />
                 <HelpCircle size={16} />
               </div>
             </div>
@@ -403,7 +403,7 @@ const NewStoryTemplate = () => {
               <div className="flex gap-2">
                 <Edit size={16} />
                 <Settings size={16} />
-                <Heart size={16} />
+                <Eye size={16} />
                 <HelpCircle size={16} />
               </div>
             </div>
