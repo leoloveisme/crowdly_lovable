@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEditableContent } from "@/contexts/EditableContentContext";
 import { toast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 
@@ -19,11 +21,11 @@ const CrowdlyHeader = () => {
   const [email, setEmail] = useState("leoforce@example.com");
   const [password, setPassword] = useState("12345678qwas!");
   const [showPassword, setShowPassword] = useState(false);
-  const [language, setLanguage] = useState("English");
   const [showPopover, setShowPopover] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const { user, signIn, signOut } = useAuth();
+  const { currentLanguage, setCurrentLanguage } = useEditableContent();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -32,6 +34,14 @@ const CrowdlyHeader = () => {
   const toggleLogin = () => {
     if (user) return; // Don't show login form if user is logged in
     setShowLogin(!showLogin);
+  };
+
+  const handleLanguageChange = (value: string) => {
+    setCurrentLanguage(value);
+    toast({
+      title: "Language changed",
+      description: `Content is now displayed in ${value}`,
+    });
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -89,7 +99,7 @@ const CrowdlyHeader = () => {
               />
             </div>
             
-            <Select value={language} onValueChange={setLanguage}>
+            <Select value={currentLanguage} onValueChange={handleLanguageChange}>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Language" />
               </SelectTrigger>

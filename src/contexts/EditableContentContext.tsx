@@ -22,6 +22,8 @@ interface EditableContentContextType {
   saveContent: (elementId: string) => Promise<void>;
   cancelEditing: (elementId: string) => void;
   isAdmin: boolean;
+  currentLanguage: string;
+  setCurrentLanguage: (language: string) => void;
 }
 
 const EditableContentContext = createContext<EditableContentContextType | undefined>(undefined);
@@ -29,21 +31,23 @@ const EditableContentContext = createContext<EditableContentContextType | undefi
 export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [contents, setContents] = useState<EditableContent>({});
   const [isEditingEnabled, setIsEditingEnabled] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState<string>("English");
   const { user, hasRole } = useAuth();
   const location = useLocation();
   const isAdmin = user !== null && hasRole('platform_admin');
   const currentPath = location.pathname;
 
-  // Fetch existing content from the database
+  // Fetch existing content from the database based on current path and language
   useEffect(() => {
     const fetchEditableContent = async () => {
-      if (!currentPath || !isAdmin) return;
+      if (!currentPath) return;
 
       try {
         const { data, error } = await supabase
           .from('editable_content')
           .select('*')
-          .eq('page_path', currentPath);
+          .eq('page_path', currentPath)
+          .eq('language', currentLanguage);
 
         if (error) {
           console.error('Error fetching editable content:', error);
@@ -59,7 +63,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
               isEditing: false
             };
           });
-          setContents(prev => ({ ...prev, ...contentMap }));
+          setContents(contentMap);
         }
       } catch (error) {
         console.error('Error in fetchEditableContent:', error);
@@ -67,7 +71,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
     };
 
     fetchEditableContent();
-  }, [currentPath, isAdmin]);
+  }, [currentPath, currentLanguage, isAdmin]);
 
   const toggleEditingMode = () => {
     if (!isAdmin) return;
@@ -125,12 +129,13 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       const contentData = contents[elementId];
       if (!contentData) return;
 
-      // Check if we already have this content in the database
+      // Check if we already have this content in the database for the current language
       const { data: existingData, error: fetchError } = await supabase
         .from('editable_content')
         .select('*')
         .eq('page_path', currentPath)
         .eq('element_id', elementId)
+        .eq('language', currentLanguage)
         .maybeSingle();
 
       if (fetchError) {
@@ -154,7 +159,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           })
           .eq('id', existingData.id);
       } else {
-        // Insert new record
+        // Insert new record with the current language
         result = await supabase
           .from('editable_content')
           .insert({
@@ -162,7 +167,8 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
             element_id: elementId,
             content: contentData.content,
             original_content: contentData.original,
-            updated_by: user?.id
+            updated_by: user?.id,
+            language: currentLanguage
           });
       }
 
@@ -187,7 +193,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
 
       toast({
         title: "Content saved",
-        description: "Your changes have been saved successfully",
+        description: `Your changes have been saved successfully in ${currentLanguage}`,
       });
     } catch (error) {
       console.error('Error in saveContent:', error);
@@ -225,7 +231,9 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
     updateContent,
     saveContent,
     cancelEditing,
-    isAdmin
+    isAdmin,
+    currentLanguage,
+    setCurrentLanguage
   };
 
   return (

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Edit, Eye } from "lucide-react";
 
 const EditingModeToggle: React.FC = () => {
-  const { isAdmin, isEditingEnabled, toggleEditingMode } = useEditableContent();
+  const { isAdmin, isEditingEnabled, toggleEditingMode, currentLanguage } = useEditableContent();
 
   if (!isAdmin) return null;
 
@@ -18,12 +18,12 @@ const EditingModeToggle: React.FC = () => {
       {isEditingEnabled ? (
         <>
           <Eye className="mr-2 h-4 w-4" />
-          Exit Editing Mode
+          Exit Editing Mode ({currentLanguage})
         </>
       ) : (
         <>
           <Edit className="mr-2 h-4 w-4" />
-          Enable Editing Mode
+          Enable Editing Mode ({currentLanguage})
         </>
       )}
     </Button>

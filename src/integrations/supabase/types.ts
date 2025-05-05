@@ -15,6 +15,7 @@ export type Database = {
           created_at: string | null
           element_id: string
           id: string
+          language: string
           original_content: string | null
           page_path: string
           updated_at: string | null
@@ -25,6 +26,7 @@ export type Database = {
           created_at?: string | null
           element_id: string
           id?: string
+          language?: string
           original_content?: string | null
           page_path: string
           updated_at?: string | null
@@ -35,6 +37,7 @@ export type Database = {
           created_at?: string | null
           element_id?: string
           id?: string
+          language?: string
           original_content?: string | null
           page_path?: string
           updated_at?: string | null

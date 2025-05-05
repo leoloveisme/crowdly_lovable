@@ -21,6 +21,7 @@ const EditableText: React.FC<EditableTextProps> = ({
     contents,
     isEditingEnabled,
     isAdmin,
+    currentLanguage,
     startEditing,
     updateContent,
     saveContent,
@@ -127,7 +128,7 @@ const EditableText: React.FC<EditableTextProps> = ({
           <button 
             onClick={handleSave}
             className="p-1 text-green-600 hover:bg-green-50 rounded"
-            title="Save"
+            title={`Save (${currentLanguage})`}
           >
             <Check size={16} />
           </button>
@@ -156,7 +157,7 @@ const EditableText: React.FC<EditableTextProps> = ({
       <Edit 
         size={12} 
         className="absolute opacity-0 group-hover:opacity-100 top-0 right-0 text-blue-400" 
-        aria-label="Click to edit" 
+        aria-label={`Click to edit (${currentLanguage})`} 
       />
     </Component>
   );
