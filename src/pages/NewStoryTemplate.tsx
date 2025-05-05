@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, Columns4, LayoutGrid, LayoutList, Grid2x2, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -332,13 +331,13 @@ const NewStoryTemplate = () => {
                           </svg>
                         </button>
                         
-                        {/* Option 2: two horizontal and two vertical */}
+                        {/* Option 2 (was originally 2, now in position 3): two horizontal and two vertical */}
                         <button 
                           onClick={() => handleLayoutOptionClick(1)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 1 ? 'border-blue-500 bg-blue-50' : ''}`}
                           title="Two horizontal and two vertical"
                         >
-                          <Grid2x2 size={24} />
+                          <Columns3 size={24} />
                         </button>
                         
                         {/* Option 3: four vertical */}
@@ -359,13 +358,13 @@ const NewStoryTemplate = () => {
                           <LayoutList size={24} />
                         </button>
                         
-                        {/* Option 5: four squares within a square */}
+                        {/* Option 5 (was originally 2, now moved to position 5): four squares within a square */}
                         <button 
                           onClick={() => handleLayoutOptionClick(4)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 4 ? 'border-blue-500 bg-blue-50' : ''}`}
                           title="Four squares within a square"
                         >
-                          <LayoutGrid size={24} />
+                          <Grid2x2 size={24} />
                         </button>
                         
                         {/* Option 6: two vertical and two horizontal */}
@@ -374,7 +373,7 @@ const NewStoryTemplate = () => {
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 5 ? 'border-blue-500 bg-blue-50' : ''}`}
                           title="Two vertical and two horizontal"
                         >
-                          <Columns3 size={24} />
+                          <LayoutGrid size={24} />
                         </button>
                         
                         {/* Option 7: two vertical and one horizontal */}
