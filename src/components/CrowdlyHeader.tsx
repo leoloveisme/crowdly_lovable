@@ -113,6 +113,15 @@ const CrowdlyHeader = () => {
                       Account Administration
                     </Link>
                   </div>
+                   <div>
+                    <Link 
+                      to="/new-story-template" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      New Story Template
+                    </Link>
+                  </div>
                 </div>
               </div>
             </PopoverContent>
