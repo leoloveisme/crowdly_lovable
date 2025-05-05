@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useToast } from "@/hooks/use-toast";
+import EditableText from "@/components/EditableText";
 import {
   Tooltip,
   TooltipContent,
@@ -131,8 +132,12 @@ const NewStoryTemplate = () => {
         <div className="space-y-8">
           {/* Story Title */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold">Sample story</h1>
-            <h2 className="text-xl">of your life</h2>
+            <h1 className="text-3xl font-bold">
+              <EditableText id="story-title">Sample story</EditableText>
+            </h1>
+            <h2 className="text-xl">
+              <EditableText id="story-subtitle">of your life</EditableText>
+            </h2>
           </div>
 
           {/* Story Actions */}
@@ -197,7 +202,9 @@ const NewStoryTemplate = () => {
           {/* Intro Section */}
           <div className="border-b pb-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold">Intro</h3>
+              <h3 className="font-semibold">
+                <EditableText id="intro-title">Intro</EditableText>
+              </h3>
               <div className="flex gap-2">
                 <button onClick={() => handleEditClick("Intro")} className="cursor-pointer hover:text-blue-500">
                   <Edit size={16} />
@@ -253,9 +260,15 @@ const NewStoryTemplate = () => {
             </div>
 
             <div className="space-y-2 text-sm">
-              <div className="text-red-500">Total in this story</div>
-              <div className="text-green-500">Approved in this story</div>
-              <div>Total by the contributor</div>
+              <div className="text-red-500">
+                <EditableText id="total-story">Total in this story</EditableText>
+              </div>
+              <div className="text-green-500">
+                <EditableText id="approved-story">Approved in this story</EditableText>
+              </div>
+              <div>
+                <EditableText id="total-contributor">Total by the contributor</EditableText>
+              </div>
             </div>
           </div>
 
@@ -514,10 +527,16 @@ const NewStoryTemplate = () => {
 
           {/* Comments Section */}
           <div className="mb-4">
-            <h3 className="font-semibold mb-2">Comments</h3>
+            <h3 className="font-semibold mb-2">
+              <EditableText id="comments-title">Comments</EditableText>
+            </h3>
             <div className="pl-4 text-sm">
-              <p className="mb-1">Some sample comment</p>
-              <p className="pl-4 text-gray-600">Some reply to the sample comment</p>
+              <p className="mb-1">
+                <EditableText id="sample-comment">Some sample comment</EditableText>
+              </p>
+              <p className="pl-4 text-gray-600">
+                <EditableText id="sample-reply">Some reply to the sample comment</EditableText>
+              </p>
             </div>
           </div>
 
@@ -525,8 +544,12 @@ const NewStoryTemplate = () => {
           <div className="border-t pt-4">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="font-semibold">Chapter 1</h3>
-                <p className="text-lg">The day I was conceived</p>
+                <h3 className="font-semibold">
+                  <EditableText id="chapter1-title">Chapter 1</EditableText>
+                </h3>
+                <p className="text-lg">
+                  <EditableText id="chapter1-subtitle">The day I was conceived</EditableText>
+                </p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handleEditClick("Chapter 1")} className="cursor-pointer hover:text-blue-500">
@@ -547,8 +570,12 @@ const NewStoryTemplate = () => {
           <div className="border-t pt-4">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="font-semibold">Chapter 2</h3>
-                <p className="text-lg">The day I was born</p>
+                <h3 className="font-semibold">
+                  <EditableText id="chapter2-title">Chapter 2</EditableText>
+                </h3>
+                <p className="text-lg">
+                  <EditableText id="chapter2-subtitle">The day I was born</EditableText>
+                </p>
               </div>
               <div className="flex gap-2">
                 <button onClick={() => handleEditClick("Chapter 2")} className="cursor-pointer hover:text-blue-500">
