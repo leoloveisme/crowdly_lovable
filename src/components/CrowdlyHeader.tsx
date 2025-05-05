@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import EditableText from "@/components/EditableText";
 
 const CrowdlyHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -67,7 +68,9 @@ const CrowdlyHeader = () => {
             <div className="text-2xl font-bold text-gray-300">LOGO</div>
           </Link>
           <h1 className="text-2xl font-bold text-[#1A1F2C] hidden md:block">
-            Crowdly where YOUR entertainment is
+            <EditableText id="header-title">
+              Crowdly where YOUR entertainment is
+            </EditableText>
           </h1>
         </div>
 
@@ -111,13 +114,18 @@ const CrowdlyHeader = () => {
                     onClick={handleLogout}
                     className="flex items-center"
                   >
-                    <LogOut className="h-4 w-4 mr-1" /> Logout
+                    <LogOut className="h-4 w-4 mr-1" /> 
+                    <EditableText id="header-logout">Logout</EditableText>
                   </Button>
                 </div>
               ) : (
                 <>
-                  <Button variant="link" onClick={() => window.location.href = "/register"}>Register</Button>
-                  <Button variant="link" onClick={toggleLogin}>Login</Button>
+                  <Button variant="link" onClick={() => window.location.href = "/register"}>
+                    <EditableText id="header-register">Register</EditableText>
+                  </Button>
+                  <Button variant="link" onClick={toggleLogin}>
+                    <EditableText id="header-login">Login</EditableText>
+                  </Button>
                 </>
               )}
             </div>
@@ -151,7 +159,8 @@ const CrowdlyHeader = () => {
                           onClick={handleLogout}
                           className="flex items-center"
                         >
-                          <LogOut className="h-3 w-3 mr-1" /> Logout
+                          <LogOut className="h-3 w-3 mr-1" /> 
+                          <EditableText id="popover-logout">Logout</EditableText>
                         </Button>
                       </div>
                     </div>
@@ -162,7 +171,9 @@ const CrowdlyHeader = () => {
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
                       onClick={() => setShowPopover(false)}
                     >
-                      Suggest a Feature
+                      <EditableText id="popover-suggest-feature">
+                        Suggest a Feature
+                      </EditableText>
                     </Link>
                   </div>
                   <div>
@@ -171,16 +182,20 @@ const CrowdlyHeader = () => {
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
                       onClick={() => setShowPopover(false)}
                     >
-                      Account Administration
+                      <EditableText id="popover-account-admin">
+                        Account Administration
+                      </EditableText>
                     </Link>
                   </div>
-                   <div>
+                  <div>
                     <Link 
                       to="/new-story-template" 
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
                       onClick={() => setShowPopover(false)}
                     >
-                      New Story Template
+                      <EditableText id="popover-new-story">
+                        New Story Template
+                      </EditableText>
                     </Link>
                   </div>
                   <div>
@@ -189,7 +204,9 @@ const CrowdlyHeader = () => {
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
                       onClick={() => setShowPopover(false)}
                     >
-                      Profile
+                      <EditableText id="popover-profile">
+                        Profile
+                      </EditableText>
                     </Link>
                   </div>
                 </div>
@@ -224,7 +241,9 @@ const CrowdlyHeader = () => {
           <div className="w-full md:w-64 p-4 bg-white border rounded shadow-md md:absolute md:right-4 md:top-16 z-10">
             <form onSubmit={handleLogin}>
               <div className="mb-4">
-                <label htmlFor="email" className="block mb-1 text-sm font-medium">Email</label>
+                <label htmlFor="email" className="block mb-1 text-sm font-medium">
+                  <EditableText id="form-email-label">Email</EditableText>
+                </label>
                 <Input
                   id="email"
                   type="email"
@@ -234,7 +253,9 @@ const CrowdlyHeader = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="password" className="block mb-1 text-sm font-medium">Password</label>
+                <label htmlFor="password" className="block mb-1 text-sm font-medium">
+                  <EditableText id="form-password-label">Password</EditableText>
+                </label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -254,7 +275,9 @@ const CrowdlyHeader = () => {
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={isLoggingIn}>
-                {isLoggingIn ? "Logging in..." : "Login"}
+                <EditableText id="form-login-button">
+                  {isLoggingIn ? "Logging in..." : "Login"}
+                </EditableText>
               </Button>
             </form>
           </div>
@@ -293,16 +316,17 @@ const CrowdlyHeader = () => {
               <div className="flex flex-col space-y-2">
                 <div className="text-sm font-medium">{user.email}</div>
                 <Button variant="outline" onClick={handleLogout} className="flex items-center justify-center">
-                  <LogOut className="h-4 w-4 mr-1" /> Logout
+                  <LogOut className="h-4 w-4 mr-1" /> 
+                  <EditableText id="mobile-logout">Logout</EditableText>
                 </Button>
               </div>
             ) : (
               <div className="flex space-x-2">
                 <Button variant="outline" className="flex-1" onClick={() => window.location.href = "/register"}>
-                  Register
+                  <EditableText id="mobile-register">Register</EditableText>
                 </Button>
                 <Button variant="outline" className="flex-1" onClick={toggleLogin}>
-                  Login
+                  <EditableText id="mobile-login">Login</EditableText>
                 </Button>
               </div>
             )}

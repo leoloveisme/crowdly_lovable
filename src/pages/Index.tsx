@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useAuth } from "@/contexts/AuthContext";
+import EditableText from "@/components/EditableText";
 
 const Index = () => {
   const { user, hasRole, roles } = useAuth();
@@ -30,23 +31,49 @@ const Index = () => {
         <div className="text-center px-4">
           {isAdmin && (
             <h2 className="text-4xl font-bold mb-2 text-red-600">
-              You are logged in as platform admin
+              <EditableText id="admin-message">
+                You are logged in as platform admin
+              </EditableText>
             </h2>
           )}
-          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">Crowdly Entertainment Platform</h1>
-          <p className="text-xl text-gray-600 mb-8">The entertainment platform where your voice matters</p>
+          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
+            <EditableText id="main-title">
+              Crowdly Entertainment Platform
+            </EditableText>
+          </h1>
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="main-subtitle">
+              The entertainment platform where your voice matters
+            </EditableText>
+          </p>
           
           <div className="space-y-4">
-            <p className="mb-2">We value your feedback and ideas!</p>
+            <p className="mb-2">
+              <EditableText id="feedback-message">
+                We value your feedback and ideas!
+              </EditableText>
+            </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 text-lg">
-                <Link to="/suggest-feature">Suggest a Feature</Link>
+                <Link to="/suggest-feature">
+                  <EditableText id="suggest-feature-button">
+                    Suggest a Feature
+                  </EditableText>
+                </Link>
               </Button>
               <Button asChild variant="outline" className="px-8 py-6 text-lg">
-                <Link to="/account-administration">Account Administration</Link>
+                <Link to="/account-administration">
+                  <EditableText id="account-admin-button">
+                    Account Administration
+                  </EditableText>
+                </Link>
               </Button>
               <Button asChild variant="outline" className="px-8 py-6 text-lg">
-                <Link to="/new-story-template">New Story Template</Link>
+                <Link to="/new-story-template">
+                  <EditableText id="new-story-button">
+                    New Story Template
+                  </EditableText>
+                </Link>
               </Button>
             </div>
           </div>
