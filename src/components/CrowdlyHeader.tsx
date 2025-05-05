@@ -1,4 +1,6 @@
+
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye } from "lucide-react";
@@ -24,9 +26,9 @@ const CrowdlyHeader = () => {
     <header className="bg-white p-4 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
-          <div className="mr-6 bg-gray-100 p-5 flex items-center justify-center">
+          <Link to="/" className="mr-6 bg-gray-100 p-5 flex items-center justify-center">
             <div className="text-2xl font-bold text-gray-300">LOGO</div>
-          </div>
+          </Link>
           <h1 className="text-2xl font-bold text-[#1A1F2C] hidden md:block">
             Crowdly where YOUR entertainment is
           </h1>

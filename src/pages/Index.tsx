@@ -17,9 +17,14 @@ const Index = () => {
           
           <div className="space-y-4">
             <p className="mb-2">We value your feedback and ideas!</p>
-            <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 text-lg">
-              <Link to="/suggest-feature">Suggest a Feature</Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 text-lg">
+                <Link to="/suggest-feature">Suggest a Feature</Link>
+              </Button>
+              <Button asChild variant="outline" className="px-8 py-6 text-lg">
+                <Link to="/account-administration">Account Administration</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
