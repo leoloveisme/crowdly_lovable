@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -67,6 +66,7 @@ import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
+import EditableText from "@/components/EditableText";
 
 const Profile = () => {
   const [name, setName] = useState("Username");
@@ -198,7 +198,9 @@ const Profile = () => {
       
       <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
         <div className="flex justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">Profile <Info className="inline h-5 w-5 text-gray-400" /></h1>
+          <h1 className="text-3xl font-bold">
+            <EditableText id="profile-title">Profile</EditableText> <Info className="inline h-5 w-5 text-gray-400" />
+          </h1>
           <div className="flex items-center space-x-4">
             <div className="flex flex-col items-end">
               <div className="flex items-center mb-1">
@@ -208,7 +210,9 @@ const Profile = () => {
                   onCheckedChange={() => setIsPrivate(!isPrivate)} 
                   className="mr-2" 
                 />
-                <Label htmlFor="private-profile">private</Label>
+                <Label htmlFor="private-profile">
+                  <EditableText id="private-label">private</EditableText>
+                </Label>
               </div>
               <div className="flex items-center mb-1">
                 <Checkbox 
@@ -217,7 +221,9 @@ const Profile = () => {
                   onCheckedChange={() => setCanBeTagged(!canBeTagged)} 
                   className="mr-2" 
                 />
-                <Label htmlFor="can-be-tagged">can be tagged any time</Label>
+                <Label htmlFor="can-be-tagged">
+                  <EditableText id="tag-label">can be tagged any time</EditableText>
+                </Label>
               </div>
             </div>
             <div className="border border-gray-300 p-2 rounded-md">
@@ -301,7 +307,9 @@ const Profile = () => {
             </div>
             
             <div className="flex items-center justify-between">
-              <div className="font-semibold">Upload</div>
+              <div className="font-semibold">
+                <EditableText id="upload-label">Upload</EditableText>
+              </div>
               <div className="flex space-x-2">
                 <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
                   <Edit className="h-4 w-4" />
@@ -330,15 +338,21 @@ const Profile = () => {
           </div>
           
           <div className="flex flex-col">
-            <div className="text-xs text-gray-500 mb-2">Can be copied any time</div>
+            <div className="text-xs text-gray-500 mb-2">
+              <EditableText id="copy-note">Can be copied any time</EditableText>
+            </div>
             <div className="text-right mb-4">
               <Button variant="link" size="sm" className="text-blue-500 p-0">
-                <Link to="/account-administration">Account administration</Link>
+                <Link to="/account-administration">
+                  <EditableText id="account-admin-link">Account administration</EditableText>
+                </Link>
               </Button>
             </div>
             
             <div className="mt-auto mb-2">
-              <h2 className="text-xl font-bold mb-2">About</h2>
+              <h2 className="text-xl font-bold mb-2">
+                <EditableText id="about-heading">About</EditableText>
+              </h2>
               <div className="border-t border-b border-gray-200 py-4">
                 <Input 
                   className="border-0 p-0 shadow-none" 
@@ -354,7 +368,9 @@ const Profile = () => {
         {/* Interests/Hobbies Section */}
         <div className="mb-8">
           <div className="flex items-center mb-2">
-            <h2 className="text-xl font-bold mr-2">Interests/Hobbies</h2>
+            <h2 className="text-xl font-bold mr-2">
+              <EditableText id="interests-heading">Interests/Hobbies</EditableText>
+            </h2>
             <Info className="h-5 w-5 text-gray-400" />
             <div className="ml-auto flex items-center">
               <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
@@ -369,7 +385,9 @@ const Profile = () => {
           <div className="mb-3">
             <div className="flex items-center mb-2">
               <Label htmlFor="interests-input" className="text-sm text-gray-500 italic mr-2">
-                Please enter your interests comma separated
+                <EditableText id="interests-instruction">
+                  Please enter your interests comma separated
+                </EditableText>
               </Label>
             </div>
             <div className="flex gap-2">
@@ -403,18 +421,28 @@ const Profile = () => {
           </div>
         </div>
         
-        {/* Revisions Section - Updated to match the design */}
+        {/* Revisions Section */}
         <div className="mb-8">
           <div className="flex items-center mb-4">
-            <h2 className="text-xl font-bold mr-2">Revisions</h2>
+            <h2 className="text-xl font-bold mr-2">
+              <EditableText id="revisions-heading">Revisions</EditableText>
+            </h2>
             <Info className="h-5 w-5 text-gray-400" />
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="ml-4 text-sm text-gray-600">Compare up to 4 revisions</span>
+                  <span className="ml-4 text-sm text-gray-600">
+                    <EditableText id="compare-tooltip-trigger">
+                      Compare up to 4 revisions
+                    </EditableText>
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>You can select and compare up to 4 revisions</p>
+                  <p>
+                    <EditableText id="compare-tooltip-content">
+                      You can select and compare up to 4 revisions
+                    </EditableText>
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -457,14 +485,21 @@ const Profile = () => {
             </Table>
           </div>
           
-          {/* Comparison Container - Shows when Compare is clicked */}
+          {/* Comparison Container */}
           {compareOpen && selectedRevisions.length > 0 && (
             <div className="border rounded-md p-4 bg-gray-50 mb-4">
-              <h4 className="font-medium mb-2">Compare Revisions</h4>
+              <h4 className="font-medium mb-2">
+                <EditableText id="compare-revisions-title">
+                  Compare Revisions
+                </EditableText>
+              </h4>
               
-              {/* Layout options */}
               <div className="mb-4">
-                <h5 className="text-sm font-medium mb-2">Layout options:</h5>
+                <h5 className="text-sm font-medium mb-2">
+                  <EditableText id="layout-options-title">
+                    Layout options:
+                  </EditableText>
+                </h5>
                 
                 <div className="grid grid-cols-7 gap-2 mb-3">
                   {/* Option 1: one horizontal and two vertical */}
@@ -561,10 +596,20 @@ const Profile = () => {
               >
                 <ResizablePanel defaultSize={33}>
                   <div className="p-2 h-full bg-white">
-                    <div className="text-sm font-medium mb-1">Revision 1</div>
+                    <div className="text-sm font-medium mb-1">
+                      <EditableText id="revision-1-title">Revision 1</EditableText>
+                    </div>
                     <div className="text-xs">
-                      <p>Original text content from revision 1.</p>
-                      <p>This shows the first version.</p>
+                      <p>
+                        <EditableText id="revision-1-content-1">
+                          Original text content from revision 1.
+                        </EditableText>
+                      </p>
+                      <p>
+                        <EditableText id="revision-1-content-2">
+                          This shows the first version.
+                        </EditableText>
+                      </p>
                     </div>
                   </div>
                 </ResizablePanel>
@@ -573,10 +618,20 @@ const Profile = () => {
                 
                 <ResizablePanel defaultSize={33}>
                   <div className="p-2 h-full bg-white">
-                    <div className="text-sm font-medium mb-1">Revision 2</div>
+                    <div className="text-sm font-medium mb-1">
+                      <EditableText id="revision-2-title">Revision 2</EditableText>
+                    </div>
                     <div className="text-xs">
-                      <p>Modified text content from revision 2.</p>
-                      <p>This shows the changes made.</p>
+                      <p>
+                        <EditableText id="revision-2-content-1">
+                          Modified text content from revision 2.
+                        </EditableText>
+                      </p>
+                      <p>
+                        <EditableText id="revision-2-content-2">
+                          This shows the changes made.
+                        </EditableText>
+                      </p>
                     </div>
                   </div>
                 </ResizablePanel>
@@ -585,10 +640,20 @@ const Profile = () => {
                 
                 <ResizablePanel defaultSize={33}>
                   <div className="p-2 h-full bg-white">
-                    <div className="text-sm font-medium mb-1">Revision 3</div>
+                    <div className="text-sm font-medium mb-1">
+                      <EditableText id="revision-3-title">Revision 3</EditableText>
+                    </div>
                     <div className="text-xs">
-                      <p>Latest text content from revision 3.</p>
-                      <p>This shows the most recent changes.</p>
+                      <p>
+                        <EditableText id="revision-3-content-1">
+                          Latest text content from revision 3.
+                        </EditableText>
+                      </p>
+                      <p>
+                        <EditableText id="revision-3-content-2">
+                          This shows the most recent changes.
+                        </EditableText>
+                      </p>
                     </div>
                   </div>
                 </ResizablePanel>
@@ -612,103 +677,133 @@ const Profile = () => {
         
         {/* Stories Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Stories</h2>
+          <h2 className="text-xl font-bold mb-4">
+            <EditableText id="stories-heading">Stories</EditableText>
+          </h2>
           <div>
             <Link to="#" className="text-blue-500 hover:underline mb-4 block">
-              Add story
+              <EditableText id="add-story-link">Add story</EditableText>
             </Link>
             
             <div className="space-y-4 mt-4">
               <div>
-                <h3 className="font-semibold mb-2">Authoring</h3>
+                <h3 className="font-semibold mb-2">
+                  <EditableText id="authoring-heading">Authoring</EditableText>
+                </h3>
                 <div className="space-y-1">
                   <div className="flex justify-between">
-                    <span>Text</span>
+                    <span><EditableText id="text-label">Text</EditableText></span>
                     <span className="text-blue-500">{stats.author.text}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Images</span>
+                    <span><EditableText id="images-label">Images</EditableText></span>
                     <span className="text-blue-500">{stats.author.images}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Audio</span>
+                    <span><EditableText id="audio-label">Audio</EditableText></span>
                     <span className="text-blue-500">{stats.author.audio}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Video</span>
+                    <span><EditableText id="video-label">Video</EditableText></span>
                     <span className="text-blue-500">{stats.author.video}</span>
                   </div>
                 </div>
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2">Consuming</h3>
+                <h3 className="font-semibold mb-2">
+                  <EditableText id="consuming-heading">Consuming</EditableText>
+                </h3>
                 <div className="space-y-1">
                   <div className="flex justify-between">
-                    <span>Text</span>
+                    <span><EditableText id="text-label">Text</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.text}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Images</span>
+                    <span><EditableText id="images-label">Images</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.images}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Audio</span>
+                    <span><EditableText id="audio-label">Audio</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.audio}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Video</span>
+                    <span><EditableText id="video-label">Video</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.video}</span>
                   </div>
                 </div>
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2">Producing</h3>
+                <h3 className="font-semibold mb-2">
+                  <EditableText id="producing-heading">Producing</EditableText>
+                </h3>
                 <div className="flex justify-between">
-                  <span>Story</span>
+                  <span>
+                    <EditableText id="story-label">Story</EditableText>
+                  </span>
                   <span className="text-blue-500">{stats.producer.story}</span>
                 </div>
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2">Community</h3>
+                <h3 className="font-semibold mb-2">
+                  <EditableText id="community-heading">Community</EditableText>
+                </h3>
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium">Contributing</h4>
+                  <h4 className="text-sm font-medium">
+                    <EditableText id="contributing-heading">Contributing</EditableText>
+                  </h4>
                   <div className="space-y-1">
                     <div className="flex justify-between">
-                      <span>Text</span>
+                      <span>
+                        <EditableText id="text-label">Text</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.contributing.text}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Images</span>
+                      <span>
+                        <EditableText id="images-label">Images</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.contributing.images}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Audio</span>
+                      <span>
+                        <EditableText id="audio-label">Audio</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.contributing.audio}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Video</span>
+                      <span>
+                        <EditableText id="video-label">Video</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.contributing.video}</span>
                     </div>
                   </div>
                   
                   <div className="space-y-1">
                     <div className="flex justify-between">
-                      <span>Sent feedback</span>
+                      <span>
+                        <EditableText id="feedback-label">Sent feedback</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.sentFeedback}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Suggested features</span>
+                      <span>
+                        <EditableText id="suggested-features-label">Suggested features</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.suggestedFeatures}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Submitted bug reports</span>
+                      <span>
+                        <EditableText id="submitted-bug-reports-label">Submitted bug reports</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.submittedBugReports}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Contact requests</span>
+                      <span>
+                        <EditableText id="contact-requests-label">Contact requests</EditableText>
+                      </span>
                       <span className="text-blue-500">{stats.community.contactRequests}</span>
                     </div>
                   </div>
@@ -718,16 +813,26 @@ const Profile = () => {
           </div>
         </div>
         
-        {/* Contributions Section - Updated to match the screenshot */}
+        {/* Contributions Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Contributions</h2>
+          <h2 className="text-xl font-bold mb-4">
+            <EditableText id="contributions-heading">Contributions</EditableText>
+          </h2>
           
           <Tabs defaultValue="total">
             <TabsList className="mb-4">
-              <TabsTrigger value="total">total</TabsTrigger>
-              <TabsTrigger value="approved">approved</TabsTrigger>
-              <TabsTrigger value="denied">denied</TabsTrigger>
-              <TabsTrigger value="undecided">undecided</TabsTrigger>
+              <TabsTrigger value="total">
+                <EditableText id="total-tab">total</EditableText>
+              </TabsTrigger>
+              <TabsTrigger value="approved">
+                <EditableText id="approved-tab">approved</EditableText>
+              </TabsTrigger>
+              <TabsTrigger value="denied">
+                <EditableText id="denied-tab">denied</EditableText>
+              </TabsTrigger>
+              <TabsTrigger value="undecided">
+                <EditableText id="undecided-tab">undecided</EditableText>
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="total" className="space-y-4">
@@ -751,9 +856,11 @@ const Profile = () => {
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-sm mt-1">
-                        <span className="text-gray-500">got: {contribution.likes} likes</span>
+                        <span className="text-gray-500">
+                          <EditableText id={`got-likes-${index}`}>got: {contribution.likes} likes</EditableText>
+                        </span>
                         <span className="text-blue-500 hover:underline cursor-pointer">
-                          jump to contribution
+                          <EditableText id={`jump-to-${index}`}>jump to contribution</EditableText>
                         </span>
                       </div>
                     </div>
@@ -764,19 +871,25 @@ const Profile = () => {
             
             <TabsContent value="approved">
               <div className="py-4 text-center text-gray-500">
-                No approved contributions yet
+                <EditableText id="no-approved-text">
+                  No approved contributions yet
+                </EditableText>
               </div>
             </TabsContent>
             
             <TabsContent value="denied">
               <div className="py-4 text-center text-gray-500">
-                No denied contributions
+                <EditableText id="no-denied-text">
+                  No denied contributions
+                </EditableText>
               </div>
             </TabsContent>
             
             <TabsContent value="undecided">
               <div className="py-4 text-center text-gray-500">
-                No undecided contributions
+                <EditableText id="no-undecided-text">
+                  No undecided contributions
+                </EditableText>
               </div>
             </TabsContent>
           </Tabs>
