@@ -361,7 +361,7 @@ const NewStoryTemplate = () => {
                 <div className="flex justify-end gap-2 mt-2 text-xs items-center">
                   <Edit size={14} />
                   <span>5</span>
-                  <Eye size={14} />
+                  <Heart size={14} />
                   <span>10</span>
                 </div>
               </div>
