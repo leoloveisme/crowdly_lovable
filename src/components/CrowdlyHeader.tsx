@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,8 +15,8 @@ import { toast } from "@/hooks/use-toast";
 const CrowdlyHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("leoforce@example.com");
+  const [password, setPassword] = useState("12345678qwas!");
   const [showPassword, setShowPassword] = useState(false);
   const [language, setLanguage] = useState("English");
   const [showPopover, setShowPopover] = useState(false);
@@ -49,8 +48,6 @@ const CrowdlyHeader = () => {
       setIsLoggingIn(true);
       await signIn(email, password);
       setShowLogin(false);
-      setEmail("");
-      setPassword("");
     } catch (error) {
       console.error("Login error:", error);
     } finally {
@@ -260,7 +257,7 @@ const CrowdlyHeader = () => {
                 {isLoggingIn ? "Logging in..." : "Login"}
               </Button>
               <div className="mt-2 text-xs text-center text-gray-500">
-                Test credentials:<br/>
+                <strong>Test credentials already filled in:</strong><br/>
                 Email: leoforce@example.com<br/>
                 Password: 12345678qwas!
               </div>

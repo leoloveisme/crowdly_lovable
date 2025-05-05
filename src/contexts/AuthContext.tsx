@@ -60,7 +60,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         // Fetch roles if we have a user
         if (currentSession?.user) {
-          // Use setTimeout to avoid potential deadlocks with Supabase client
           setTimeout(() => {
             fetchUserRoles(currentSession.user.id);
           }, 0);
@@ -97,41 +96,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (email: string, password: string) => {
     try {
       console.log('Attempting login with:', email);
-      // Make sure to use the exact credentials from the SQL migration
-      if (email === 'leoforce@example.com' && password === '12345678qwas!') {
-        const { data, error } = await supabase.auth.signInWithPassword({ 
-          email, 
-          password 
-        });
-        
-        if (error) {
-          console.error('Error during sign in:', error);
-          toast({
-            title: "Login failed",
-            description: error.message,
-            variant: "destructive"
-          });
-          throw error;
-        }
-
-        console.log('Login successful for:', data.user?.email);
-        toast({
-          title: "Login successful",
-          description: "Welcome back!"
-        });
-        navigate('/');
-        return;
-      } else {
+      setLoading(true);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+      
+      if (error) {
+        console.error('Error during sign in:', error);
         toast({
           title: "Login failed",
-          description: "Invalid login credentials",
+          description: error.message,
           variant: "destructive"
         });
-        console.error('Invalid credentials provided');
+        throw error;
       }
+
+      console.log('Login successful for:', data.user?.email);
+      toast({
+        title: "Login successful",
+        description: "Welcome back!"
+      });
+      navigate('/');
     } catch (error) {
       console.error("Error during sign in:", error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
