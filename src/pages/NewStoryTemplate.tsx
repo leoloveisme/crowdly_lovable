@@ -1,8 +1,11 @@
+
 import React, { useState } from "react";
 import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
+import { useToast } from "@/hooks/use-toast";
 
 const NewStoryTemplate = () => {
   const [visibilityOpen, setVisibilityOpen] = useState(false);
@@ -10,6 +13,8 @@ const NewStoryTemplate = () => {
   const [revisionsOpen, setRevisionsOpen] = useState(true);
   const [layoutOptionsOpen, setLayoutOptionsOpen] = useState(true);
   const [branchesOpen, setBranchesOpen] = useState(true);
+  const [isPublished, setIsPublished] = useState(false);
+  const { toast } = useToast();
 
   const toggleSection = (section: string) => {
     switch(section) {
@@ -31,6 +36,17 @@ const NewStoryTemplate = () => {
     }
   };
 
+  const togglePublishStatus = () => {
+    setIsPublished(!isPublished);
+    toast({
+      title: isPublished ? "Story unpublished" : "Story published",
+      description: isPublished 
+        ? "Your story is no longer visible to others" 
+        : "Your story is now visible to others",
+      duration: 3000,
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
@@ -45,9 +61,13 @@ const NewStoryTemplate = () => {
 
           {/* Story Actions */}
           <div className="space-y-1 text-sm">
-            <div className="flex gap-2 text-blue-500">
-              <button className="hover:underline">publish</button>
-              <button className="hover:underline">unpublish</button>
+            <div className="flex items-center gap-2">
+              <button 
+                className="text-blue-500 hover:underline"
+                onClick={togglePublishStatus}
+              >
+                {isPublished ? "unpublish" : "publish"}
+              </button>
             </div>
             <div className="flex items-center gap-1">
               <button className="text-blue-500 hover:underline">clone</button>
