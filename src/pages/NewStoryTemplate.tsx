@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, Columns4, LayoutGrid, LayoutList, Grid2x2, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -318,13 +319,17 @@ const NewStoryTemplate = () => {
                       <h5 className="text-sm font-medium mb-2">7 viewing options:</h5>
                       
                       <div className="grid grid-cols-7 gap-2">
-                        {/* Option 1: one horizontal and two vertical */}
+                        {/* Option 1: one horizontal and two vertical - Custom SVG to match screenshot */}
                         <button 
                           onClick={() => handleLayoutOptionClick(0)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 0 ? 'border-blue-500 bg-blue-50' : ''}`}
                           title="One horizontal and two vertical"
                         >
-                          <LayoutDashboard size={24} />
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="12" y1="12" x2="12" y2="21" />
+                          </svg>
                         </button>
                         
                         {/* Option 2: two horizontal and two vertical */}
