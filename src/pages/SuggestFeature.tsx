@@ -374,7 +374,7 @@ const SuggestFeature = () => {
                     <Info size={16} className="text-gray-400 cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>You can submit an empty form</p>
+                    <p>Only password field is the exception, providing you choose Yes and decide to create an account on this platform</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
