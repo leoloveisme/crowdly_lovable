@@ -180,6 +180,10 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           })
           .eq('id', existingData.id);
       } else {
+        // Check for duplicate key first by creating a unique key
+        const uniqueKey = `${currentPath}_${elementId}_${currentLanguage}`;
+        console.log('Checking for duplicate with key:', uniqueKey);
+        
         // Insert new record with the current language
         console.log('Inserting new content record');
         result = await supabase
@@ -196,11 +200,23 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
 
       if (result.error) {
         console.error('Error saving content:', result.error);
-        toast({
-          title: "Error saving content",
-          description: result.error.message,
-          variant: "destructive"
-        });
+        
+        // Special handling for duplicate key errors
+        if (result.error.code === '23505') {
+          toast({
+            title: "Error saving content",
+            description: "This content already exists. Try refreshing the page.",
+            variant: "destructive"
+          });
+          // Force refresh content from database
+          setShouldFetchContent(true);
+        } else {
+          toast({
+            title: "Error saving content",
+            description: result.error.message,
+            variant: "destructive"
+          });
+        }
         return;
       }
 

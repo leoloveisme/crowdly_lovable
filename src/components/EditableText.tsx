@@ -74,38 +74,30 @@ const EditableText: React.FC<EditableTextProps> = ({
     if (isEditing && editableRef.current) {
       editableRef.current.focus();
       
-      // Set text input direction and cursor position based on language
+      // Place cursor at the end for all languages (this is standard behavior users expect)
       const div = editableRef.current;
       if (div) {
-        // Place cursor at the beginning for RTL languages, end for LTR languages
         const range = document.createRange();
         const sel = window.getSelection();
         
-        if (isRTL) {
-          // For RTL, set cursor at the beginning
-          range.setStart(div, 0);
+        if (div.childNodes.length > 0) {
+          const lastNode = div.childNodes[div.childNodes.length - 1];
+          if (lastNode.nodeType === Node.TEXT_NODE) {
+            range.setStart(lastNode, lastNode.textContent?.length || 0);
+          } else {
+            range.setStartAfter(lastNode);
+          }
           range.collapse(true);
         } else {
-          // For LTR, set cursor at the end
-          if (div.childNodes.length > 0) {
-            const lastNode = div.childNodes[div.childNodes.length - 1];
-            if (lastNode.nodeType === Node.TEXT_NODE) {
-              range.setStart(lastNode, lastNode.textContent?.length || 0);
-            } else {
-              range.setStartAfter(lastNode);
-            }
-            range.collapse(true);
-          } else {
-            range.setStart(div, 0);
-            range.collapse(true);
-          }
+          range.setStart(div, 0);
+          range.collapse(true);
         }
         
         sel?.removeAllRanges();
         sel?.addRange(range);
       }
     }
-  }, [isEditing, isRTL]);
+  }, [isEditing]);
 
   const handleClick = () => {
     if (isAdmin && isEditingEnabled && !isEditing) {
