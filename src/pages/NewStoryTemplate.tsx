@@ -171,8 +171,8 @@ const NewStoryTemplate = () => {
             </div>
 
             <div className="space-y-2 text-sm">
-              <div>Total in this story</div>
-              <div>Approved in this story</div>
+              <div className="text-red-500">Total in this story</div>
+              <div className="text-green-500">Approved in this story</div>
               <div>Total by the contributor</div>
             </div>
           </div>
