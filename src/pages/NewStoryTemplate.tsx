@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useToast } from "@/hooks/use-toast";
@@ -26,6 +27,7 @@ const NewStoryTemplate = () => {
   const [branchesOpen, setBranchesOpen] = useState(true);
   const [isPublished, setIsPublished] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
+  const [selectedRevisions, setSelectedRevisions] = useState<number[]>([]);
   const { toast } = useToast();
 
   const toggleSection = (section: string) => {
@@ -61,6 +63,20 @@ const NewStoryTemplate = () => {
 
   const toggleCompare = () => {
     setCompareOpen(!compareOpen);
+  };
+
+  const toggleRevisionSelection = (revisionId: number) => {
+    setSelectedRevisions(prev => {
+      if (prev.includes(revisionId)) {
+        return prev.filter(id => id !== revisionId);
+      } else {
+        // Limit to 4 selections
+        if (prev.length >= 4) {
+          return [...prev.slice(1), revisionId];
+        }
+        return [...prev, revisionId];
+      }
+    });
   };
 
   return (
@@ -210,7 +226,13 @@ const NewStoryTemplate = () => {
                   <tbody>
                     {[1, 2, 3].map((number) => (
                       <tr key={number} className="border-b last:border-0">
-                        <td className="py-2 w-8">{number}</td>
+                        <td className="py-2 w-8">
+                          <Checkbox 
+                            id={`revision-${number}`} 
+                            checked={selectedRevisions.includes(number)} 
+                            onCheckedChange={() => toggleRevisionSelection(number)}
+                          />
+                        </td>
                         <td className="py-2 text-blue-500">11:28</td>
                         <td className="py-2 text-center">1</td>
                       </tr>
