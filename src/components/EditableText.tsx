@@ -109,6 +109,7 @@ const EditableText: React.FC<EditableTextProps> = ({
       <Component 
         className={className} 
         dir={isRTL ? "rtl" : "ltr"}
+        style={{ unicodeBidi: "isolate" }}
       >
         {elementData?.content || localContent || children}
       </Component>
@@ -130,6 +131,7 @@ const EditableText: React.FC<EditableTextProps> = ({
             "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]"
           )}
           dir={isRTL ? "rtl" : "ltr"}
+          style={{ unicodeBidi: "isolate" }}
           dangerouslySetInnerHTML={{ __html: localContent }}
         />
         <div className="absolute right-0 top-0 space-x-1 bg-white shadow-sm border border-gray-200 rounded-md p-1">
@@ -161,6 +163,7 @@ const EditableText: React.FC<EditableTextProps> = ({
       )}
       onClick={handleClick}
       dir={isRTL ? "rtl" : "ltr"}
+      style={{ unicodeBidi: "isolate" }}
     >
       {elementData?.content || localContent || children}
       <Edit 
