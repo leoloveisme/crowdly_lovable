@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEditableContent } from "@/contexts/EditableContentContext";
 import { toast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
+import LoginForm from "@/components/LoginForm";
 
 const CrowdlyHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
