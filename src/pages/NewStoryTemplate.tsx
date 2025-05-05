@@ -354,13 +354,18 @@ const NewStoryTemplate = () => {
                           <Columns4 size={24} />
                         </button>
                         
-                        {/* Option 4: horizontal */}
+                        {/* Option 4: four horizontal - Custom SVG to match uploaded image */}
                         <button 
                           onClick={() => handleLayoutOptionClick(3)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 3 ? 'border-blue-500 bg-blue-50' : ''}`}
-                          title="Horizontal"
+                          title="Four horizontal"
                         >
-                          <LayoutList size={24} />
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="3" y1="7.5" x2="21" y2="7.5" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="16.5" x2="21" y2="16.5" />
+                          </svg>
                         </button>
                         
                         {/* Option 5: four squares within a square */}
@@ -396,7 +401,7 @@ const NewStoryTemplate = () => {
                         <p>1. One horizontal and two vertical (for the case 3 versions were chosen to compare)</p>
                         <p>2. Two horizontal and two vertical (if 4 versions were chosen)</p>
                         <p>3. Four vertical (from one to four chosen)</p>
-                        <p>4. Horizontal (from one to four chosen)</p>
+                        <p>4. Four horizontal (from one to four chosen)</p>
                         <p>5. Four squares within a square</p>
                         <p>6. Two vertical and two horizontal</p>
                         <p>7. Two vertical and one horizontal</p>
