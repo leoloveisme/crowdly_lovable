@@ -149,7 +149,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
 
       console.log(`Saving content for ${elementId} in ${currentLanguage}`);
 
-      // Check if we already have this content in the database for the current language
+      // First, try to get the EXACT record with element_id, page_path and language combination
       const { data: existingData, error: fetchError } = await supabase
         .from('editable_content')
         .select('*')
@@ -169,6 +169,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       }
 
       let result;
+      
       if (existingData) {
         // Update existing record
         console.log('Updating existing content record:', existingData.id);
@@ -176,15 +177,40 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           .from('editable_content')
           .update({
             content: contentData.content,
-            updated_by: user?.id
+            updated_by: user?.id,
+            updated_at: new Date().toISOString()
           })
           .eq('id', existingData.id);
       } else {
-        // Check for duplicate key first by creating a unique key
-        const uniqueKey = `${currentPath}_${elementId}_${currentLanguage}`;
-        console.log('Checking for duplicate with key:', uniqueKey);
+        // Before inserting, double check that there isn't already a record with this combination
+        // This helps avoid race conditions or duplicate entries
+        const { count, error: countError } = await supabase
+          .from('editable_content')
+          .select('*', { count: 'exact', head: true })
+          .eq('page_path', currentPath)
+          .eq('element_id', elementId)
+          .eq('language', currentLanguage);
+          
+        if (countError) {
+          console.error('Error checking for duplicates:', countError);
+          return;
+        }
         
-        // Insert new record with the current language
+        if (count && count > 0) {
+          // If we found a record but didn't get it in our first query (race condition)
+          // Retry the fetch
+          console.log('Record exists but wasn\'t returned in first query, retrying fetch');
+          setShouldFetchContent(true);
+          
+          toast({
+            title: "Cannot save content",
+            description: "This content already exists. The page will refresh to show the current version.",
+            variant: "destructive"
+          });
+          return;
+        }
+        
+        // If no record exists, insert new record
         console.log('Inserting new content record');
         result = await supabase
           .from('editable_content')
@@ -205,7 +231,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
         if (result.error.code === '23505') {
           toast({
             title: "Error saving content",
-            description: "This content already exists. Try refreshing the page.",
+            description: "This content already exists. The page will refresh to show the current version.",
             variant: "destructive"
           });
           // Force refresh content from database

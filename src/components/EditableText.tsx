@@ -74,30 +74,37 @@ const EditableText: React.FC<EditableTextProps> = ({
     if (isEditing && editableRef.current) {
       editableRef.current.focus();
       
-      // Place cursor at the end for all languages (this is standard behavior users expect)
+      // Set cursor position appropriately based on text direction
       const div = editableRef.current;
       if (div) {
         const range = document.createRange();
         const sel = window.getSelection();
         
-        if (div.childNodes.length > 0) {
-          const lastNode = div.childNodes[div.childNodes.length - 1];
-          if (lastNode.nodeType === Node.TEXT_NODE) {
-            range.setStart(lastNode, lastNode.textContent?.length || 0);
-          } else {
-            range.setStartAfter(lastNode);
-          }
-          range.collapse(true);
-        } else {
+        if (isRTL) {
+          // For RTL languages, position cursor at beginning (right side)
           range.setStart(div, 0);
           range.collapse(true);
+        } else {
+          // For LTR languages, position cursor at end (right side)
+          if (div.childNodes.length > 0) {
+            const lastNode = div.childNodes[div.childNodes.length - 1];
+            if (lastNode.nodeType === Node.TEXT_NODE) {
+              range.setStart(lastNode, lastNode.textContent?.length || 0);
+            } else {
+              range.setStartAfter(lastNode);
+            }
+            range.collapse(true);
+          } else {
+            range.setStart(div, 0);
+            range.collapse(true);
+          }
         }
         
         sel?.removeAllRanges();
         sel?.addRange(range);
       }
     }
-  }, [isEditing]);
+  }, [isEditing, isRTL]);
 
   const handleClick = () => {
     if (isAdmin && isEditingEnabled && !isEditing) {
@@ -157,7 +164,7 @@ const EditableText: React.FC<EditableTextProps> = ({
           )}
           dir={isRTL ? "rtl" : "ltr"}
           style={{ textAlign: isRTL ? "right" : "left" }}
-          dangerouslySetInnerHTML={{ __html: localContent }}
+          suppressContentEditableWarning={true}
         />
         <div className="absolute right-0 top-0 space-x-1 bg-white shadow-sm border border-gray-200 rounded-md p-1">
           <button 
