@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -30,7 +29,7 @@ interface Attachment {
   file?: File;
 }
 
-const RECAPTCHA_SITE_KEY = "6LdvUbQpAAAAANq8BkVlcr_aHVlP-8yjg9SY6Nod"; // Replace with your actual site key
+const RECAPTCHA_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"; // Test key provided by Google for development
 
 const SuggestFeature = () => {
   const { toast } = useToast();
