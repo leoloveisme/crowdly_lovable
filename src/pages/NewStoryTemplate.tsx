@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -326,7 +325,8 @@ const NewStoryTemplate = () => {
               </button>
             </div>
             
-            {layoutOptionsOpen && (
+            {/* Only show layout options when at least one checkbox is checked AND compare is clicked */}
+            {layoutOptionsOpen && compareOpen && columnChecked.length > 0 && (
               <div className="bg-white rounded-md shadow-sm border p-4 grid grid-cols-6 gap-4">
                 {["⊑", "🗔", "🗕", "⊻", "𝌐", "⊏"].map((symbol, index) => (
                   <button 
