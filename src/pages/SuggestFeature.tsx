@@ -620,6 +620,12 @@ const SuggestFeature = () => {
             {formErrors.captcha && (
               <p className="text-red-500 text-sm mt-1">{formErrors.captcha}</p>
             )}
+            {RECAPTCHA_SITE_KEY === "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" && (
+              <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
+                <strong>Developer Note:</strong> You're using Google's test reCAPTCHA key. 
+                Replace it with your actual site key from the Google reCAPTCHA admin console before deployment.
+              </div>
+            )}
           </div>
           
           {/* Submit Button */}
