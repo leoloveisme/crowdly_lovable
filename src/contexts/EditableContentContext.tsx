@@ -39,6 +39,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
 
   // Create a tracking variable for language changes
   const [shouldFetchContent, setShouldFetchContent] = useState(true);
+  const [lastSaveAttempt, setLastSaveAttempt] = useState<string | null>(null);
 
   // Handle language change
   const handleLanguageChange = (language: string) => {
@@ -157,48 +158,30 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       const contentData = contents[elementId];
       if (!contentData) return;
 
+      // Create a unique identifier for this save attempt
+      const saveKey = `${elementId}-${currentLanguage}-${Date.now()}`;
+      setLastSaveAttempt(saveKey);
+      
       console.log(`Saving content for ${elementId} in ${currentLanguage}`);
 
-      // First check if a record with this combination already exists
-      const { data: existingRecords, error: checkError } = await supabase
+      // First, try to update assuming the record exists
+      const { data: updateData, error: updateError } = await supabase
         .from('editable_content')
-        .select('id')
+        .update({
+          content: contentData.content,
+          updated_by: user?.id,
+          updated_at: new Date().toISOString()
+        })
         .eq('page_path', currentPath)
         .eq('element_id', elementId)
-        .eq('language', currentLanguage);
-
-      if (checkError) {
-        console.error('Error checking existing content:', checkError);
-        toast({
-          title: "Error saving content",
-          description: checkError.message,
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (existingRecords && existingRecords.length > 0) {
-        // Update existing record
-        const { error: updateError } = await supabase
-          .from('editable_content')
-          .update({
-            content: contentData.content,
-            updated_by: user?.id,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existingRecords[0].id);
-
-        if (updateError) {
-          console.error('Error updating content:', updateError);
-          toast({
-            title: "Error saving content",
-            description: updateError.message,
-            variant: "destructive"
-          });
-          return;
-        }
-      } else {
-        // Insert new record
+        .eq('language', currentLanguage)
+        .select();
+      
+      // If there was no error but no rows were affected (nothing updated)
+      if (!updateError && (!updateData || updateData.length === 0)) {
+        console.log('No existing record found, inserting new record');
+        
+        // Try to insert a new record
         const { error: insertError } = await supabase
           .from('editable_content')
           .insert({
@@ -211,20 +194,56 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           });
 
         if (insertError) {
-          console.error('Error inserting content:', insertError);
-          
-          // Special handling for duplicate key errors
+          // If insert fails with duplicate key, it means another session just created it
           if (insertError.code === '23505') {
-            console.log('Duplicate key detected, refreshing content');
-            setShouldFetchContent(true);
+            console.log('Duplicate key detected - concurrent edit detected');
             
-            toast({
-              title: "Content already exists",
-              description: "The content was updated by another session. Refreshing to show current version.",
-              variant: "destructive"
-            });
+            // Wait a moment and retry as update
+            setTimeout(async () => {
+              if (saveKey !== lastSaveAttempt) return; // Don't retry if there's been a newer save attempt
+              
+              const { error: retryError } = await supabase
+                .from('editable_content')
+                .update({
+                  content: contentData.content,
+                  updated_by: user?.id,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('page_path', currentPath)
+                .eq('element_id', elementId)
+                .eq('language', currentLanguage);
+              
+              if (retryError) {
+                console.error('Error in retry update:', retryError);
+                toast({
+                  title: "Error saving content",
+                  description: "Could not save after retry. Please try again.",
+                  variant: "destructive"
+                });
+                return;
+              }
+              
+              // Turn off editing for this element after successful retry
+              setContents(prev => ({
+                ...prev,
+                [elementId]: {
+                  ...prev[elementId],
+                  isEditing: false
+                }
+              }));
+
+              toast({
+                title: "Content saved",
+                description: `Your changes have been saved successfully in ${currentLanguage} (after retry)`,
+              });
+              
+              // Refresh content from database to ensure we have the latest
+              setShouldFetchContent(true);
+            }, 500);
+            
             return;
           } else {
+            console.error('Error inserting content:', insertError);
             toast({
               title: "Error saving content",
               description: insertError.message,
@@ -233,6 +252,14 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
             return;
           }
         }
+      } else if (updateError) {
+        console.error('Error updating content:', updateError);
+        toast({
+          title: "Error saving content",
+          description: updateError.message,
+          variant: "destructive"
+        });
+        return;
       }
 
       // Turn off editing for this element
@@ -248,6 +275,9 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
         title: "Content saved",
         description: `Your changes have been saved successfully in ${currentLanguage}`,
       });
+      
+      // Always refresh content after successful save to ensure we have the latest
+      setShouldFetchContent(true);
     } catch (error) {
       console.error('Error in saveContent:', error);
       toast({

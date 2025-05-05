@@ -33,7 +33,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   const elementData = contents[id];
   const isEditing = elementData?.isEditing || false;
   
-  // Define RTL languages
+  // Define RTL languages - Russian is NOT an RTL language
   const rtlLanguages = ["Arabic", "Hebrew"];
   const isRTL = rtlLanguages.includes(currentLanguage);
   
