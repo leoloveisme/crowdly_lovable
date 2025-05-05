@@ -41,13 +41,13 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
   const handleLanguageChange = (language: string) => {
     console.log(`Language changed to: ${language}`);
     
-    // Clear existing content
+    // Clear existing content first
     setContents({});
     
     // Set the new language
     setCurrentLanguage(language);
     
-    // Force a content refetch
+    // Force a content refetch with the new language
     fetchEditableContent(currentPath, language);
     
     // Display toast notification about language change
@@ -92,7 +92,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
     }
   };
 
-  // Fetch content when path or language changes
+  // Fetch content whenever path or language changes
   useEffect(() => {
     fetchEditableContent(currentPath, currentLanguage);
   }, [currentPath, currentLanguage]);
@@ -155,57 +155,31 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       
       console.log(`Saving content for ${elementId} in ${currentLanguage}`);
 
-      // Check if the record already exists
-      const { data: existingRecord, error: checkError } = await supabase
+      // First try to delete any existing record to avoid duplicate key errors
+      await supabase
         .from('editable_content')
-        .select('id')
+        .delete()
         .eq('page_path', currentPath)
         .eq('element_id', elementId)
-        .eq('language', currentLanguage)
-        .maybeSingle();
+        .eq('language', currentLanguage);
         
-      if (checkError) {
-        console.error('Error checking existing record:', checkError);
-        toast({
-          title: "Error saving content",
-          description: checkError.message,
-          variant: "destructive"
+      // Then insert the new record
+      const { error: insertError } = await supabase
+        .from('editable_content')
+        .insert({
+          page_path: currentPath,
+          element_id: elementId,
+          content: contentData.content,
+          original_content: contentData.original,
+          updated_by: user?.id,
+          language: currentLanguage
         });
-        return;
-      }
       
-      let saveResult;
-      if (existingRecord) {
-        // Update existing record
-        saveResult = await supabase
-          .from('editable_content')
-          .update({
-            content: contentData.content,
-            updated_by: user?.id,
-            updated_at: new Date().toISOString()
-          })
-          .eq('page_path', currentPath)
-          .eq('element_id', elementId)
-          .eq('language', currentLanguage);
-      } else {
-        // Insert new record
-        saveResult = await supabase
-          .from('editable_content')
-          .insert({
-            page_path: currentPath,
-            element_id: elementId,
-            content: contentData.content,
-            original_content: contentData.original,
-            updated_by: user?.id,
-            language: currentLanguage
-          });
-      }
-      
-      if (saveResult.error) {
-        console.error('Error saving content:', saveResult.error);
+      if (insertError) {
+        console.error('Error saving content:', insertError);
         toast({
           title: "Error saving content",
-          description: saveResult.error.message,
+          description: insertError.message,
           variant: "destructive"
         });
         return;

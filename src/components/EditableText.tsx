@@ -33,7 +33,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   const elementData = contents[id];
   const isEditing = elementData?.isEditing || false;
   
-  // Define RTL languages
+  // Define RTL languages - Arabic and Hebrew only
   const rtlLanguages = ["Arabic", "Hebrew"];
   const isRTL = rtlLanguages.includes(currentLanguage);
   
@@ -72,6 +72,16 @@ const EditableText: React.FC<EditableTextProps> = ({
     if (isEditing && editableRef.current) {
       // Focus the editable div
       editableRef.current.focus();
+      
+      // Place cursor at the end of the text
+      const selection = window.getSelection();
+      if (selection) {
+        const range = document.createRange();
+        range.selectNodeContents(editableRef.current);
+        range.collapse(false); // false means collapse to end
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
     }
   }, [isEditing]);
 
@@ -128,7 +138,8 @@ const EditableText: React.FC<EditableTextProps> = ({
           onBlur={(e) => e.stopPropagation()} // Prevent immediate save on blur
           className={cn(
             className,
-            "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]"
+            "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]",
+            isRTL ? "text-right" : "text-left"
           )}
           dir={isRTL ? "rtl" : "ltr"}
           suppressContentEditableWarning={true}
