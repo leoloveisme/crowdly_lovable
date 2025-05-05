@@ -3,8 +3,13 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye } from "lucide-react";
+import { Eye, Menu, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const CrowdlyHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +18,7 @@ const CrowdlyHeader = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [language, setLanguage] = useState("English");
+  const [showPopover, setShowPopover] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -66,6 +72,48 @@ const CrowdlyHeader = () => {
               <Button variant="link" onClick={toggleLogin}>Login</Button>
             </div>
           </div>
+          
+          {/* Hamburger menu icon - visible on all screen sizes */}
+          <Popover open={showPopover} onOpenChange={setShowPopover}>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-10 w-10">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Menu</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-0">
+              <div className="relative p-4">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-2 right-2"
+                  onClick={() => setShowPopover(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+                <div className="space-y-2 pt-4">
+                  <div className="border-b pb-2">
+                    <Link 
+                      to="/suggest-feature" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      Suggest a Feature
+                    </Link>
+                  </div>
+                  <div>
+                    <Link 
+                      to="/account-administration" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      Account Administration
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
           
           <button 
             className="md:hidden text-gray-500 focus:outline-none" 
