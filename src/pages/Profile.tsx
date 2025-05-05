@@ -206,7 +206,7 @@ const Profile = () => {
             </div>
             
             <div className="flex items-center justify-between">
-              <div className="font-semibold">People</div>
+              
               <div className="flex space-x-2">
                 <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
                   <Edit className="h-4 w-4" />
