@@ -37,15 +37,24 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
   const isAdmin = user !== null && hasRole('platform_admin');
   const currentPath = location.pathname;
 
-  // Reset contents when language changes to force reload of content
-  useEffect(() => {
+  // Create a tracking variable for language changes
+  const [shouldFetchContent, setShouldFetchContent] = useState(true);
+
+  // Handle language change
+  const handleLanguageChange = (language: string) => {
+    console.log(`Language changed to: ${language}`);
+    // Set the new language
+    setCurrentLanguage(language);
+    // Clear existing content
     setContents({});
-  }, [currentLanguage]);
+    // Trigger a content refetch
+    setShouldFetchContent(true);
+  };
 
   // Fetch existing content from the database based on current path and language
   useEffect(() => {
     const fetchEditableContent = async () => {
-      if (!currentPath) return;
+      if (!currentPath || !shouldFetchContent) return;
 
       try {
         console.log(`Fetching content for path: ${currentPath}, language: ${currentLanguage}`);
@@ -71,6 +80,8 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
             };
           });
           setContents(contentMap);
+          // Reset the fetch flag after successful fetch
+          setShouldFetchContent(false);
         }
       } catch (error) {
         console.error('Error in fetchEditableContent:', error);
@@ -78,7 +89,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
     };
 
     fetchEditableContent();
-  }, [currentPath, currentLanguage, isAdmin]);
+  }, [currentPath, currentLanguage, isAdmin, shouldFetchContent]);
 
   const toggleEditingMode = () => {
     if (!isAdmin) return;
@@ -246,7 +257,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
     cancelEditing,
     isAdmin,
     currentLanguage,
-    setCurrentLanguage
+    setCurrentLanguage: handleLanguageChange // Use our new handler instead of direct state setter
   };
 
   return (

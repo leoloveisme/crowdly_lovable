@@ -33,9 +33,12 @@ const EditableText: React.FC<EditableTextProps> = ({
   const elementData = contents[id];
   const isEditing = elementData?.isEditing || false;
   
-  // Determine if we need RTL direction based on language
-  // Only Arabic and Hebrew are RTL languages - Russian is LTR like English
-  const isRTL = currentLanguage === "Arabic" || currentLanguage === "Hebrew";
+  // Define RTL languages (Arabic and Hebrew only)
+  // Explicitly set Russian and other languages as LTR
+  const rtlLanguages = ["Arabic", "Hebrew"];
+  const isRTL = rtlLanguages.includes(currentLanguage);
+  
+  console.log(`Language: ${currentLanguage}, Direction: ${isRTL ? 'RTL' : 'LTR'}`);
   
   // Initialize content from children when the component mounts
   useEffect(() => {
@@ -109,7 +112,8 @@ const EditableText: React.FC<EditableTextProps> = ({
       <Component 
         className={className} 
         dir={isRTL ? "rtl" : "ltr"}
-        style={{ unicodeBidi: "isolate" }}
+        // Apply minimal style adjustments for proper text direction
+        style={{ textAlign: isRTL ? "right" : "left" }}
       >
         {elementData?.content || localContent || children}
       </Component>
@@ -131,7 +135,8 @@ const EditableText: React.FC<EditableTextProps> = ({
             "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]"
           )}
           dir={isRTL ? "rtl" : "ltr"}
-          style={{ unicodeBidi: "isolate" }}
+          // Apply proper text alignment based on language direction
+          style={{ textAlign: isRTL ? "right" : "left" }}
           dangerouslySetInnerHTML={{ __html: localContent }}
         />
         <div className="absolute right-0 top-0 space-x-1 bg-white shadow-sm border border-gray-200 rounded-md p-1">
@@ -163,12 +168,13 @@ const EditableText: React.FC<EditableTextProps> = ({
       )}
       onClick={handleClick}
       dir={isRTL ? "rtl" : "ltr"}
-      style={{ unicodeBidi: "isolate" }}
+      // Apply proper text alignment based on language direction
+      style={{ textAlign: isRTL ? "right" : "left" }}
     >
       {elementData?.content || localContent || children}
       <Edit 
         size={12} 
-        className="absolute opacity-0 group-hover:opacity-100 top-0 right-0 text-blue-400" 
+        className={`absolute opacity-0 group-hover:opacity-100 ${isRTL ? 'left-0' : 'right-0'} top-0 text-blue-400`}
         aria-label={`Click to edit (${currentLanguage})`} 
       />
     </Component>
