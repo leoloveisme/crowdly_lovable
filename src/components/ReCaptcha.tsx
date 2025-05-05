@@ -6,6 +6,27 @@ interface ReCaptchaProps {
   onChange: (token: string | null) => void;
 }
 
+declare global {
+  interface Window {
+    grecaptcha: {
+      render: (
+        container: HTMLElement | string,
+        parameters: {
+          sitekey: string;
+          callback?: (token: string) => void;
+          'expired-callback'?: () => void;
+          'error-callback'?: () => void;
+          theme?: 'light' | 'dark';
+          size?: 'normal' | 'compact' | 'invisible';
+        }
+      ) => number;
+      reset: (widgetId?: number) => void;
+      execute: (widgetId?: number) => void;
+      ready: (callback: () => void) => void;
+    };
+  }
+}
+
 const ReCaptcha: React.FC<ReCaptchaProps> = ({ siteKey, onChange }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const captchaId = useRef<number | null>(null);
@@ -45,7 +66,12 @@ const ReCaptcha: React.FC<ReCaptchaProps> = ({ siteKey, onChange }) => {
       }
     };
 
-    renderCaptcha();
+    // Use grecaptcha.ready if available, otherwise use our custom rendering logic
+    if (window.grecaptcha && window.grecaptcha.ready) {
+      window.grecaptcha.ready(renderCaptcha);
+    } else {
+      setTimeout(renderCaptcha, 500);
+    }
 
     return () => {
       // Cleanup if needed
