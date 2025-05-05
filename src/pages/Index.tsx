@@ -4,14 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user, hasRole } = useAuth();
+  const isAdmin = hasRole('platform_admin');
+
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
       
       <div className="flex-grow flex items-center justify-center bg-gray-50">
         <div className="text-center px-4">
+          {isAdmin && (
+            <h2 className="text-4xl font-bold mb-2 text-red-600">
+              You are logged in as platform admin
+            </h2>
+          )}
           <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">Crowdly Entertainment Platform</h1>
           <p className="text-xl text-gray-600 mb-8">The entertainment platform where your voice matters</p>
           

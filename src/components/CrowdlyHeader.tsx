@@ -3,13 +3,15 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, Menu, X } from "lucide-react";
+import { Eye, Menu, X, LogOut } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 const CrowdlyHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,13 +21,45 @@ const CrowdlyHeader = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [language, setLanguage] = useState("English");
   const [showPopover, setShowPopover] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  const { user, signIn, signOut } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const toggleLogin = () => {
+    if (user) return; // Don't show login form if user is logged in
     setShowLogin(!showLogin);
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please enter both email and password.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsLoggingIn(true);
+      await signIn(email, password);
+      setShowLogin(false);
+      setEmail("");
+      setPassword("");
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut();
   };
 
   return (
@@ -71,8 +105,24 @@ const CrowdlyHeader = () => {
             </Select>
             
             <div className="space-x-4">
-              <Button variant="link" onClick={() => window.location.href = "/register"}>Register</Button>
-              <Button variant="link" onClick={toggleLogin}>Login</Button>
+              {user ? (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm">{user.email}</span>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleLogout}
+                    className="flex items-center"
+                  >
+                    <LogOut className="h-4 w-4 mr-1" /> Logout
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Button variant="link" onClick={() => window.location.href = "/register"}>Register</Button>
+                  <Button variant="link" onClick={toggleLogin}>Login</Button>
+                </>
+              )}
             </div>
           </div>
           
@@ -95,6 +145,21 @@ const CrowdlyHeader = () => {
                   <X className="h-4 w-4" />
                 </Button>
                 <div className="space-y-2 pt-4">
+                  {user && (
+                    <div className="border-b pb-2 mb-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{user.email}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={handleLogout}
+                          className="flex items-center"
+                        >
+                          <LogOut className="h-3 w-3 mr-1" /> Logout
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                   <div className="border-b pb-2">
                     <Link 
                       to="/suggest-feature" 
@@ -158,38 +223,44 @@ const CrowdlyHeader = () => {
         </div>
       </div>
 
-      {showLogin && (
+      {showLogin && !user && (
         <div className="container mx-auto mt-2">
           <div className="w-full md:w-64 p-4 bg-white border rounded shadow-md md:absolute md:right-4 md:top-16 z-10">
-            <div className="mb-4">
-              <label htmlFor="email" className="block mb-1 text-sm font-medium">Email</label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="password" className="block mb-1 text-sm font-medium">Password</label>
-              <div className="relative">
+            <form onSubmit={handleLogin}>
+              <div className="mb-4">
+                <label htmlFor="email" className="block mb-1 text-sm font-medium">Email</label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10"
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
-                <button
-                  type="button"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  <Eye size={16} />
-                </button>
               </div>
-            </div>
-            <Button className="w-full">Login</Button>
+              <div className="mb-4">
+                <label htmlFor="password" className="block mb-1 text-sm font-medium">Password</label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    <Eye size={16} />
+                  </button>
+                </div>
+              </div>
+              <Button type="submit" className="w-full" disabled={isLoggingIn}>
+                {isLoggingIn ? "Logging in..." : "Login"}
+              </Button>
+            </form>
           </div>
         </div>
       )}
@@ -222,14 +293,23 @@ const CrowdlyHeader = () => {
               </SelectContent>
             </Select>
             
-            <div className="flex space-x-2">
-              <Button variant="outline" className="flex-1" onClick={() => window.location.href = "/register"}>
-                Register
-              </Button>
-              <Button variant="outline" className="flex-1" onClick={toggleLogin}>
-                Login
-              </Button>
-            </div>
+            {user ? (
+              <div className="flex flex-col space-y-2">
+                <div className="text-sm font-medium">{user.email}</div>
+                <Button variant="outline" onClick={handleLogout} className="flex items-center justify-center">
+                  <LogOut className="h-4 w-4 mr-1" /> Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex space-x-2">
+                <Button variant="outline" className="flex-1" onClick={() => window.location.href = "/register"}>
+                  Register
+                </Button>
+                <Button variant="outline" className="flex-1" onClick={toggleLogin}>
+                  Login
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
