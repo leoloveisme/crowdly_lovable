@@ -156,7 +156,7 @@ const EditableText: React.FC<EditableTextProps> = ({
       <Edit 
         size={12} 
         className="absolute opacity-0 group-hover:opacity-100 top-0 right-0 text-blue-400" 
-        title="Click to edit" 
+        aria-label="Click to edit" 
       />
     </Component>
   );
