@@ -47,11 +47,13 @@ import {
   X, 
   Plus,
   Check,
-  ChevronDown
+  ChevronDown,
+  Upload
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
+import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 
 const Profile = () => {
   const [name, setName] = useState("Username");
@@ -61,6 +63,8 @@ const Profile = () => {
   const [isPrivate, setIsPrivate] = useState(false);
   const [canBeTagged, setCanBeTagged] = useState(true);
   const [anyoneCanEdit, setAnyoneCanEdit] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   
   // For the revision history
   const revisions = [
@@ -74,28 +78,28 @@ const Profile = () => {
     author: {
       text: 5,
       images: 50,
-      audio: 30,
+      audio: 10,
       video: 5
     },
     consumer: {
-      text: 8,
+      text: 5,
       images: 50,
       audio: 10,
       video: 5
     },
     producer: {
-      story: 8
+      story: 5
     },
     community: {
       contributing: {
         text: 5,
         images: 50,
-        audio: 30,
+        audio: 10,
         video: 5
       },
       sentFeedback: 5,
-      suggestedFeatures: 30,
-      submittedBugReports: 30,
+      suggestedFeatures: 50,
+      submittedBugReports: 10,
       contactRequests: 5
     }
   };
@@ -130,6 +134,11 @@ const Profile = () => {
 
   const handleRemoveInterest = (interest: string) => {
     setInterests(interests.filter(i => i !== interest));
+  };
+
+  const handleProfileImageChange = (imageUrl: string) => {
+    setProfileImage(imageUrl);
+    setIsUploadDialogOpen(false);
   };
 
   return (
@@ -199,10 +208,19 @@ const Profile = () => {
               </div>
             </div>
             <div className="border border-gray-300 rounded-md p-8 flex items-center justify-center">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src="/placeholder.svg" alt={name} />
-                <AvatarFallback>UN</AvatarFallback>
-              </Avatar>
+              <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+                <DialogTrigger asChild>
+                  <Avatar className="h-20 w-20 cursor-pointer">
+                    {profileImage ? (
+                      <AvatarImage src={profileImage} alt={name} />
+                    ) : (
+                      <AvatarImage src="/placeholder.svg" alt={name} />
+                    )}
+                    <AvatarFallback>UN</AvatarFallback>
+                  </Avatar>
+                </DialogTrigger>
+                <ProfilePictureUpload onImageChange={handleProfileImageChange} />
+              </Dialog>
             </div>
             
             <div className="flex items-center justify-between">
@@ -243,10 +261,15 @@ const Profile = () => {
               </div>
             </div>
             <div className="border border-gray-300 rounded-md p-8 flex items-center justify-center mb-2">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src="/placeholder.svg" alt="Upload" />
-                <AvatarFallback>UP</AvatarFallback>
-              </Avatar>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Avatar className="h-20 w-20 cursor-pointer">
+                    <AvatarImage src="/placeholder.svg" alt="Upload" />
+                    <AvatarFallback>UP</AvatarFallback>
+                  </Avatar>
+                </DialogTrigger>
+                <ProfilePictureUpload onImageChange={() => {}} />
+              </Dialog>
             </div>
             <div className="flex gap-2">
               <Button size="sm" className="bg-blue-600">Save</Button>
@@ -259,7 +282,7 @@ const Profile = () => {
             <div className="text-xs text-gray-500 mb-2">Can be copied any time</div>
             <div className="text-right mb-4">
               <Button variant="link" size="sm" className="text-blue-500 p-0">
-                Account administration
+                <Link to="/account-administration">Account administration</Link>
               </Button>
             </div>
             
@@ -380,14 +403,14 @@ const Profile = () => {
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Stories</h2>
           <div>
-            <Link to="#" className="text-blue-500 hover:underline mb-2 block">
+            <Link to="#" className="text-blue-500 hover:underline mb-4 block">
               Add story
             </Link>
             
-            <div className="space-y-4">
+            <div className="space-y-4 mt-4">
               <div>
                 <h3 className="font-semibold mb-2">Authoring</h3>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                <div className="space-y-1">
                   <div className="flex justify-between">
                     <span>Text</span>
                     <span className="text-blue-500">{stats.author.text}</span>
@@ -408,8 +431,8 @@ const Profile = () => {
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2">Consumer</h3>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                <h3 className="font-semibold mb-2">Consuming</h3>
+                <div className="space-y-1">
                   <div className="flex justify-between">
                     <span>Text</span>
                     <span className="text-blue-500">{stats.consumer.text}</span>
@@ -430,7 +453,7 @@ const Profile = () => {
               </div>
               
               <div>
-                <h3 className="font-semibold mb-2">Producer</h3>
+                <h3 className="font-semibold mb-2">Producing</h3>
                 <div className="flex justify-between">
                   <span>Story</span>
                   <span className="text-blue-500">{stats.producer.story}</span>
@@ -441,7 +464,7 @@ const Profile = () => {
                 <h3 className="font-semibold mb-2">Community</h3>
                 <div className="space-y-2">
                   <h4 className="text-sm font-medium">Contributing</h4>
-                  <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                  <div className="space-y-1">
                     <div className="flex justify-between">
                       <span>Text</span>
                       <span className="text-blue-500">{stats.community.contributing.text}</span>
