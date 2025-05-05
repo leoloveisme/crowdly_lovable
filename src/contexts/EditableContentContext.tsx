@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -149,16 +148,16 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
 
       console.log(`Saving content for ${elementId} in ${currentLanguage}`);
 
-      // First, try to get the EXACT record with element_id, page_path and language combination
+      // Try to update existing record first (safer approach)
       const { data: existingData, error: fetchError } = await supabase
         .from('editable_content')
-        .select('*')
+        .select('id')
         .eq('page_path', currentPath)
         .eq('element_id', elementId)
         .eq('language', currentLanguage)
-        .maybeSingle();
+        .single();
 
-      if (fetchError) {
+      if (fetchError && fetchError.code !== 'PGRST116') { // Not found error is okay
         console.error('Error checking existing content:', fetchError);
         toast({
           title: "Error saving content",
@@ -170,7 +169,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
 
       let result;
       
-      if (existingData) {
+      if (existingData?.id) {
         // Update existing record
         console.log('Updating existing content record:', existingData.id);
         result = await supabase
@@ -182,35 +181,8 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           })
           .eq('id', existingData.id);
       } else {
-        // Before inserting, double check that there isn't already a record with this combination
-        // This helps avoid race conditions or duplicate entries
-        const { count, error: countError } = await supabase
-          .from('editable_content')
-          .select('*', { count: 'exact', head: true })
-          .eq('page_path', currentPath)
-          .eq('element_id', elementId)
-          .eq('language', currentLanguage);
-          
-        if (countError) {
-          console.error('Error checking for duplicates:', countError);
-          return;
-        }
-        
-        if (count && count > 0) {
-          // If we found a record but didn't get it in our first query (race condition)
-          // Retry the fetch
-          console.log('Record exists but wasn\'t returned in first query, retrying fetch');
-          setShouldFetchContent(true);
-          
-          toast({
-            title: "Cannot save content",
-            description: "This content already exists. The page will refresh to show the current version.",
-            variant: "destructive"
-          });
-          return;
-        }
-        
-        // If no record exists, insert new record
+        // Insert new record with upsert=false to avoid duplicate key errors
+        // This approach will fail if a record was created concurrently
         console.log('Inserting new content record');
         result = await supabase
           .from('editable_content')
@@ -225,25 +197,28 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       }
 
       if (result.error) {
-        console.error('Error saving content:', result.error);
-        
-        // Special handling for duplicate key errors
+        // Handle duplicate key error
         if (result.error.code === '23505') {
+          console.log('Duplicate key detected, refreshing content');
+          
+          // Force refresh content from database
+          setShouldFetchContent(true);
+          
           toast({
             title: "Error saving content",
             description: "This content already exists. The page will refresh to show the current version.",
             variant: "destructive"
           });
-          // Force refresh content from database
-          setShouldFetchContent(true);
+          return;
         } else {
+          console.error('Error saving content:', result.error);
           toast({
             title: "Error saving content",
             description: result.error.message,
             variant: "destructive"
           });
+          return;
         }
-        return;
       }
 
       console.log('Content saved successfully');
@@ -299,7 +274,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
     cancelEditing,
     isAdmin,
     currentLanguage,
-    setCurrentLanguage: handleLanguageChange // Use our new handler instead of direct state setter
+    setCurrentLanguage: handleLanguageChange
   };
 
   return (
