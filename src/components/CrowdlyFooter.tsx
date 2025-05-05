@@ -1,11 +1,12 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 
 const CrowdlyFooter = () => {
   return (
     <footer className="bg-white py-8 mt-8 border-t">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="font-medium text-gray-800 mb-4">Company</h3>
             <ul className="space-y-2">
@@ -17,6 +18,13 @@ const CrowdlyFooter = () => {
               <li><a href="#" className="text-gray-600 hover:text-blue-500">Support</a></li>
               <li><a href="#" className="text-gray-600 hover:text-blue-500">Terms & Conditions</a></li>
               <li><a href="#" className="text-gray-600 hover:text-blue-500">Privacy</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="font-medium text-gray-800 mb-4">Finding your ways</h3>
+            <ul className="space-y-2">
+              <li><Link to="/sitemap" className="text-gray-600 hover:text-blue-500">Sitemap</Link></li>
             </ul>
           </div>
           
