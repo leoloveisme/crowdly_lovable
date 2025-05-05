@@ -67,10 +67,10 @@ const NewStoryTemplate = () => {
           {/* Visibility Options */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-sm text-blue-600">
-                <span className="inline-block w-2 h-2 bg-blue-600 rounded-full mr-1"></span>
+              <label className="flex items-center gap-2 text-sm">
+               <input type="radio" name="visibility" />
                 public
-              </h3>
+              </label>             
               <button onClick={() => toggleSection('visibility')}>
                 {visibilityOpen ? <CircleX size={16} /> : <HelpCircle size={16} className="text-gray-400" />}
               </button>
