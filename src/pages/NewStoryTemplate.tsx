@@ -391,13 +391,17 @@ const NewStoryTemplate = () => {
                           </svg>
                         </button>
                         
-                        {/* Option 7: two vertical and one horizontal */}
+                        {/* Option 7: two vertical and one horizontal - Updated to match screenshot */}
                         <button 
                           onClick={() => handleLayoutOptionClick(6)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 6 ? 'border-blue-500 bg-blue-50' : ''}`}
                           title="Two vertical and one horizontal"
                         >
-                          <Columns2 size={24} />
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="12" y1="3" x2="12" y2="21" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                          </svg>
                         </button>
                       </div>
                       
