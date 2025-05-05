@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -42,12 +43,22 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
   // Handle language change
   const handleLanguageChange = (language: string) => {
     console.log(`Language changed to: ${language}`);
-    // Set the new language
-    setCurrentLanguage(language);
+    
     // Clear existing content
     setContents({});
+    
+    // Set the new language
+    setCurrentLanguage(language);
+    
     // Trigger a content refetch
     setShouldFetchContent(true);
+    
+    // Display toast notification about language change
+    toast({
+      title: "Language changed",
+      description: `Content is now displayed in ${language}`,
+      duration: 3000,
+    });
   };
 
   // Fetch existing content from the database based on current path and language
@@ -148,43 +159,49 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
 
       console.log(`Saving content for ${elementId} in ${currentLanguage}`);
 
-      // Try to update existing record first (safer approach)
-      const { data: existingData, error: fetchError } = await supabase
+      // First check if a record with this combination already exists
+      const { data: existingRecords, error: checkError } = await supabase
         .from('editable_content')
         .select('id')
         .eq('page_path', currentPath)
         .eq('element_id', elementId)
-        .eq('language', currentLanguage)
-        .single();
+        .eq('language', currentLanguage);
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // Not found error is okay
-        console.error('Error checking existing content:', fetchError);
+      if (checkError) {
+        console.error('Error checking existing content:', checkError);
         toast({
           title: "Error saving content",
-          description: fetchError.message,
+          description: checkError.message,
           variant: "destructive"
         });
         return;
       }
 
-      let result;
-      
-      if (existingData?.id) {
-        // Update existing record
-        console.log('Updating existing content record:', existingData.id);
-        result = await supabase
+      // If we found an existing record, update it
+      if (existingRecords && existingRecords.length > 0) {
+        console.log('Updating existing content record:', existingRecords[0].id);
+        const { error: updateError } = await supabase
           .from('editable_content')
           .update({
             content: contentData.content,
             updated_by: user?.id,
             updated_at: new Date().toISOString()
           })
-          .eq('id', existingData.id);
+          .eq('id', existingRecords[0].id);
+
+        if (updateError) {
+          console.error('Error updating content:', updateError);
+          toast({
+            title: "Error saving content",
+            description: updateError.message,
+            variant: "destructive"
+          });
+          return;
+        }
       } else {
-        // Insert new record with upsert=false to avoid duplicate key errors
-        // This approach will fail if a record was created concurrently
+        // No existing record found, create a new one
         console.log('Inserting new content record');
-        result = await supabase
+        const { error: insertError } = await supabase
           .from('editable_content')
           .insert({
             page_path: currentPath,
@@ -194,36 +211,37 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
             updated_by: user?.id,
             language: currentLanguage
           });
-      }
 
-      if (result.error) {
-        // Handle duplicate key error
-        if (result.error.code === '23505') {
-          console.log('Duplicate key detected, refreshing content');
-          
-          // Force refresh content from database
-          setShouldFetchContent(true);
-          
-          toast({
-            title: "Error saving content",
-            description: "This content already exists. The page will refresh to show the current version.",
-            variant: "destructive"
-          });
-          return;
-        } else {
-          console.error('Error saving content:', result.error);
-          toast({
-            title: "Error saving content",
-            description: result.error.message,
-            variant: "destructive"
-          });
-          return;
+        if (insertError) {
+          // If we get a duplicate key error, it means another session created the record
+          // between our check and insert (race condition)
+          if (insertError.code === '23505') {
+            console.log('Duplicate key detected, the record was created by another session');
+            
+            // Refresh content from the database
+            setShouldFetchContent(true);
+            
+            toast({
+              title: "Content already exists",
+              description: "Someone else has already saved this content. Refreshing to show current version.",
+              variant: "destructive"
+            });
+            return;
+          } else {
+            console.error('Error inserting content:', insertError);
+            toast({
+              title: "Error saving content",
+              description: insertError.message,
+              variant: "destructive"
+            });
+            return;
+          }
         }
       }
 
       console.log('Content saved successfully');
       
-      // Update local state, turn off editing for this element
+      // Turn off editing for this element
       setContents(prev => ({
         ...prev,
         [elementId]: {
