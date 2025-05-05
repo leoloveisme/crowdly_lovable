@@ -8,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { EditableContentProvider } from "./contexts/EditableContentContext";
 import Index from "./pages/Index";
 import SuggestFeature from "./pages/SuggestFeature";
+import FeatureSuggestions from "./pages/FeatureSuggestions";
 import AccountAdministration from "./pages/AccountAdministration";
 import NewStoryTemplate from "./pages/NewStoryTemplate";
 import Profile from "./pages/Profile";
@@ -30,6 +31,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/suggest-feature" element={<SuggestFeature />} />
+                <Route path="/feature-suggestions" element={<FeatureSuggestions />} />
                 <Route path="/account-administration" element={<AccountAdministration />} />
                 <Route path="/new-story-template" element={<NewStoryTemplate />} />
                 <Route path="/profile" element={<Profile />} />

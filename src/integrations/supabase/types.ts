@@ -45,6 +45,51 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_suggestions: {
+        Row: {
+          attachments: Json | null
+          can_contact: boolean | null
+          contact_method: string | null
+          created_at: string | null
+          description: string
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          telephone: string | null
+          user_id: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"]
+        }
+        Insert: {
+          attachments?: Json | null
+          can_contact?: boolean | null
+          contact_method?: string | null
+          created_at?: string | null
+          description: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          telephone?: string | null
+          user_id?: string | null
+          visibility: Database["public"]["Enums"]["visibility_type"]
+        }
+        Update: {
+          attachments?: Json | null
+          can_contact?: boolean | null
+          contact_method?: string | null
+          created_at?: string | null
+          description?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          telephone?: string | null
+          user_id?: string | null
+          visibility?: Database["public"]["Enums"]["visibility_type"]
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -107,6 +152,7 @@ export type Database = {
         | "chief_editor"
         | "producer"
         | "contributor"
+      visibility_type: "public" | "private" | "anonymous"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -232,6 +278,7 @@ export const Constants = {
         "producer",
         "contributor",
       ],
+      visibility_type: ["public", "private", "anonymous"],
     },
   },
 } as const

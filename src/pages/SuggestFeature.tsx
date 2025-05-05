@@ -1,4 +1,6 @@
-import React, { useState, useRef } from "react";
+
+import React, { useState, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,19 +14,28 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Eye, Info, X } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Eye, Info, X, AlertTriangle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
+import ReCaptcha from "@/components/ReCaptcha";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Attachment {
   id: number;
   name: string;
   type: string;
+  file?: File;
 }
+
+const RECAPTCHA_SITE_KEY = "6LdvUbQpAAAAANq8BkVlcr_aHVlP-8yjg9SY6Nod"; // Replace with your actual site key
 
 const SuggestFeature = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [visibilityOption, setVisibilityOption] = useState<string>("public");
@@ -38,11 +49,49 @@ const SuggestFeature = () => {
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [featureDescription, setFeatureDescription] = useState<string>("");
-  const [attachments, setAttachments] = useState<Attachment[]>([
-    { id: 1, name: "Document.pdf", type: "pdf" },
-    { id: 2, name: "Document.docx", type: "docx" },
-    { id: 3, name: "Image.jpeg", type: "jpeg" }
-  ]);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [showEmptyFormAlert, setShowEmptyFormAlert] = useState<boolean>(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  
+  const resetForm = () => {
+    setVisibilityOption("public");
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setTelephone("");
+    setCanContact("");
+    setContactMethod("");
+    setCreateAccount("no");
+    setPassword("");
+    setFeatureDescription("");
+    setAttachments([]);
+    setCaptchaToken(null);
+    setFormErrors({});
+    
+    // Reset reCAPTCHA if window.grecaptcha is available
+    if (window.grecaptcha) {
+      try {
+        window.grecaptcha.reset();
+      } catch (error) {
+        console.error("Error resetting reCAPTCHA:", error);
+      }
+    }
+  };
+  
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    
+    // Clear captcha error if token is valid
+    if (token) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.captcha;
+        return newErrors;
+      });
+    }
+  };
   
   const handleFileUpload = () => {
     fileInputRef.current?.click();
@@ -52,10 +101,22 @@ const SuggestFeature = () => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const newFile = files[0];
+      
+      // Validate file size (max 5MB)
+      if (newFile.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Maximum file size is 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const newAttachment: Attachment = {
-        id: attachments.length + 1,
+        id: Date.now(),
         name: newFile.name,
         type: newFile.name.split('.').pop() || "",
+        file: newFile
       };
       
       setAttachments([...attachments, newAttachment]);
@@ -70,12 +131,189 @@ const SuggestFeature = () => {
     setAttachments(attachments.filter(attachment => attachment.id !== id));
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    let hasValue = false;
+    
+    // Check if form is completely empty
+    if (
+      !featureDescription && 
+      !firstName && 
+      !lastName && 
+      !email && 
+      !telephone && 
+      attachments.length === 0
+    ) {
+      setShowEmptyFormAlert(true);
+      return { isValid: false, hasValue: false, errors };
+    }
+    
+    // Required fields for all visibility options
+    if (!featureDescription) {
+      errors.description = "Feature description is required";
+    } else {
+      hasValue = true;
+    }
+    
+    // CAPTCHA validation
+    if (!captchaToken) {
+      errors.captcha = "Please complete the CAPTCHA";
+    }
+    
+    // Additional fields based on visibility option
+    if (visibilityOption === "public" || visibilityOption === "private") {
+      if (!firstName) {
+        errors.firstName = "First name is required";
+      } else {
+        hasValue = true;
+      }
+      
+      if (!lastName) {
+        errors.lastName = "Last name is required";
+      } else {
+        hasValue = true;
+      }
+      
+      if (email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          errors.email = "Please enter a valid email address";
+        } else {
+          hasValue = true;
+        }
+      }
+    }
+    
+    // Password validation if creating account
+    if (createAccount === "yes" && !password) {
+      errors.password = "Password is required to create an account";
+    }
+    
+    setFormErrors(errors);
+    return { 
+      isValid: Object.keys(errors).length === 0, 
+      hasValue,
+      errors 
+    };
+  };
+  
+  const uploadAttachments = async () => {
+    const uploadPromises = attachments
+      .filter(attachment => attachment.file)
+      .map(async attachment => {
+        if (!attachment.file) return null;
+        
+        const fileName = `${Date.now()}_${attachment.name}`;
+        const { data, error } = await supabase.storage
+          .from('feature_attachments')
+          .upload(fileName, attachment.file);
+          
+        if (error) {
+          console.error("Error uploading file:", error);
+          return null;
+        }
+        
+        return {
+          id: attachment.id,
+          name: attachment.name,
+          type: attachment.type,
+          path: data.path
+        };
+      });
+      
+    const results = await Promise.all(uploadPromises);
+    return results.filter(Boolean);
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Feature suggestion submitted",
-      description: "Thank you for your suggestion!",
-    });
+    
+    const { isValid, hasValue } = validateForm();
+    
+    if (!hasValue) {
+      return; // Empty form alert is already shown in validateForm
+    }
+    
+    if (!isValid) {
+      toast({
+        title: "Form Validation Error",
+        description: "Please fix the errors in the form before submitting",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Upload attachments if any
+      const uploadedAttachments = attachments.length > 0 
+        ? await uploadAttachments() 
+        : [];
+        
+      // Insert suggestion into database
+      const { data: suggestion, error: insertError } = await supabase
+        .from('feature_suggestions')
+        .insert({
+          user_id: user?.id || null,
+          first_name: visibilityOption !== 'anonymous' ? firstName : null,
+          last_name: visibilityOption !== 'anonymous' ? lastName : null,
+          email: visibilityOption !== 'anonymous' ? email : null,
+          telephone: visibilityOption !== 'anonymous' ? telephone : null,
+          can_contact: canContact === 'yes',
+          contact_method: canContact === 'yes' ? contactMethod : null,
+          description: featureDescription,
+          visibility: visibilityOption as any,
+          attachments: uploadedAttachments.length > 0 ? uploadedAttachments : null
+        })
+        .select()
+        .single();
+        
+      if (insertError) {
+        throw insertError;
+      }
+      
+      // Send notification emails
+      const { data: emailResult, error: emailError } = await supabase.functions.invoke(
+        'send-feature-emails',
+        {
+          body: {
+            visibility: visibilityOption,
+            firstName,
+            lastName,
+            email,
+            suggestionId: suggestion.id
+          }
+        }
+      );
+      
+      if (emailError) {
+        console.error("Error sending emails:", emailError);
+      }
+      
+      toast({
+        title: "Feature suggestion submitted",
+        description: "Thank you for your suggestion!",
+      });
+      
+      // Reset form
+      resetForm();
+      
+      // Redirect to feature suggestions list if public or anonymous
+      if (visibilityOption === 'public' || visibilityOption === 'anonymous') {
+        navigate('/feature-suggestions');
+      }
+      
+    } catch (error) {
+      console.error("Error submitting suggestion:", error);
+      toast({
+        title: "Error submitting suggestion",
+        description: "An error occurred while submitting your suggestion. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -171,8 +409,11 @@ const SuggestFeature = () => {
                   placeholder="Input text" 
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="mt-1"
+                  className={`mt-1 ${formErrors.firstName ? 'border-red-500' : ''}`}
                 />
+                {formErrors.firstName && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.firstName}</p>
+                )}
               </div>
               <div>
                 <Label htmlFor="lastName">Last name</Label>
@@ -182,8 +423,11 @@ const SuggestFeature = () => {
                   placeholder="Input text" 
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="mt-1"
+                  className={`mt-1 ${formErrors.lastName ? 'border-red-500' : ''}`}
                 />
+                {formErrors.lastName && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.lastName}</p>
+                )}
               </div>
             </div>
           )}
@@ -203,8 +447,11 @@ const SuggestFeature = () => {
                     type="email" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="mt-1"
+                    className={`mt-1 ${formErrors.email ? 'border-red-500' : ''}`}
                   />
+                  {formErrors.email && (
+                    <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="telephone">Telephone</Label>
@@ -286,6 +533,7 @@ const SuggestFeature = () => {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className={formErrors.password ? 'border-red-500' : ''}
                       />
                       <button
                         type="button"
@@ -299,6 +547,9 @@ const SuggestFeature = () => {
                   </div>
                 )}
               </div>
+              {formErrors.password && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>
+              )}
             </div>
           )}
           
@@ -321,8 +572,11 @@ const SuggestFeature = () => {
               value={featureDescription}
               onChange={(e) => setFeatureDescription(e.target.value)}
               rows={6}
-              className="w-full"
+              className={`w-full ${formErrors.description ? 'border-red-500' : ''}`}
             />
+            {formErrors.description && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>
+            )}
           </div>
           
           {/* Attachments */}
@@ -361,13 +615,22 @@ const SuggestFeature = () => {
             </div>
           </div>
           
+          {/* CAPTCHA */}
+          <div className="mb-6">
+            <ReCaptcha siteKey={RECAPTCHA_SITE_KEY} onChange={handleCaptchaChange} />
+            {formErrors.captcha && (
+              <p className="text-red-500 text-sm mt-1">{formErrors.captcha}</p>
+            )}
+          </div>
+          
           {/* Submit Button */}
           <div className="mb-6">
             <Button 
               type="submit" 
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-8"
+              disabled={isSubmitting}
             >
-              Send
+              {isSubmitting ? "Sending..." : "Send"}
             </Button>
           </div>
           
@@ -394,6 +657,24 @@ const SuggestFeature = () => {
       </div>
       
       <CrowdlyFooter />
+      
+      {/* Empty Form Alert Dialog */}
+      <AlertDialog open={showEmptyFormAlert} onOpenChange={setShowEmptyFormAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center">
+              <AlertTriangle className="h-5 w-5 mr-2 text-yellow-500" />
+              Empty Form
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              You haven't entered any data. Please fill out at least one field to submit the form.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction>OK</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
