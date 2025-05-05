@@ -331,13 +331,18 @@ const NewStoryTemplate = () => {
                           </svg>
                         </button>
                         
-                        {/* Option 2 (was originally 2, now in position 3): two horizontal and two vertical */}
+                        {/* Option 2: two horizontal and two vertical - Custom SVG to match screenshot */}
                         <button 
                           onClick={() => handleLayoutOptionClick(1)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 1 ? 'border-blue-500 bg-blue-50' : ''}`}
                           title="Two horizontal and two vertical"
                         >
-                          <Columns3 size={24} />
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />
+                            <line x1="12" y1="15" x2="12" y2="21" />
+                          </svg>
                         </button>
                         
                         {/* Option 3: four vertical */}
@@ -358,7 +363,7 @@ const NewStoryTemplate = () => {
                           <LayoutList size={24} />
                         </button>
                         
-                        {/* Option 5 (was originally 2, now moved to position 5): four squares within a square */}
+                        {/* Option 5: four squares within a square */}
                         <button 
                           onClick={() => handleLayoutOptionClick(4)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 4 ? 'border-blue-500 bg-blue-50' : ''}`}
