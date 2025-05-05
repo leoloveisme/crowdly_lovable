@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate } from "lucide-react";
+import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
