@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import RegisterForm from "@/components/RegisterForm";
-import { CrowdlyHeader } from "@/components/CrowdlyHeader";
-import { CrowdlyFooter } from "@/components/CrowdlyFooter";
+import CrowdlyHeader from "@/components/CrowdlyHeader";
+import CrowdlyFooter from "@/components/CrowdlyFooter";
 
 const Register = () => {
   const { user } = useAuth();
