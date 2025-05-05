@@ -73,6 +73,7 @@ const CrowdlyHeader = () => {
             <div className="space-x-4">
               <Button variant="link" onClick={() => window.location.href = "/register"}>Register</Button>
               <Button variant="link" onClick={toggleLogin}>Login</Button>
+              <Button variant="link" onClick={() => window.location.href = "/"}>Index</Button>
             </div>
           </div>
           
