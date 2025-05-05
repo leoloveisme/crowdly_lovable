@@ -11,6 +11,8 @@ import SuggestFeature from "./pages/SuggestFeature";
 import AccountAdministration from "./pages/AccountAdministration";
 import NewStoryTemplate from "./pages/NewStoryTemplate";
 import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import EditingModeToggle from "./components/EditingModeToggle";
 
@@ -31,6 +33,8 @@ const App = () => {
                 <Route path="/account-administration" element={<AccountAdministration />} />
                 <Route path="/new-story-template" element={<NewStoryTemplate />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
