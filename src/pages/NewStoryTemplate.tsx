@@ -6,6 +6,12 @@ import { Switch } from "@/components/ui/switch";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const NewStoryTemplate = () => {
   const [visibilityOpen, setVisibilityOpen] = useState(false);
@@ -201,12 +207,16 @@ const NewStoryTemplate = () => {
                     ))}
                   </tbody>
                 </table>
-                <div className="mt-2">
+                <div className="mt-2 flex items-center gap-1">
                   <button className="text-blue-500 text-sm hover:underline">Compare</button>
-                  <HelpCircle size={14} className="text-gray-400 inline ml-1" />
-                </div>
-                <div className="bg-gray-800 text-white text-xs p-1 mt-2 inline-block rounded">
-                  <span>You can compare up to 3 revisions</span>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HelpCircle size={14} className="text-gray-400" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>You can compare up to 4 revisions</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
             )}
