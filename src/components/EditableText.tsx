@@ -33,14 +33,9 @@ const EditableText: React.FC<EditableTextProps> = ({
   const elementData = contents[id];
   const isEditing = elementData?.isEditing || false;
   
-  // Define RTL languages - Russian is NOT an RTL language
+  // Define RTL languages
   const rtlLanguages = ["Arabic", "Hebrew"];
   const isRTL = rtlLanguages.includes(currentLanguage);
-  
-  // Log language and direction for debugging
-  useEffect(() => {
-    console.log(`Language: ${currentLanguage}, Direction: ${isRTL ? 'RTL' : 'LTR'}`);
-  }, [currentLanguage, isRTL]);
   
   // Initialize content from children when the component mounts
   useEffect(() => {
@@ -75,39 +70,10 @@ const EditableText: React.FC<EditableTextProps> = ({
   // When editing status changes, focus the content editable div
   useEffect(() => {
     if (isEditing && editableRef.current) {
+      // Focus the editable div
       editableRef.current.focus();
-      
-      // Position cursor appropriately based on text direction
-      const div = editableRef.current;
-      if (div) {
-        const range = document.createRange();
-        const sel = window.getSelection();
-        
-        if (isRTL) {
-          // For RTL languages, position cursor at beginning (right side)
-          range.setStart(div, 0);
-          range.collapse(true);
-        } else {
-          // For LTR languages, position cursor at end (right side)
-          if (div.childNodes.length > 0) {
-            const lastNode = div.childNodes[div.childNodes.length - 1];
-            if (lastNode.nodeType === Node.TEXT_NODE) {
-              range.setStart(lastNode, lastNode.textContent?.length || 0);
-            } else {
-              range.setStartAfter(lastNode);
-            }
-            range.collapse(true);
-          } else {
-            range.setStart(div, 0);
-            range.collapse(true);
-          }
-        }
-        
-        sel?.removeAllRanges();
-        sel?.addRange(range);
-      }
     }
-  }, [isEditing, isRTL]);
+  }, [isEditing]);
 
   const handleClick = () => {
     if (isAdmin && isEditingEnabled && !isEditing) {
@@ -144,7 +110,6 @@ const EditableText: React.FC<EditableTextProps> = ({
       <Component 
         className={className} 
         dir={isRTL ? "rtl" : "ltr"}
-        style={{ textAlign: isRTL ? "right" : "left" }}
       >
         {elementData?.content || localContent || children}
       </Component>
@@ -166,7 +131,6 @@ const EditableText: React.FC<EditableTextProps> = ({
             "border-2 border-blue-400 p-1 focus:outline-none min-h-[1em] min-w-[1em]"
           )}
           dir={isRTL ? "rtl" : "ltr"}
-          style={{ textAlign: isRTL ? "right" : "left" }}
           suppressContentEditableWarning={true}
         >
           {elementData?.content || localContent}
@@ -200,7 +164,6 @@ const EditableText: React.FC<EditableTextProps> = ({
       )}
       onClick={handleClick}
       dir={isRTL ? "rtl" : "ltr"}
-      style={{ textAlign: isRTL ? "right" : "left" }}
     >
       {elementData?.content || localContent || children}
       <Edit 
