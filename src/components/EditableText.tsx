@@ -33,11 +33,14 @@ const EditableText: React.FC<EditableTextProps> = ({
   const elementData = contents[id];
   const isEditing = elementData?.isEditing || false;
   
-  // ONLY Arabic and Hebrew are RTL languages
+  // Define RTL languages
   const rtlLanguages = ["Arabic", "Hebrew"];
   const isRTL = rtlLanguages.includes(currentLanguage);
   
-  console.log(`Language: ${currentLanguage}, Direction: ${isRTL ? 'RTL' : 'LTR'}`);
+  // Log language and direction for debugging
+  useEffect(() => {
+    console.log(`Language: ${currentLanguage}, Direction: ${isRTL ? 'RTL' : 'LTR'}`);
+  }, [currentLanguage, isRTL]);
   
   // Initialize content from children when the component mounts
   useEffect(() => {
@@ -74,7 +77,7 @@ const EditableText: React.FC<EditableTextProps> = ({
     if (isEditing && editableRef.current) {
       editableRef.current.focus();
       
-      // Set cursor position appropriately based on text direction
+      // Position cursor appropriately based on text direction
       const div = editableRef.current;
       if (div) {
         const range = document.createRange();
@@ -165,7 +168,9 @@ const EditableText: React.FC<EditableTextProps> = ({
           dir={isRTL ? "rtl" : "ltr"}
           style={{ textAlign: isRTL ? "right" : "left" }}
           suppressContentEditableWarning={true}
-        />
+        >
+          {elementData?.content || localContent}
+        </div>
         <div className="absolute right-0 top-0 space-x-1 bg-white shadow-sm border border-gray-200 rounded-md p-1">
           <button 
             onClick={handleSave}

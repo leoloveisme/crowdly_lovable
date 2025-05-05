@@ -99,7 +99,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
     };
 
     fetchEditableContent();
-  }, [currentPath, currentLanguage, isAdmin, shouldFetchContent]);
+  }, [currentPath, currentLanguage, shouldFetchContent]);
 
   const toggleEditingMode = () => {
     if (!isAdmin) return;
@@ -177,9 +177,8 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
         return;
       }
 
-      // If we found an existing record, update it
       if (existingRecords && existingRecords.length > 0) {
-        console.log('Updating existing content record:', existingRecords[0].id);
+        // Update existing record
         const { error: updateError } = await supabase
           .from('editable_content')
           .update({
@@ -199,8 +198,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           return;
         }
       } else {
-        // No existing record found, create a new one
-        console.log('Inserting new content record');
+        // Insert new record
         const { error: insertError } = await supabase
           .from('editable_content')
           .insert({
@@ -213,22 +211,20 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
           });
 
         if (insertError) {
-          // If we get a duplicate key error, it means another session created the record
-          // between our check and insert (race condition)
+          console.error('Error inserting content:', insertError);
+          
+          // Special handling for duplicate key errors
           if (insertError.code === '23505') {
-            console.log('Duplicate key detected, the record was created by another session');
-            
-            // Refresh content from the database
+            console.log('Duplicate key detected, refreshing content');
             setShouldFetchContent(true);
             
             toast({
               title: "Content already exists",
-              description: "Someone else has already saved this content. Refreshing to show current version.",
+              description: "The content was updated by another session. Refreshing to show current version.",
               variant: "destructive"
             });
             return;
           } else {
-            console.error('Error inserting content:', insertError);
             toast({
               title: "Error saving content",
               description: insertError.message,
@@ -239,8 +235,6 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
         }
       }
 
-      console.log('Content saved successfully');
-      
       // Turn off editing for this element
       setContents(prev => ({
         ...prev,
