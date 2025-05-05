@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +30,7 @@ const NewStoryTemplate = () => {
   const [selectedRevisions, setSelectedRevisions] = useState<number[]>([]);
   const [columnChecked, setColumnChecked] = useState<number[]>([]);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const toggleSection = (section: string) => {
     switch(section) {
@@ -112,6 +113,10 @@ const NewStoryTemplate = () => {
       description: `Previewing ${section}`,
       duration: 3000,
     });
+  };
+  
+  const handleChapterPreviewClick = (chapterId: string) => {
+    navigate(`/chapter/${chapterId}`);
   };
 
   return (
@@ -425,6 +430,13 @@ const NewStoryTemplate = () => {
                 <button onClick={() => handleEyeClick("Chapter 1")} className="cursor-pointer hover:text-blue-500">
                   <Eye size={16} />
                 </button>
+                <button 
+                  onClick={() => handleChapterPreviewClick("1")} 
+                  className="ml-2 p-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 flex items-center justify-center"
+                  title="Open in reader view"
+                >
+                  <Eye size={14} />
+                </button>
                 <HelpCircle size={16} />
               </div>
             </div>
@@ -446,6 +458,13 @@ const NewStoryTemplate = () => {
                 </button>
                 <button onClick={() => handleEyeClick("Chapter 2")} className="cursor-pointer hover:text-blue-500">
                   <Eye size={16} />
+                </button>
+                <button 
+                  onClick={() => handleChapterPreviewClick("2")} 
+                  className="ml-2 p-1 bg-blue-500 text-white rounded-full hover:bg-blue-600 flex items-center justify-center"
+                  title="Open in reader view"
+                >
+                  <Eye size={14} />
                 </button>
                 <HelpCircle size={16} />
               </div>
