@@ -34,6 +34,7 @@ const EditableText: React.FC<EditableTextProps> = ({
   const isEditing = elementData?.isEditing || false;
   
   // Determine if we need RTL direction based on language
+  // Only Arabic and Hebrew are RTL languages - Russian is LTR like English
   const isRTL = currentLanguage === "Arabic" || currentLanguage === "Hebrew";
   
   // Initialize content from children when the component mounts
@@ -59,12 +60,12 @@ const EditableText: React.FC<EditableTextProps> = ({
     }
   }, [children]);
   
-  // Update localContent when elementData changes
+  // Update localContent when elementData changes or currentLanguage changes
   useEffect(() => {
     if (elementData && elementData.content) {
       setLocalContent(elementData.content);
     }
-  }, [elementData]);
+  }, [elementData, currentLanguage]);
 
   // When editing status changes, focus the content editable div
   useEffect(() => {

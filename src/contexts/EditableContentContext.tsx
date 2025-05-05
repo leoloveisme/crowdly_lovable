@@ -37,6 +37,11 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
   const isAdmin = user !== null && hasRole('platform_admin');
   const currentPath = location.pathname;
 
+  // Reset contents when language changes to force reload of content
+  useEffect(() => {
+    setContents({});
+  }, [currentLanguage]);
+
   // Fetch existing content from the database based on current path and language
   useEffect(() => {
     const fetchEditableContent = async () => {
@@ -106,7 +111,7 @@ export const EditableContentProvider: React.FC<{ children: ReactNode }> = ({ chi
       ...prev,
       [elementId]: {
         content,
-        original,
+        original: prev[elementId]?.original || original,
         isEditing: true
       }
     }));
