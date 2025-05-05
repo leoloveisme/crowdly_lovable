@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,19 +34,18 @@ const CrowdlyHeader = () => {
 
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex space-x-4 items-center">
-            <Input 
-              type="text" 
-              placeholder="Search" 
-              className="w-40 md:w-60"
-              prefixIcon={
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                  </svg>
-                </div>
-              }
-              className="pl-10"
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                </svg>
+              </div>
+              <Input 
+                type="text" 
+                placeholder="Search" 
+                className="w-40 md:w-60 pl-10"
+              />
+            </div>
             
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="w-32">
@@ -128,18 +126,18 @@ const CrowdlyHeader = () => {
       {isMenuOpen && (
         <div className="md:hidden mt-2">
           <div className="flex flex-col space-y-2 p-2 bg-white border-t">
-            <Input
-              type="text"
-              placeholder="Search"
-              className="w-full pl-10"
-              prefixIcon={
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                  </svg>
-                </div>
-              }
-            />
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                </svg>
+              </div>
+              <Input
+                type="text"
+                placeholder="Search"
+                className="w-full pl-10"
+              />
+            </div>
             
             <Select value={language} onValueChange={setLanguage}>
               <SelectTrigger className="w-full">
