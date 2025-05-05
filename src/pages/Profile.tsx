@@ -41,6 +41,17 @@ import {
   FormItem, 
   FormLabel 
 } from "@/components/ui/form";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { 
   Edit, 
   Info, 
@@ -48,7 +59,9 @@ import {
   Plus,
   Check,
   ChevronDown,
-  Upload
+  Upload,
+  Grid2x2,
+  Columns4
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -68,10 +81,15 @@ const Profile = () => {
   
   // For the revision history
   const revisions = [
-    { id: 1, text: "Text 1" },
-    { id: 2, text: "Text 2" },
-    { id: 3, text: "Text 3" },
+    { id: 1, text: "Text 1", time: "11:28" },
+    { id: 2, text: "Text 2", time: "12:15" },
+    { id: 3, text: "Text 3", time: "14:30" },
   ];
+  
+  // New state for revisions comparison functionality
+  const [selectedRevisions, setSelectedRevisions] = useState<number[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+  const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
 
   // Stats for stories and contributions
   const stats = {
@@ -104,24 +122,34 @@ const Profile = () => {
     }
   };
 
+  // Updated contributions data to match the screenshot
   const contributions = [
     { 
       id: 1, 
-      storyTitle: "Story title", 
-      chapterType: "Chapter", 
-      dataType: "Data type", 
-      words: "...words", 
-      gif: "...gif", 
-      lines: "...lines"
+      storyTitle: "The story title", 
+      chapterName: "Chapter title/edit",  
+      date: "2023-05-01",
+      time: "11:28",
+      words: 550,
+      likes: 3
     },
     { 
       id: 2, 
-      storyTitle: "Story title", 
-      chapterType: "Chapter title/edit", 
-      dataType: "code line", 
-      words: "...words", 
-      gif: "...gif", 
-      lines: "...lines"
+      storyTitle: "Another story", 
+      chapterName: "Chapter 5",
+      date: "2023-05-03",
+      time: "14:15",
+      words: 320,
+      likes: 7
+    },
+    { 
+      id: 3, 
+      storyTitle: "Epic Journey", 
+      chapterName: "Introduction",
+      date: "2023-05-05",
+      time: "09:45",
+      words: 480,
+      likes: 12
     }
   ];
 
@@ -139,6 +167,29 @@ const Profile = () => {
   const handleProfileImageChange = (imageUrl: string) => {
     setProfileImage(imageUrl);
     setIsUploadDialogOpen(false);
+  };
+  
+  // Functions for revision comparison
+  const toggleCompare = () => {
+    setCompareOpen(!compareOpen);
+  };
+
+  const toggleRevisionSelection = (revisionId: number) => {
+    setSelectedRevisions(prev => {
+      if (prev.includes(revisionId)) {
+        return prev.filter(id => id !== revisionId);
+      } else {
+        // Limit to 4 selections
+        if (prev.length >= 4) {
+          return [...prev.slice(1), revisionId];
+        }
+        return [...prev, revisionId];
+      }
+    });
+  };
+  
+  const handleLayoutOptionClick = (layoutIndex: number) => {
+    setActiveLayoutOption(layoutIndex);
   };
 
   return (
@@ -352,27 +403,48 @@ const Profile = () => {
           </div>
         </div>
         
-        {/* Revisions Section */}
+        {/* Revisions Section - Updated to match the design */}
         <div className="mb-8">
           <div className="flex items-center mb-4">
             <h2 className="text-xl font-bold mr-2">Revisions</h2>
             <Info className="h-5 w-5 text-gray-400" />
-            <span className="ml-4 text-sm text-gray-600">Compare up to 4 revisions</span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="ml-4 text-sm text-gray-600">Compare up to 4 revisions</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>You can select and compare up to 4 revisions</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           
           <div className="mb-4">
             <Table>
               <TableBody>
-                {revisions.map((revision, index) => (
-                  <TableRow key={index}>
+                {revisions.map((revision) => (
+                  <TableRow key={revision.id}>
                     <TableCell className="font-medium w-10">{revision.id}</TableCell>
-                    <TableCell className="text-blue-500">{revision.text}</TableCell>
+                    <TableCell className="text-blue-500">{revision.time}</TableCell>
+                    <TableCell className="w-8">
+                      <Checkbox 
+                        id={`revision-${revision.id}`} 
+                        checked={selectedRevisions.includes(revision.id)}
+                        onCheckedChange={() => toggleRevisionSelection(revision.id)}
+                      />
+                    </TableCell>
                   </TableRow>
                 ))}
                 <TableRow>
-                  <TableCell colSpan={2}>
+                  <TableCell colSpan={3}>
                     <div className="flex justify-between items-center">
-                      <Button variant="link" size="sm" className="text-blue-500 p-0">
+                      <Button 
+                        variant="link" 
+                        size="sm" 
+                        className="text-blue-500 p-0"
+                        onClick={toggleCompare}
+                      >
                         Compare
                       </Button>
                       <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
@@ -384,6 +456,145 @@ const Profile = () => {
               </TableBody>
             </Table>
           </div>
+          
+          {/* Comparison Container - Shows when Compare is clicked */}
+          {compareOpen && selectedRevisions.length > 0 && (
+            <div className="border rounded-md p-4 bg-gray-50 mb-4">
+              <h4 className="font-medium mb-2">Compare Revisions</h4>
+              
+              {/* Layout options */}
+              <div className="mb-4">
+                <h5 className="text-sm font-medium mb-2">Layout options:</h5>
+                
+                <div className="grid grid-cols-7 gap-2 mb-3">
+                  {/* Option 1: one horizontal and two vertical */}
+                  <button 
+                    onClick={() => handleLayoutOptionClick(0)}
+                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 0 ? 'border-blue-500 bg-blue-50' : ''}`}
+                    title="One horizontal and two vertical"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" />
+                      <line x1="3" y1="12" x2="21" y2="12" />
+                      <line x1="12" y1="12" x2="12" y2="21" />
+                    </svg>
+                  </button>
+                  
+                  {/* Option 2: two horizontal and two vertical */}
+                  <button 
+                    onClick={() => handleLayoutOptionClick(1)}
+                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 1 ? 'border-blue-500 bg-blue-50' : ''}`}
+                    title="Two horizontal and two vertical"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" />
+                      <line x1="3" y1="9" x2="21" y2="9" />
+                      <line x1="3" y1="15" x2="21" y2="15" />
+                      <line x1="12" y1="15" x2="12" y2="21" />
+                    </svg>
+                  </button>
+                  
+                  {/* Option 3: four vertical */}
+                  <button 
+                    onClick={() => handleLayoutOptionClick(2)}
+                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 2 ? 'border-blue-500 bg-blue-50' : ''}`}
+                    title="Four vertical"
+                  >
+                    <Columns4 size={24} />
+                  </button>
+                  
+                  {/* Option 4: four horizontal */}
+                  <button 
+                    onClick={() => handleLayoutOptionClick(3)}
+                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 3 ? 'border-blue-500 bg-blue-50' : ''}`}
+                    title="Four horizontal"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" />
+                      <line x1="3" y1="7.5" x2="21" y2="7.5" />
+                      <line x1="3" y1="12" x2="21" y2="12" />
+                      <line x1="3" y1="16.5" x2="21" y2="16.5" />
+                    </svg>
+                  </button>
+                  
+                  {/* Option 5: four squares within a square */}
+                  <button 
+                    onClick={() => handleLayoutOptionClick(4)}
+                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 4 ? 'border-blue-500 bg-blue-50' : ''}`}
+                    title="Four squares within a square"
+                  >
+                    <Grid2x2 size={24} />
+                  </button>
+                  
+                  {/* Option 6: two vertical and two horizontal */}
+                  <button 
+                    onClick={() => handleLayoutOptionClick(5)}
+                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 5 ? 'border-blue-500 bg-blue-50' : ''}`}
+                    title="Two vertical and two horizontal"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" />
+                      <line x1="12" y1="3" x2="12" y2="9" />
+                      <line x1="3" y1="15" x2="21" y2="15" /> 
+                      <line x1="3" y1="9" x2="21" y2="9" />                                                      
+                    </svg>
+                  </button>
+                  
+                  {/* Option 7: two vertical and one horizontal */}
+                  <button 
+                    onClick={() => handleLayoutOptionClick(6)}
+                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 6 ? 'border-blue-500 bg-blue-50' : ''}`}
+                    title="Two vertical and one horizontal"
+                  >
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" />
+                      <line x1="12" y1="3" x2="12" y2="12" />
+                      <line x1="3" y1="12" x2="21" y2="12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <ResizablePanelGroup
+                direction="horizontal"
+                className="min-h-[200px] max-w-full border rounded"
+              >
+                <ResizablePanel defaultSize={33}>
+                  <div className="p-2 h-full bg-white">
+                    <div className="text-sm font-medium mb-1">Revision 1</div>
+                    <div className="text-xs">
+                      <p>Original text content from revision 1.</p>
+                      <p>This shows the first version.</p>
+                    </div>
+                  </div>
+                </ResizablePanel>
+                
+                <ResizableHandle withHandle />
+                
+                <ResizablePanel defaultSize={33}>
+                  <div className="p-2 h-full bg-white">
+                    <div className="text-sm font-medium mb-1">Revision 2</div>
+                    <div className="text-xs">
+                      <p>Modified text content from revision 2.</p>
+                      <p>This shows the changes made.</p>
+                    </div>
+                  </div>
+                </ResizablePanel>
+                
+                <ResizableHandle withHandle />
+                
+                <ResizablePanel defaultSize={33}>
+                  <div className="p-2 h-full bg-white">
+                    <div className="text-sm font-medium mb-1">Revision 3</div>
+                    <div className="text-xs">
+                      <p>Latest text content from revision 3.</p>
+                      <p>This shows the most recent changes.</p>
+                    </div>
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          )}
         </div>
         
         {/* Layout Options */}
@@ -507,60 +718,66 @@ const Profile = () => {
           </div>
         </div>
         
-        {/* Contributions Section */}
+        {/* Contributions Section - Updated to match the screenshot */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">Contributions</h2>
           
-          <Tabs defaultValue="all">
+          <Tabs defaultValue="total">
             <TabsList className="mb-4">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="gifs">Gifs</TabsTrigger>
-              <TabsTrigger value="received">Received</TabsTrigger>
-              <TabsTrigger value="unused">Unused</TabsTrigger>
+              <TabsTrigger value="total">total</TabsTrigger>
+              <TabsTrigger value="approved">approved</TabsTrigger>
+              <TabsTrigger value="denied">denied</TabsTrigger>
+              <TabsTrigger value="undecided">undecided</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="all" className="space-y-4">
+            <TabsContent value="total" className="space-y-4">
               {contributions.map((contribution, index) => (
                 <div key={index} className="border-b pb-4">
-                  <div className="flex items-center mb-2">
-                    <span className="font-semibold mr-1">{index + 1}.</span>
-                    <Link to="#" className="text-blue-500 hover:underline mr-2">
-                      {contribution.storyTitle}
-                    </Link>
-                    <Link to="#" className="text-blue-500 hover:underline">
-                      {contribution.chapterType}
-                    </Link>
-                    <span className="mx-2">•</span>
-                    <span>{contribution.dataType}</span>
-                    <span className="mx-2">•</span>
-                    <span>{contribution.words}</span>
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    <div>
-                      <span className="mr-2">{contribution.gif}</span>
-                      <span className="mx-2">•</span>
-                      <span>{contribution.lines}</span>
-                    </div>
-                    <div className="mt-1">
-                      <Link to="#" className="text-blue-500 hover:underline">
-                        Share to contributions
-                      </Link>
+                  <div className="flex items-start mb-1">
+                    <span className="font-semibold text-gray-600 mr-2">{index + 1}.</span>
+                    <div className="flex-1">
+                      <div className="flex flex-wrap gap-x-2 mb-1">
+                        <Link to="#" className="text-blue-500 hover:underline">
+                          {contribution.storyTitle}
+                        </Link>
+                        <Link to="#" className="text-blue-500 hover:underline">
+                          {contribution.chapterName}
+                        </Link>
+                        <span className="text-gray-500">
+                          {contribution.date} {contribution.time}
+                        </span>
+                        <span className="text-gray-500">
+                          {contribution.words} words
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm mt-1">
+                        <span className="text-gray-500">got: {contribution.likes} likes</span>
+                        <span className="text-blue-500 hover:underline cursor-pointer">
+                          jump to contribution
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
             </TabsContent>
             
-            <TabsContent value="gifs">
-              <p>Gifs content</p>
+            <TabsContent value="approved">
+              <div className="py-4 text-center text-gray-500">
+                No approved contributions yet
+              </div>
             </TabsContent>
             
-            <TabsContent value="received">
-              <p>Received content</p>
+            <TabsContent value="denied">
+              <div className="py-4 text-center text-gray-500">
+                No denied contributions
+              </div>
             </TabsContent>
             
-            <TabsContent value="unused">
-              <p>Unused content</p>
+            <TabsContent value="undecided">
+              <div className="py-4 text-center text-gray-500">
+                No undecided contributions
+              </div>
             </TabsContent>
           </Tabs>
         </div>
