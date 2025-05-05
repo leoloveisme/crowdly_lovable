@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,7 +58,7 @@ const NewStoryTemplate = () => {
               <HelpCircle size={14} className="text-gray-400" />
             </div>
             <div className="flex items-center gap-1">
-              <button className="text-blue-500 hover:underline">load</button>
+              <button className="text-blue-500 hover:underline">read</button>
               <HelpCircle size={14} className="text-gray-400" />
             </div>
             <button className="text-blue-500 hover:underline">add chapter</button>
