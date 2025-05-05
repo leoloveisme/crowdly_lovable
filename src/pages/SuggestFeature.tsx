@@ -322,7 +322,7 @@ const SuggestFeature = () => {
           <div className="mb-6">
             <Label className="block mb-2">Attachments</Label>
             <div className="flex items-center mb-4">
-              <Input className="w-auto mr-2" placeholder="input text" readOnly onClick={handleFileUpload} />
+              <Input className="w-auto mr-2" readOnly onClick={handleFileUpload} />
               <input 
                 type="file" 
                 ref={fileInputRef} 
