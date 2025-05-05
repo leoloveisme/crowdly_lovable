@@ -377,7 +377,7 @@ const NewStoryTemplate = () => {
                           <Grid2x2 size={24} />
                         </button>
                         
-                        {/* Option 6: two vertical and two horizontal - Updated Custom SVG to match new screenshot */}
+                        {/* Option 6: two vertical and two horizontal - Flipped version of option 2 */}
                         <button 
                           onClick={() => handleLayoutOptionClick(5)}
                           className={`border p-2 flex items-center justify-center ${activeLayoutOption === 5 ? 'border-blue-500 bg-blue-50' : ''}`}
@@ -385,9 +385,10 @@ const NewStoryTemplate = () => {
                         >
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="3" y="3" width="18" height="18" />
-                            <line x1="12" y1="3" x2="12" y2="21" />
-                            <line x1="3" y1="12" x2="21" y2="12" />
-                            <line x1="3" y1="17" x2="21" y2="17" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />
+                            <line x1="9" y1="9" x2="9" y2="21" />
+                            <line x1="15" y1="9" x2="15" y2="21" />
                           </svg>
                         </button>
                         
