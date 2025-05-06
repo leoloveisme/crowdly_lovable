@@ -15,14 +15,25 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Book, Settings, Eye, HelpCircle, Copy, Plus, 
   Volume, Mic, Users, History, GitBranch, 
-  ChevronRight, Image, Share2, ZoomIn
+  ChevronRight, Image, Share2, ZoomIn,
+  Video, AudioLines, ThumbsUp, ThumbsDown, Play
 } from "lucide-react";
 import EditableText from "@/components/EditableText";
 
 const StoryforConsumers = () => {
   const { user } = useAuth();
-  const [contentType, setContentType] = useState<string>("text");
+  const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(["text"]);
   const [activeSection, setActiveSection] = useState<string>("story");
+  const [likes, setLikes] = useState<{[key: string]: number}>({
+    paragraph1: 12,
+    paragraph2: 8,
+    paragraph3: 15
+  });
+  const [dislikes, setDislikes] = useState<{[key: string]: number}>({
+    paragraph1: 2,
+    paragraph2: 3,
+    paragraph3: 1
+  });
   const userName = user?.email?.split("@")[0] || "Guest";
   
   // Sample data for tables
@@ -50,9 +61,33 @@ const StoryforConsumers = () => {
     { id: 3, number: 3, title: "The Resolution" }
   ];
   
+  // Toggle content type selection
+  const toggleContentType = (type: string) => {
+    if (selectedContentTypes.includes(type)) {
+      setSelectedContentTypes(selectedContentTypes.filter(item => item !== type));
+    } else {
+      setSelectedContentTypes([...selectedContentTypes, type]);
+    }
+  };
+  
   // Section toggle handler
   const toggleSection = (section: string) => {
     setActiveSection(activeSection === section ? "" : section);
+  };
+  
+  // Like/Dislike handlers
+  const handleLike = (id: string) => {
+    setLikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  const handleDislike = (id: string) => {
+    setDislikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
   };
   
   return (
@@ -75,32 +110,51 @@ const StoryforConsumers = () => {
           </div>
         </div>
         
-        {/* Content Type Selector */}
-        <div className="flex mb-8 space-x-4 border-b pb-4">
-          <Button 
-            variant={contentType === "text" ? "default" : "outline"} 
-            onClick={() => setContentType("text")}
-          >
-            <EditableText id="content-type-text">Text</EditableText>
-          </Button>
-          <Button 
-            variant={contentType === "images" ? "default" : "outline"} 
-            onClick={() => setContentType("images")}
-          >
-            <EditableText id="content-type-images">Images</EditableText>
-          </Button>
-          <Button 
-            variant={contentType === "audio" ? "default" : "outline"} 
-            onClick={() => setContentType("audio")}
-          >
-            <EditableText id="content-type-audio">Audio</EditableText>
-          </Button>
-          <Button 
-            variant={contentType === "video" ? "default" : "outline"} 
-            onClick={() => setContentType("video")}
-          >
-            <EditableText id="content-type-video">Video</EditableText>
-          </Button>
+        {/* Content Type Selector with Checkboxes */}
+        <div className="flex mb-8 space-x-6 border-b pb-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="text-checkbox" 
+              checked={selectedContentTypes.includes("text")} 
+              onCheckedChange={() => toggleContentType("text")}
+            />
+            <Label htmlFor="text-checkbox">
+              <EditableText id="content-type-text">text</EditableText>
+            </Label>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="images-checkbox" 
+              checked={selectedContentTypes.includes("images")} 
+              onCheckedChange={() => toggleContentType("images")}
+            />
+            <Label htmlFor="images-checkbox">
+              <EditableText id="content-type-images">images</EditableText>
+            </Label>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="audio-checkbox" 
+              checked={selectedContentTypes.includes("audio")} 
+              onCheckedChange={() => toggleContentType("audio")}
+            />
+            <Label htmlFor="audio-checkbox">
+              <EditableText id="content-type-audio">audio</EditableText>
+            </Label>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="video-checkbox" 
+              checked={selectedContentTypes.includes("video")} 
+              onCheckedChange={() => toggleContentType("video")}
+            />
+            <Label htmlFor="video-checkbox">
+              <EditableText id="content-type-video">video</EditableText>
+            </Label>
+          </div>
         </div>
         
         {/* Main Content Grid */}
@@ -223,56 +277,209 @@ const StoryforConsumers = () => {
                         <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
                       </h2>
                       
-                      <p className="mb-4">
-                        <EditableText id="paragraph-1">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
-                          nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
-                          nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
-                        </EditableText>
-                      </p>
-                      
-                      <p className="mb-4">
-                        <EditableText id="paragraph-2">
-                          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
-                          totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
-                          dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
-                          sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-                        </EditableText>
-                      </p>
-                      
-                      <div className="my-8 border p-4 rounded-lg">
-                        <div className="flex justify-between items-center mb-2">
-                          <h3 className="text-lg font-medium">
-                            <EditableText id="image-title">Featured Image</EditableText>
-                          </h3>
-                          <div className="flex space-x-2">
-                            <Button variant="ghost" size="sm">
-                              <ZoomIn className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm">
-                              <Share2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="bg-gray-200 h-64 flex items-center justify-center">
-                          <Image className="h-12 w-12 text-gray-400" />
-                          <span className="ml-2 text-gray-500">
-                            <EditableText id="image-placeholder">Image Placeholder</EditableText>
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-500 mt-2">
-                          <EditableText id="image-caption">Image caption goes here. Describe what is shown in the image.</EditableText>
+                      {/* Text content with like/dislike buttons */}
+                      <div className="mb-6 space-y-1">
+                        <p className="mb-2">
+                          <EditableText id="paragraph-1">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
+                            nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
+                            nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
+                          </EditableText>
                         </p>
+                        <div className="flex items-center space-x-4">
+                          <button 
+                            onClick={() => handleLike('paragraph1')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                          >
+                            <ThumbsUp className="h-4 w-4 mr-1" />
+                            <span>{likes.paragraph1}</span>
+                          </button>
+                          <button 
+                            onClick={() => handleDislike('paragraph1')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                          >
+                            <ThumbsDown className="h-4 w-4 mr-1" />
+                            <span>{dislikes.paragraph1}</span>
+                          </button>
+                        </div>
                       </div>
                       
-                      <p className="mb-4">
-                        <EditableText id="paragraph-3">
-                          Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
-                          sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
-                          Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
-                          aliquid ex ea commodi consequatur?
-                        </EditableText>
-                      </p>
+                      <div className="mb-6 space-y-1">
+                        <p className="mb-2">
+                          <EditableText id="paragraph-2">
+                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                            totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                            dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                            sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                          </EditableText>
+                        </p>
+                        <div className="flex items-center space-x-4">
+                          <button 
+                            onClick={() => handleLike('paragraph2')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                          >
+                            <ThumbsUp className="h-4 w-4 mr-1" />
+                            <span>{likes.paragraph2}</span>
+                          </button>
+                          <button 
+                            onClick={() => handleDislike('paragraph2')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                          >
+                            <ThumbsDown className="h-4 w-4 mr-1" />
+                            <span>{dislikes.paragraph2}</span>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Image Player Container */}
+                      {selectedContentTypes.includes('images') && (
+                        <div className="my-8 border p-4 rounded-lg">
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-medium flex items-center">
+                              <Image className="h-5 w-5 mr-2" />
+                              <EditableText id="presentation-title">Presentation / Cartoon</EditableText>
+                            </h3>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                <ZoomIn className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="bg-gray-200 h-64 flex flex-col items-center justify-center rounded">
+                            <div className="h-48 w-48 bg-gray-300 rounded flex items-center justify-center mb-4">
+                              <Play className="h-12 w-12 text-gray-500" />
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button variant="outline" size="sm">
+                                <EditableText id="prev-image">Previous</EditableText>
+                              </Button>
+                              <span className="text-sm">1 / 5</span>
+                              <Button variant="outline" size="sm">
+                                <EditableText id="next-image">Next</EditableText>
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-500 mt-2">
+                            <EditableText id="image-caption">Slide caption: Describe what is shown in the presentation slide.</EditableText>
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Audio Player Container */}
+                      {selectedContentTypes.includes('audio') && (
+                        <div className="my-8 border p-4 rounded-lg">
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-medium flex items-center">
+                              <AudioLines className="h-5 w-5 mr-2" />
+                              <EditableText id="audio-title">Audio Player</EditableText>
+                            </h3>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="bg-gray-100 p-4 rounded">
+                            <div className="flex items-center space-x-2 mb-3">
+                              <Button variant="outline" size="icon" className="h-10 w-10 rounded-full flex items-center justify-center">
+                                <Play className="h-6 w-6" />
+                              </Button>
+                              <div className="w-full">
+                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                  <div className="bg-primary h-full w-1/3 rounded-full"></div>
+                                </div>
+                                <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                  <span>1:23</span>
+                                  <span>3:45</span>
+                                </div>
+                              </div>
+                              <Button variant="ghost" size="sm">
+                                <Volume className="h-5 w-5" />
+                              </Button>
+                            </div>
+                            <p className="text-sm text-gray-500 italic">
+                              <EditableText id="audio-description">Audio description: Narrative of Chapter 1, read by the author.</EditableText>
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Video Player Container */}
+                      {selectedContentTypes.includes('video') && (
+                        <div className="my-8 border p-4 rounded-lg">
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-medium flex items-center">
+                              <Video className="h-5 w-5 mr-2" />
+                              <EditableText id="video-title">Video Player</EditableText>
+                            </h3>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                <ZoomIn className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="bg-gray-800 h-72 rounded flex flex-col items-center justify-center">
+                            <Play className="h-16 w-16 text-white opacity-70 hover:opacity-100 cursor-pointer" />
+                            
+                            <div className="absolute bottom-4 w-11/12 opacity-0 hover:opacity-100 transition-opacity">
+                              <div className="bg-gray-900 bg-opacity-70 p-2 rounded">
+                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                  <div className="bg-primary h-full w-1/4 rounded-full"></div>
+                                </div>
+                                <div className="flex justify-between items-center mt-1">
+                                  <div className="flex items-center space-x-2">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                      <Play className="h-4 w-4" />
+                                    </Button>
+                                    <span className="text-xs text-gray-200">0:35 / 2:18</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                      <Volume className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-500 mt-2">
+                            <EditableText id="video-caption">Video caption: Visual interpretation of Chapter 1 - The Beginning.</EditableText>
+                          </p>
+                        </div>
+                      )}
+                      
+                      <div className="mb-6 space-y-1">
+                        <p className="mb-2">
+                          <EditableText id="paragraph-3">
+                            Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
+                            sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
+                            Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
+                            aliquid ex ea commodi consequatur?
+                          </EditableText>
+                        </p>
+                        <div className="flex items-center space-x-4">
+                          <button 
+                            onClick={() => handleLike('paragraph3')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                          >
+                            <ThumbsUp className="h-4 w-4 mr-1" />
+                            <span>{likes.paragraph3}</span>
+                          </button>
+                          <button 
+                            onClick={() => handleDislike('paragraph3')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                          >
+                            <ThumbsDown className="h-4 w-4 mr-1" />
+                            <span>{dislikes.paragraph3}</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     
                     <div className="mt-8 pt-4 border-t">
