@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -206,7 +205,7 @@ const StoryforConsumers = () => {
           
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            {/* Story Controls */}
+            {/* Story Controls - Updated to add Record Video and Generate Video buttons */}
             <div className="flex justify-between items-center mb-4">
               <div className="flex space-x-2">
                 <Button variant="outline" size="sm" className="flex items-center">
@@ -234,6 +233,15 @@ const StoryforConsumers = () => {
                 <Button variant="outline" size="sm" className="flex items-center">
                   <Mic className="h-4 w-4 mr-1" />
                   <EditableText id="record-audio-btn">Record Audio</EditableText>
+                </Button>
+                {/* New buttons for video recording and generation */}
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Video className="h-4 w-4 mr-1" />
+                  <EditableText id="record-video-btn">Record Video</EditableText>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Video className="h-4 w-4 mr-1" />
+                  <EditableText id="generate-video-btn">Generate Video</EditableText>
                 </Button>
               </div>
             </div>
