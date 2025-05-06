@@ -11,6 +11,7 @@ import SuggestFeature from "./pages/SuggestFeature";
 import FeatureSuggestions from "./pages/FeatureSuggestions";
 import AccountAdministration from "./pages/AccountAdministration";
 import NewStoryTemplate from "./pages/NewStoryTemplate";
+import StoryforConsumers from "./pages/StoryforConsumers";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -34,6 +35,7 @@ const App = () => {
                 <Route path="/feature-suggestions" element={<FeatureSuggestions />} />
                 <Route path="/account-administration" element={<AccountAdministration />} />
                 <Route path="/new-story-template" element={<NewStoryTemplate />} />
+                <Route path="/story-for-consumers" element={<StoryforConsumers />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />

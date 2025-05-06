@@ -1,0 +1,530 @@
+
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEditableContent } from "@/contexts/EditableContentContext";
+import CrowdlyHeader from "@/components/CrowdlyHeader";
+import CrowdlyFooter from "@/components/CrowdlyFooter";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { 
+  Book, Settings, Eye, HelpCircle, Copy, Plus, 
+  Volume, Mic, Users, History, GitBranch, 
+  ChevronRight, Image, Share2, ZoomIn
+} from "lucide-react";
+import EditableText from "@/components/EditableText";
+
+const StoryforConsumers = () => {
+  const { user } = useAuth();
+  const [contentType, setContentType] = useState<string>("text");
+  const [activeSection, setActiveSection] = useState<string>("story");
+  const userName = user?.email?.split("@")[0] || "Guest";
+  
+  // Sample data for tables
+  const contributorsData = [
+    { id: 1, name: "Lola Bridget", words: 5378, paragraphs: 15, chapters: 3 },
+    { id: 2, name: "James Smith", words: 4892, paragraphs: 12, chapters: 2 },
+    { id: 3, name: "Maria Garcia", words: 3256, paragraphs: 8, chapters: 1 }
+  ];
+  
+  const revisionsData = [
+    { id: 1, timestamp: "2025-05-06 09:23", description: "Title edit - Introduction" },
+    { id: 2, timestamp: "2025-05-05 14:45", description: "Content change - Chapter 2" },
+    { id: 3, timestamp: "2025-05-04 11:30", description: "New paragraph - Conclusion" }
+  ];
+  
+  const branchesData = [
+    { id: 1, title: "Main Storyline", author: "Lola Bridget", chapters: 5 },
+    { id: 2, title: "Alternative Ending", author: "James Smith", chapters: 2 },
+    { id: 3, title: "Character Background", author: "Maria Garcia", chapters: 3 }
+  ];
+  
+  const chaptersData = [
+    { id: 1, number: 1, title: "The Beginning" },
+    { id: 2, number: 2, title: "The Conflict" },
+    { id: 3, number: 3, title: "The Resolution" }
+  ];
+  
+  // Section toggle handler
+  const toggleSection = (section: string) => {
+    setActiveSection(activeSection === section ? "" : section);
+  };
+  
+  return (
+    <div className="min-h-screen flex flex-col">
+      <CrowdlyHeader />
+      
+      <main className="flex-grow container mx-auto px-4 py-8">
+        {/* Story Header Section */}
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center">
+            <Book className="h-6 w-6 mr-2" />
+            <h1 className="text-2xl font-bold">
+              <EditableText id="story-title">Story of my life</EditableText>
+            </h1>
+          </div>
+          <div>
+            <span className="text-gray-600">
+              <EditableText id="welcome-message">Welcome {userName}</EditableText>
+            </span>
+          </div>
+        </div>
+        
+        {/* Content Type Selector */}
+        <div className="flex mb-8 space-x-4 border-b pb-4">
+          <Button 
+            variant={contentType === "text" ? "default" : "outline"} 
+            onClick={() => setContentType("text")}
+          >
+            <EditableText id="content-type-text">Text</EditableText>
+          </Button>
+          <Button 
+            variant={contentType === "images" ? "default" : "outline"} 
+            onClick={() => setContentType("images")}
+          >
+            <EditableText id="content-type-images">Images</EditableText>
+          </Button>
+          <Button 
+            variant={contentType === "audio" ? "default" : "outline"} 
+            onClick={() => setContentType("audio")}
+          >
+            <EditableText id="content-type-audio">Audio</EditableText>
+          </Button>
+          <Button 
+            variant={contentType === "video" ? "default" : "outline"} 
+            onClick={() => setContentType("video")}
+          >
+            <EditableText id="content-type-video">Video</EditableText>
+          </Button>
+        </div>
+        
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Left Sidebar - Chapter Navigation */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <EditableText id="chapters-title">Chapters</EditableText>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {chaptersData.map((chapter) => (
+                    <div 
+                      key={chapter.id} 
+                      className="flex justify-between items-center p-2 hover:bg-gray-100 rounded cursor-pointer"
+                    >
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium mr-2">{chapter.number}.</span>
+                        <span className="text-sm">{chapter.title}</span>
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                          <Settings className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                          <Share2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <Button variant="outline" size="sm" className="mt-4 w-full">
+                  <Plus className="h-4 w-4 mr-1" />
+                  <EditableText id="add-chapter-btn">Add Chapter</EditableText>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Main Content Area */}
+          <div className="lg:col-span-3">
+            {/* Story Controls */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex space-x-2">
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Settings className="h-4 w-4 mr-1" />
+                  <EditableText id="settings-btn">Settings</EditableText>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Eye className="h-4 w-4 mr-1" />
+                  <EditableText id="preview-btn">Preview</EditableText>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <HelpCircle className="h-4 w-4 mr-1" />
+                  <EditableText id="help-btn">Help</EditableText>
+                </Button>
+              </div>
+              <div className="flex space-x-2">
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Copy className="h-4 w-4 mr-1" />
+                  <EditableText id="clone-btn">Clone</EditableText>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Volume className="h-4 w-4 mr-1" />
+                  <EditableText id="generate-audio-btn">Generate Audio</EditableText>
+                </Button>
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Mic className="h-4 w-4 mr-1" />
+                  <EditableText id="record-audio-btn">Record Audio</EditableText>
+                </Button>
+              </div>
+            </div>
+            
+            {/* Tabs for different views */}
+            <div className="flex border-b mb-6">
+              <Button 
+                variant="ghost" 
+                className={`${activeSection === 'story' ? 'border-b-2 border-primary rounded-none' : ''}`}
+                onClick={() => toggleSection('story')}
+              >
+                <EditableText id="story-tab">Story</EditableText>
+              </Button>
+              <Button 
+                variant="ghost" 
+                className={`${activeSection === 'contributors' ? 'border-b-2 border-primary rounded-none' : ''}`}
+                onClick={() => toggleSection('contributors')}
+              >
+                <Users className="h-4 w-4 mr-1" />
+                <EditableText id="contributors-tab">Contributors</EditableText>
+              </Button>
+              <Button 
+                variant="ghost" 
+                className={`${activeSection === 'revisions' ? 'border-b-2 border-primary rounded-none' : ''}`}
+                onClick={() => toggleSection('revisions')}
+              >
+                <History className="h-4 w-4 mr-1" />
+                <EditableText id="revisions-tab">Revisions</EditableText>
+              </Button>
+              <Button 
+                variant="ghost" 
+                className={`${activeSection === 'branches' ? 'border-b-2 border-primary rounded-none' : ''}`}
+                onClick={() => toggleSection('branches')}
+              >
+                <GitBranch className="h-4 w-4 mr-1" />
+                <EditableText id="branches-tab">Branches</EditableText>
+              </Button>
+            </div>
+            
+            {/* Story Content */}
+            {activeSection === 'story' || activeSection === '' ? (
+              <div className="space-y-6">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="prose max-w-none">
+                      <h2 className="text-xl font-semibold mb-4">
+                        <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
+                      </h2>
+                      
+                      <p className="mb-4">
+                        <EditableText id="paragraph-1">
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
+                          nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
+                          nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
+                        </EditableText>
+                      </p>
+                      
+                      <p className="mb-4">
+                        <EditableText id="paragraph-2">
+                          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                          totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                          dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                          sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                        </EditableText>
+                      </p>
+                      
+                      <div className="my-8 border p-4 rounded-lg">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="text-lg font-medium">
+                            <EditableText id="image-title">Featured Image</EditableText>
+                          </h3>
+                          <div className="flex space-x-2">
+                            <Button variant="ghost" size="sm">
+                              <ZoomIn className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="bg-gray-200 h-64 flex items-center justify-center">
+                          <Image className="h-12 w-12 text-gray-400" />
+                          <span className="ml-2 text-gray-500">
+                            <EditableText id="image-placeholder">Image Placeholder</EditableText>
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">
+                          <EditableText id="image-caption">Image caption goes here. Describe what is shown in the image.</EditableText>
+                        </p>
+                      </div>
+                      
+                      <p className="mb-4">
+                        <EditableText id="paragraph-3">
+                          Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
+                          sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
+                          Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
+                          aliquid ex ea commodi consequatur?
+                        </EditableText>
+                      </p>
+                    </div>
+                    
+                    <div className="mt-8 pt-4 border-t">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-medium">
+                          <EditableText id="comments-title">Comments</EditableText>
+                        </h3>
+                        <Button variant="outline" size="sm">
+                          <EditableText id="add-comment-btn">Add Comment</EditableText>
+                        </Button>
+                      </div>
+                      <div className="mt-4 text-gray-500 italic">
+                        <EditableText id="no-comments">No comments yet. Be the first to share your thoughts.</EditableText>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : null}
+            
+            {/* Contributors Section */}
+            {activeSection === 'contributors' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <EditableText id="contributors-title">Story Contributors</EditableText>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>
+                          <EditableText id="contrib-name-header">Name</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="contrib-words-header">Words</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="contrib-paragraphs-header">Paragraphs</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="contrib-chapters-header">Chapters</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="contrib-actions-header">Actions</EditableText>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {contributorsData.map((contributor) => (
+                        <TableRow key={contributor.id}>
+                          <TableCell>{contributor.name}</TableCell>
+                          <TableCell>{contributor.words}</TableCell>
+                          <TableCell>{contributor.paragraphs}</TableCell>
+                          <TableCell>{contributor.chapters}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
+                                <EditableText id="contrib-delete-btn">Delete</EditableText>
+                              </Button>
+                              <Button variant="ghost" size="sm" className="text-orange-500 hover:text-orange-700">
+                                <EditableText id="contrib-ban-btn">Ban</EditableText>
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 className="text-lg font-medium mb-2">
+                      <EditableText id="total-stats-title">Total Statistics</EditableText>
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <span className="block text-sm text-gray-500">
+                          <EditableText id="total-contributors-label">Contributors</EditableText>
+                        </span>
+                        <span className="block text-lg font-medium">3</span>
+                      </div>
+                      <div>
+                        <span className="block text-sm text-gray-500">
+                          <EditableText id="total-words-label">Words</EditableText>
+                        </span>
+                        <span className="block text-lg font-medium">13,526</span>
+                      </div>
+                      <div>
+                        <span className="block text-sm text-gray-500">
+                          <EditableText id="total-chapters-label">Chapters</EditableText>
+                        </span>
+                        <span className="block text-lg font-medium">6</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Revisions Section */}
+            {activeSection === 'revisions' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <EditableText id="revisions-title">Revision History</EditableText>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-end mb-4">
+                    <Button variant="outline" size="sm">
+                      <EditableText id="compare-btn">Compare Selected</EditableText>
+                    </Button>
+                  </div>
+                  
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-12">
+                          <Checkbox id="select-all" />
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="revision-timestamp-header">Timestamp</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="revision-description-header">Description</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="revision-actions-header">Actions</EditableText>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {revisionsData.map((revision) => (
+                        <TableRow key={revision.id}>
+                          <TableCell>
+                            <Checkbox id={`revision-${revision.id}`} />
+                          </TableCell>
+                          <TableCell>{revision.timestamp}</TableCell>
+                          <TableCell>{revision.description}</TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">
+                              <EditableText id="revision-view-btn">View</EditableText>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  
+                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 className="text-lg font-medium mb-2">
+                      <EditableText id="comparison-options-title">Comparison Options</EditableText>
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <input 
+                            type="radio" 
+                            id="side-by-side" 
+                            name="comparison-type" 
+                            defaultChecked 
+                          />
+                          <Label htmlFor="side-by-side">
+                            <EditableText id="side-by-side-label">Side by Side</EditableText>
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <input 
+                            type="radio" 
+                            id="unified-view" 
+                            name="comparison-type" 
+                          />
+                          <Label htmlFor="unified-view">
+                            <EditableText id="unified-view-label">Unified View</EditableText>
+                          </Label>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="show-additions" defaultChecked />
+                          <Label htmlFor="show-additions">
+                            <EditableText id="show-additions-label">Show Additions</EditableText>
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2 mt-2">
+                          <Checkbox id="show-deletions" defaultChecked />
+                          <Label htmlFor="show-deletions">
+                            <EditableText id="show-deletions-label">Show Deletions</EditableText>
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Branches Section */}
+            {activeSection === 'branches' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <EditableText id="branches-title">Story Branches</EditableText>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {branchesData.map((branch) => (
+                      <div key={branch.id} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className="text-lg font-medium">{branch.title}</h3>
+                            <p className="text-sm text-gray-500">
+                              <EditableText id={`branch-author-${branch.id}`}>
+                                By {branch.author} • {branch.chapters} chapters
+                              </EditableText>
+                            </p>
+                          </div>
+                          <Button variant="outline" size="sm" className="flex items-center">
+                            <EditableText id="join-branch-btn">Join</EditableText>
+                            <ChevronRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        </div>
+                        <div className="mt-4 flex space-x-2">
+                          {Array.from({ length: branch.chapters }).map((_, i) => (
+                            <div 
+                              key={i} 
+                              className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"
+                            >
+                              {i + 1}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <Button variant="outline" size="sm" className="mt-6 w-full">
+                    <Plus className="h-4 w-4 mr-1" />
+                    <EditableText id="create-branch-btn">Create New Branch</EditableText>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      </main>
+      
+      <CrowdlyFooter />
+    </div>
+  );
+};
+
+export default StoryforConsumers;
