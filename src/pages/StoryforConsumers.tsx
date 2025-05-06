@@ -24,16 +24,16 @@ const StoryforConsumers = () => {
   const { user } = useAuth();
   const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(["text"]);
   const [activeSection, setActiveSection] = useState<string>("story");
-  const [likes, setLikes] = useState<{[key: string]: number}>({
-    paragraph1: 12,
-    paragraph2: 8,
-    paragraph3: 15
+  // Changed to store likes/dislikes per chapter instead of per paragraph
+  const [chapterLikes, setChapterLikes] = useState<{[key: string]: number}>({
+    chapter1: 35
   });
-  const [dislikes, setDislikes] = useState<{[key: string]: number}>({
-    paragraph1: 2,
-    paragraph2: 3,
-    paragraph3: 1
+  const [chapterDislikes, setChapterDislikes] = useState<{[key: string]: number}>({
+    chapter1: 6
   });
+  const [showBranchDialog, setShowBranchDialog] = useState(false);
+  const [selectedParagraphForBranch, setSelectedParagraphForBranch] = useState<string | null>(null);
+  
   const userName = user?.email?.split("@")[0] || "Guest";
   
   // Sample data for tables
@@ -60,6 +60,27 @@ const StoryforConsumers = () => {
     { id: 2, number: 2, title: "The Conflict" },
     { id: 3, number: 3, title: "The Resolution" }
   ];
+
+  // Function to handle branch creation
+  const handleCreateBranch = (paragraphId: string) => {
+    setSelectedParagraphForBranch(paragraphId);
+    setShowBranchDialog(true);
+  };
+  
+  // Chapter like/dislike handlers
+  const handleChapterLike = (id: string) => {
+    setChapterLikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  const handleChapterDislike = (id: string) => {
+    setChapterDislikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
   
   // Toggle content type selection
   const toggleContentType = (type: string) => {
@@ -73,21 +94,6 @@ const StoryforConsumers = () => {
   // Section toggle handler
   const toggleSection = (section: string) => {
     setActiveSection(activeSection === section ? "" : section);
-  };
-  
-  // Like/Dislike handlers
-  const handleLike = (id: string) => {
-    setLikes(prev => ({
-      ...prev,
-      [id]: (prev[id] || 0) + 1
-    }));
-  };
-  
-  const handleDislike = (id: string) => {
-    setDislikes(prev => ({
-      ...prev,
-      [id]: (prev[id] || 0) + 1
-    }));
   };
   
   return (
@@ -273,61 +279,70 @@ const StoryforConsumers = () => {
                 <Card>
                   <CardContent className="pt-6">
                     <div className="prose max-w-none">
-                      <h2 className="text-xl font-semibold mb-4">
-                        <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
-                      </h2>
-                      
-                      {/* Text content with like/dislike buttons */}
-                      <div className="mb-6 space-y-1">
-                        <p className="mb-2">
-                          <EditableText id="paragraph-1">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
-                            nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
-                            nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
-                          </EditableText>
-                        </p>
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold">
+                          <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
+                        </h2>
+                        {/* Chapter level like/dislike buttons */}
                         <div className="flex items-center space-x-4">
                           <button 
-                            onClick={() => handleLike('paragraph1')} 
+                            onClick={() => handleChapterLike('chapter1')} 
                             className="flex items-center text-sm text-gray-500 hover:text-blue-500"
                           >
                             <ThumbsUp className="h-4 w-4 mr-1" />
-                            <span>{likes.paragraph1}</span>
+                            <span>{chapterLikes.chapter1 || 0}</span>
                           </button>
                           <button 
-                            onClick={() => handleDislike('paragraph1')} 
+                            onClick={() => handleChapterDislike('chapter1')} 
                             className="flex items-center text-sm text-gray-500 hover:text-red-500"
                           >
                             <ThumbsDown className="h-4 w-4 mr-1" />
-                            <span>{dislikes.paragraph1}</span>
+                            <span>{chapterDislikes.chapter1 || 0}</span>
                           </button>
                         </div>
                       </div>
                       
-                      <div className="mb-6 space-y-1">
-                        <p className="mb-2">
-                          <EditableText id="paragraph-2">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
-                            totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
-                            dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
-                            sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-                          </EditableText>
-                        </p>
-                        <div className="flex items-center space-x-4">
-                          <button 
-                            onClick={() => handleLike('paragraph2')} 
-                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                      {/* Text content with branch buttons */}
+                      <div className="mb-6">
+                        <div className="group relative">
+                          <p className="mb-2">
+                            <EditableText id="paragraph-1">
+                              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
+                              nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
+                              nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
+                            </EditableText>
+                          </p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleCreateBranch('paragraph1')}
                           >
-                            <ThumbsUp className="h-4 w-4 mr-1" />
-                            <span>{likes.paragraph2}</span>
-                          </button>
-                          <button 
-                            onClick={() => handleDislike('paragraph2')} 
-                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            <GitBranch className="h-3 w-3 mr-1" />
+                            <EditableText id="create-branch-btn">Create Branch</EditableText>
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-6">
+                        <div className="group relative">
+                          <p className="mb-2">
+                            <EditableText id="paragraph-2">
+                              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                              totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                              dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                              sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                            </EditableText>
+                          </p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleCreateBranch('paragraph2')}
                           >
-                            <ThumbsDown className="h-4 w-4 mr-1" />
-                            <span>{dislikes.paragraph2}</span>
-                          </button>
+                            <GitBranch className="h-3 w-3 mr-1" />
+                            <EditableText id="create-branch-btn2">Create Branch</EditableText>
+                          </Button>
                         </div>
                       </div>
                       
@@ -454,30 +469,25 @@ const StoryforConsumers = () => {
                         </div>
                       )}
                       
-                      <div className="mb-6 space-y-1">
-                        <p className="mb-2">
-                          <EditableText id="paragraph-3">
-                            Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
-                            sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
-                            Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
-                            aliquid ex ea commodi consequatur?
-                          </EditableText>
-                        </p>
-                        <div className="flex items-center space-x-4">
-                          <button 
-                            onClick={() => handleLike('paragraph3')} 
-                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                      <div className="mb-6">
+                        <div className="group relative">
+                          <p className="mb-2">
+                            <EditableText id="paragraph-3">
+                              Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
+                              sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
+                              Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
+                              aliquid ex ea commodi consequatur?
+                            </EditableText>
+                          </p>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleCreateBranch('paragraph3')}
                           >
-                            <ThumbsUp className="h-4 w-4 mr-1" />
-                            <span>{likes.paragraph3}</span>
-                          </button>
-                          <button 
-                            onClick={() => handleDislike('paragraph3')} 
-                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                          >
-                            <ThumbsDown className="h-4 w-4 mr-1" />
-                            <span>{dislikes.paragraph3}</span>
-                          </button>
+                            <GitBranch className="h-3 w-3 mr-1" />
+                            <EditableText id="create-branch-btn3">Create Branch</EditableText>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -728,6 +738,40 @@ const StoryforConsumers = () => {
           </div>
         </div>
       </main>
+      
+      {/* Branch Creation Dialog */}
+      <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              <EditableText id="create-branch-dialog-title">Create New Branch</EditableText>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="branch-name">
+                <EditableText id="branch-name-label">Branch Name</EditableText>
+              </Label>
+              <Input id="branch-name" placeholder="My Alternative Story Path" />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="branch-description">
+                <EditableText id="branch-description-label">Description</EditableText>
+              </Label>
+              <Input id="branch-description" placeholder="Briefly describe your alternative story direction" />
+            </div>
+            <div className="flex justify-between mt-4">
+              <Button variant="outline" onClick={() => setShowBranchDialog(false)}>
+                <EditableText id="cancel-btn">Cancel</EditableText>
+              </Button>
+              <Button onClick={() => setShowBranchDialog(false)}>
+                <GitBranch className="h-4 w-4 mr-1" />
+                <EditableText id="create-btn">Create Branch</EditableText>
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
       
       <CrowdlyFooter />
     </div>
