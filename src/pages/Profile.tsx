@@ -269,13 +269,7 @@ const Profile = () => {
           </div>
           
           <div className="mb-3">
-            <div className="flex items-center mb-2">
-              <Label htmlFor="interests-input" className="text-sm text-gray-500 italic mr-2">
-                <EditableText id="interests-instruction">
-                  Please enter your interests comma separated
-                </EditableText>
-              </Label>
-            </div>
+           
             <div className="flex gap-2">
               <Input 
                 id="interests-input"
