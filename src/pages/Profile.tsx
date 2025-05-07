@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -82,7 +81,16 @@ import {
   PencilLine,
   User,
   Globe,
-  Users
+  Users,
+  FileText,
+  Image,
+  AudioLines,
+  Video,
+  BookOpen,
+  MessageSquare,
+  Send,
+  Award,
+  Star
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -810,62 +818,4 @@ const Profile = () => {
                             </EditableText>
                           </p>
                           <p>
-                            <EditableText id="revision-2-content-2">
-                              This shows the changes made.
-                            </EditableText>
-                          </p>
-                        </div>
-                      </div>
-                    </ResizablePanel>
-                    
-                    <ResizableHandle withHandle />
-                    
-                    <ResizablePanel defaultSize={33}>
-                      <div className="p-2 h-full bg-white">
-                        <div className="text-sm font-medium mb-1">
-                          <EditableText id="revision-3-title">Revision 3</EditableText>
-                        </div>
-                        <div className="text-xs">
-                          <p>
-                            <EditableText id="revision-3-content-1">
-                              Latest text content from revision 3.
-                            </EditableText>
-                          </p>
-                          <p>
-                            <EditableText id="revision-3-content-2">
-                              This shows the most recent changes.
-                            </EditableText>
-                          </p>
-                        </div>
-                      </div>
-                    </ResizablePanel>
-                  </ResizablePanelGroup>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-        
-        {/* Stories Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">
-            <EditableText id="stories-heading">Stories</EditableText>
-          </h2>
-          <div>
-            {!previewMode && (
-              <Link to="#" className="text-blue-500 hover:underline mb-4 block">
-                <EditableText id="add-story-link">Add story</EditableText>
-              </Link>
-            )}
-            
-            
-          </div>
-        </div>
-      </div>
-      
-      <CrowdlyFooter />
-    </div>
-  );
-};
-
-export default Profile;
+                            <EditableText id="revision-2-
