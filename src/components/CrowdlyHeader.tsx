@@ -175,7 +175,17 @@ const CrowdlyHeader = () => {
                       </div>
                     </div>
                   )}
-                  
+                  <div>
+                    <Link 
+                      to="/sitemap" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      <EditableText id="popover-profile">
+                        Sitemap
+                      </EditableText>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </PopoverContent>
