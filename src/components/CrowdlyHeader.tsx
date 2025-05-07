@@ -1,16 +1,14 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, LogOut } from "lucide-react";
+import { Eye, Menu, X, LogOut } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEditableContent } from "@/contexts/EditableContentContext";
 import { toast } from "@/hooks/use-toast";
@@ -23,6 +21,7 @@ const CrowdlyHeader = () => {
   const [email, setEmail] = useState("leoforce@example.com");
   const [password, setPassword] = useState("12345678qwas!");
   const [showPassword, setShowPassword] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const { user, signIn, signOut } = useAuth();
@@ -86,7 +85,7 @@ const CrowdlyHeader = () => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className="flex space-x-4 items-center">
+          <div className="hidden md:flex space-x-4 items-center">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg className="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -140,20 +139,121 @@ const CrowdlyHeader = () => {
                 </>
               )}
             </div>
-            
-            {/* Navigation links - adding the links that were in the popover */}
-            <div className="hidden md:flex space-x-4">
-              <Link to="/suggest-feature" className="text-gray-700 hover:text-gray-900">
-                <EditableText id="nav-suggest-feature">Suggest a Feature</EditableText>
-              </Link>
-              <Link to="/account-administration" className="text-gray-700 hover:text-gray-900">
-                <EditableText id="nav-account-admin">Account Administration</EditableText>
-              </Link>
-              <Link to="/profile" className="text-gray-700 hover:text-gray-900">
-                <EditableText id="nav-profile">Profile</EditableText>
-              </Link>
-            </div>
           </div>
+          
+          <Popover open={showPopover} onOpenChange={setShowPopover}>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-10 w-10">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Menu</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-0">
+              <div className="relative p-4">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-2 right-2"
+                  onClick={() => setShowPopover(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+                <div className="space-y-2 pt-4">
+                  {user && (
+                    <div className="border-b pb-2 mb-2">
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">{user.email}</span>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={handleLogout}
+                          className="flex items-center"
+                        >
+                          <LogOut className="h-3 w-3 mr-1" /> 
+                          <EditableText id="popover-logout">Logout</EditableText>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  <div className="border-b pb-2">
+                    <Link 
+                      to="/suggest-feature" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      <EditableText id="popover-suggest-feature">
+                        Suggest a Feature
+                      </EditableText>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link 
+                      to="/account-administration" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      <EditableText id="popover-account-admin">
+                        Account Administration
+                      </EditableText>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link 
+                      to="/new-story-template" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      <EditableText id="popover-new-story">
+                        New Story Template
+                      </EditableText>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link 
+                      to="/story-for-consumers" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      <EditableText id="story-for-consumers">
+                        Story for consumers
+                      </EditableText>
+                    </Link>
+                  </div>
+                  <div>
+                    <Link 
+                      to="/profile" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      <EditableText id="popover-profile">
+                        Profile
+                      </EditableText>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          
+          <button 
+            className="md:hidden text-gray-500 focus:outline-none" 
+            onClick={toggleMenu}
+          >
+            <svg 
+              className="w-6 h-6" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M4 6h16M4 12h16M4 18h16" 
+              />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -192,25 +292,6 @@ const CrowdlyHeader = () => {
                 <SelectItem value="German">German</SelectItem>
               </SelectContent>
             </Select>
-            
-            {/* Mobile navigation links */}
-            <div className="flex flex-col space-y-2">
-              <Link to="/suggest-feature" className="text-gray-700 hover:text-gray-900 py-1">
-                <EditableText id="mobile-nav-suggest-feature">Suggest a Feature</EditableText>
-              </Link>
-              <Link to="/account-administration" className="text-gray-700 hover:text-gray-900 py-1">
-                <EditableText id="mobile-nav-account-admin">Account Administration</EditableText>
-              </Link>
-              <Link to="/new-story-template" className="text-gray-700 hover:text-gray-900 py-1">
-                <EditableText id="mobile-nav-new-story">New Story Template</EditableText>
-              </Link>
-              <Link to="/story-for-consumers" className="text-gray-700 hover:text-gray-900 py-1">
-                <EditableText id="mobile-nav-story-consumers">Story for consumers</EditableText>
-              </Link>
-              <Link to="/profile" className="text-gray-700 hover:text-gray-900 py-1">
-                <EditableText id="mobile-nav-profile">Profile</EditableText>
-              </Link>
-            </div>
             
             {user ? (
               <div className="flex flex-col space-y-2">
