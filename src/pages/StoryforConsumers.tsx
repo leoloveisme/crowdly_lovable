@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -15,7 +16,8 @@ import {
   Book, Settings, Eye, HelpCircle, Copy, Plus, 
   Volume, Mic, Users, History, GitBranch, 
   ChevronRight, Image, Share2, ZoomIn,
-  Video, AudioLines, ThumbsUp, ThumbsDown, Play
+  Video, AudioLines, ThumbsUp, ThumbsDown, Play,
+  MessageCircle
 } from "lucide-react";
 import EditableText from "@/components/EditableText";
 import {
@@ -61,6 +63,17 @@ const StoryforConsumers = () => {
   const [videoDislikes, setVideoDislikes] = useState<{[key: string]: number}>({
     video1: 5
   });
+  
+  // Add state for comments
+  const [showCommentForm, setShowCommentForm] = useState<{[key: string]: boolean}>({});
+  const [comments, setComments] = useState<{[key: string]: Array<{user: string, text: string}>}>({
+    chapter1: [],
+    presentation1: [],
+    audio1: [],
+    video1: []
+  });
+  const [newComment, setNewComment] = useState<string>("");
+  const [commentTarget, setCommentTarget] = useState<string>("");
   
   const [showBranchDialog, setShowBranchDialog] = useState(false);
   const [selectedParagraphForBranch, setSelectedParagraphForBranch] = useState<string | null>(null);
@@ -170,6 +183,98 @@ const StoryforConsumers = () => {
   // Section toggle handler
   const toggleSection = (section: string) => {
     setActiveSection(activeSection === section ? "" : section);
+  };
+  
+  // Handle showing the comment form
+  const handleShowCommentForm = (target: string) => {
+    setCommentTarget(target);
+    setNewComment("");
+    setShowCommentForm(prev => ({
+      ...prev,
+      [target]: true
+    }));
+  };
+  
+  // Handle submitting a new comment
+  const handleSubmitComment = () => {
+    if (newComment.trim() !== "" && commentTarget) {
+      setComments(prev => ({
+        ...prev,
+        [commentTarget]: [...(prev[commentTarget] || []), {
+          user: userName,
+          text: newComment.trim()
+        }]
+      }));
+      setNewComment("");
+      setShowCommentForm(prev => ({
+        ...prev,
+        [commentTarget]: false
+      }));
+    }
+  };
+  
+  // Comments section component
+  const CommentsSection = ({ targetId }: { targetId: string }) => {
+    const targetComments = comments[targetId] || [];
+    
+    return (
+      <div className="mt-8 pt-4 border-t">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-medium flex items-center">
+            <MessageCircle className="h-5 w-5 mr-2" />
+            <EditableText id="comments-title">Comments</EditableText>
+          </h3>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => handleShowCommentForm(targetId)}
+          >
+            <EditableText id="add-comment-btn">Add Comment</EditableText>
+          </Button>
+        </div>
+        
+        {showCommentForm[targetId] ? (
+          <div className="mt-4 space-y-3">
+            <Textarea
+              placeholder="Write your comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="min-h-[100px]"
+            />
+            <div className="flex justify-end space-x-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowCommentForm(prev => ({ ...prev, [targetId]: false }))}
+              >
+                Cancel
+              </Button>
+              <Button 
+                size="sm"
+                onClick={handleSubmitComment}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        ) : null}
+        
+        {targetComments.length > 0 ? (
+          <div className="space-y-4 mt-4">
+            {targetComments.map((comment, index) => (
+              <div key={index} className="bg-gray-50 rounded-lg p-3">
+                <div className="font-medium text-sm">{comment.user}</div>
+                <div className="text-sm mt-1">{comment.text}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4 text-gray-500 italic">
+            <EditableText id="no-comments">No comments yet. Be the first to share your thoughts.</EditableText>
+          </div>
+        )}
+      </div>
+    );
   };
   
   return (
@@ -512,6 +617,9 @@ const StoryforConsumers = () => {
                               <span>{imageDislikes.presentation1 || 0}</span>
                             </button>
                           </div>
+                          
+                          {/* Add Comments section for presentation */}
+                          <CommentsSection targetId="presentation1" />
                         </div>
                       )}
                       
@@ -569,6 +677,9 @@ const StoryforConsumers = () => {
                               <span>{audioDislikes.audio1 || 0}</span>
                             </button>
                           </div>
+                          
+                          {/* Add Comments section for audio */}
+                          <CommentsSection targetId="audio1" />
                         </div>
                       )}
                       
@@ -634,6 +745,9 @@ const StoryforConsumers = () => {
                               <span>{videoDislikes.video1 || 0}</span>
                             </button>
                           </div>
+                          
+                          {/* Add Comments section for video */}
+                          <CommentsSection targetId="video1" />
                         </div>
                       )}
                       
@@ -649,315 +763,4 @@ const StoryforConsumers = () => {
                           </p>
                           <Button 
                             variant="outline" 
-                            size="sm" 
-                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => handleCreateBranch('paragraph3')}
-                          >
-                            <GitBranch className="h-3 w-3 mr-1" />
-                            <EditableText id="create-branch-btn3">Create Branch</EditableText>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-6 pt-4 border-t flex items-center space-x-2">
-                      <button 
-                        onClick={() => handleChapterLike('chapter1')} 
-                        className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                      >
-                        <ThumbsUp className="h-5 w-5 mr-1" />
-                        <span>{chapterLikes.chapter1 || 0}</span>
-                      </button>
-                      <button 
-                        onClick={() => handleChapterDislike('chapter1')} 
-                        className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                      >
-                        <ThumbsDown className="h-5 w-5 mr-1" />
-                        <span>{chapterDislikes.chapter1 || 0}</span>
-                      </button>
-                    </div>
-                    
-                    <div className="mt-8 pt-4 border-t">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-medium">
-                          <EditableText id="comments-title">Comments</EditableText>
-                        </h3>
-                        <Button variant="outline" size="sm">
-                          <EditableText id="add-comment-btn">Add Comment</EditableText>
-                        </Button>
-                      </div>
-                      <div className="mt-4 text-gray-500 italic">
-                        <EditableText id="no-comments">No comments yet. Be the first to share your thoughts.</EditableText>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ) : null}
-            
-            {/* Contributors Section */}
-            {activeSection === 'contributors' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <EditableText id="contributors-title">Story Contributors</EditableText>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>
-                          <EditableText id="contrib-name-header">Name</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="contrib-words-header">Words</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="contrib-paragraphs-header">Paragraphs</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="contrib-chapters-header">Chapters</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="contrib-actions-header">Actions</EditableText>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {contributorsData.map((contributor) => (
-                        <TableRow key={contributor.id}>
-                          <TableCell>{contributor.name}</TableCell>
-                          <TableCell>{contributor.words}</TableCell>
-                          <TableCell>{contributor.paragraphs}</TableCell>
-                          <TableCell>{contributor.chapters}</TableCell>
-                          <TableCell>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
-                                <EditableText id="contrib-delete-btn">Delete</EditableText>
-                              </Button>
-                              <Button variant="ghost" size="sm" className="text-orange-500 hover:text-orange-700">
-                                <EditableText id="contrib-ban-btn">Ban</EditableText>
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                  
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h3 className="text-lg font-medium mb-2">
-                      <EditableText id="total-stats-title">Total Statistics</EditableText>
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <span className="block text-sm text-gray-500">
-                          <EditableText id="total-contributors-label">Contributors</EditableText>
-                        </span>
-                        <span className="block text-lg font-medium">3</span>
-                      </div>
-                      <div>
-                        <span className="block text-sm text-gray-500">
-                          <EditableText id="total-words-label">Words</EditableText>
-                        </span>
-                        <span className="block text-lg font-medium">13,526</span>
-                      </div>
-                      <div>
-                        <span className="block text-sm text-gray-500">
-                          <EditableText id="total-chapters-label">Chapters</EditableText>
-                        </span>
-                        <span className="block text-lg font-medium">6</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Revisions Section */}
-            {activeSection === 'revisions' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <EditableText id="revisions-title">Revision History</EditableText>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-end mb-4">
-                    <Button variant="outline" size="sm">
-                      <EditableText id="compare-btn">Compare Selected</EditableText>
-                    </Button>
-                  </div>
-                  
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-12">
-                          <Checkbox id="select-all" />
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="revision-timestamp-header">Timestamp</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="revision-description-header">Description</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="revision-actions-header">Actions</EditableText>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {revisionsData.map((revision) => (
-                        <TableRow key={revision.id}>
-                          <TableCell>
-                            <Checkbox id={`revision-${revision.id}`} />
-                          </TableCell>
-                          <TableCell>{revision.timestamp}</TableCell>
-                          <TableCell>{revision.description}</TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="sm">
-                              <EditableText id="revision-view-btn">View</EditableText>
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                  
-                  <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h3 className="text-lg font-medium mb-2">
-                      <EditableText id="comparison-options-title">Comparison Options</EditableText>
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <input 
-                            type="radio" 
-                            id="side-by-side" 
-                            name="comparison-type" 
-                            defaultChecked 
-                          />
-                          <Label htmlFor="side-by-side">
-                            <EditableText id="side-by-side-label">Side by Side</EditableText>
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2 mt-2">
-                          <input 
-                            type="radio" 
-                            id="unified-view" 
-                            name="comparison-type" 
-                          />
-                          <Label htmlFor="unified-view">
-                            <EditableText id="unified-view-label">Unified View</EditableText>
-                          </Label>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="show-additions" defaultChecked />
-                          <Label htmlFor="show-additions">
-                            <EditableText id="show-additions-label">Show Additions</EditableText>
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2 mt-2">
-                          <Checkbox id="show-deletions" defaultChecked />
-                          <Label htmlFor="show-deletions">
-                            <EditableText id="show-deletions-label">Show Deletions</EditableText>
-                          </Label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Branches Section */}
-            {activeSection === 'branches' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <EditableText id="branches-title">Story Branches</EditableText>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {branchesData.map((branch) => (
-                      <div key={branch.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="text-lg font-medium">{branch.title}</h3>
-                            <p className="text-sm text-gray-500">
-                              <EditableText id={`branch-author-${branch.id}`}>
-                                By {branch.author} • {branch.chapters} chapters
-                              </EditableText>
-                            </p>
-                          </div>
-                          <Button variant="outline" size="sm" className="flex items-center">
-                            <EditableText id="join-branch-btn">Join</EditableText>
-                            <ChevronRight className="h-4 w-4 ml-1" />
-                          </Button>
-                        </div>
-                        <div className="mt-4 flex space-x-2">
-                          {Array.from({ length: branch.chapters }).map((_, i) => (
-                            <div 
-                              key={i} 
-                              className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"
-                            >
-                              {i + 1}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-      </main>
-      
-      {/* Branch Creation Dialog */}
-      <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              <EditableText id="create-branch-dialog-title">Create New Branch</EditableText>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="branch-name">
-                <EditableText id="branch-name-label">Branch Name</EditableText>
-              </Label>
-              <Input id="branch-name" placeholder="My Alternative Story Path" />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="branch-description">
-                <EditableText id="branch-description-label">Description</EditableText>
-              </Label>
-              <Input id="branch-description" placeholder="Briefly describe your alternative story direction" />
-            </div>
-            <div className="flex justify-between mt-4">
-              <Button variant="outline" onClick={() => setShowBranchDialog(false)}>
-                <EditableText id="cancel-btn">Cancel</EditableText>
-              </Button>
-              <Button onClick={() => setShowBranchDialog(false)}>
-                <GitBranch className="h-4 w-4 mr-1" />
-                <EditableText id="create-btn">Create Branch</EditableText>
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      
-      <CrowdlyFooter />
-    </div>
-  );
-};
-
-export default StoryforConsumers;
+                            size="sm"
