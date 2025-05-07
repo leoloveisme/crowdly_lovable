@@ -1106,22 +1106,7 @@ const Profile = () => {
           <h1 className="text-3xl font-bold">
             <EditableText id="favorites">Favorites</EditableText> 
 
-                    <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="text-xs text-gray-500 flex items-center gap-1">
-                              <Info className="h-4 w-4" />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              <EditableText id="visibility-tooltip-popup">
-                                You can change the visibility of your Favorites at any time
-                              </EditableText>
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+
 
             {!previewMode && (
               <Popover open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
@@ -1190,6 +1175,25 @@ const Profile = () => {
               </Popover>
             )}
           </h1>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="text-xs text-gray-500 flex items-center gap-1">
+                              <Info className="h-4 w-4" />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              <EditableText id="visibility-tooltip-popup">
+                                You can change the visibility of your Favorites at any time
+                              </EditableText>
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+
+
         </div>
 </div>
 
