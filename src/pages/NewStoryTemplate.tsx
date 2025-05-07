@@ -482,19 +482,7 @@ const NewStoryTemplate = () => {
               </button>
             </div>
             
-            {/* Only show layout options when at least one checkbox is checked AND compare is clicked */}
-            {layoutOptionsOpen && compareOpen && columnChecked.length > 0 && (
-              <div className="bg-white rounded-md shadow-sm border p-4 grid grid-cols-6 gap-4">
-                {["⊑", "🗔", "🗕", "⊻", "𝌐", "⊏"].map((symbol, index) => (
-                  <button 
-                    key={index}
-                    className="border p-2 flex items-center justify-center text-xl"
-                  >
-                    {symbol}
-                  </button>
-                ))}
-              </div>
-            )}
+           
           </div>
 
           {/* Branches Section */}
