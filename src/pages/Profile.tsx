@@ -52,6 +52,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  RadioGroup,
+  RadioGroupItem
+} from "@/components/ui/radio-group";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from "@/components/ui/hover-card";
+import {
   Eye,
   Settings,
   Edit, 
@@ -62,7 +76,11 @@ import {
   ChevronDown,
   Upload,
   Grid2x2,
-  Columns4
+  Columns4,
+  PencilLine,
+  User,
+  Globe,
+  Users
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -72,6 +90,8 @@ import EditableText from "@/components/EditableText";
 
 const Profile = () => {
   const [name, setName] = useState("Username");
+  const [rupkin, setRupkin] = useState("@username");
+  const [nickname, setNickname] = useState("");
   const [about, setAbout] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
   const [newInterest, setNewInterest] = useState("");
@@ -80,6 +100,9 @@ const Profile = () => {
   const [anyoneCanEdit, setAnyoneCanEdit] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [visibilityOption, setVisibilityOption] = useState("public");
+  const [editField, setEditField] = useState<string | null>(null);
+  const [tempFieldValue, setTempFieldValue] = useState("");
   
   // For the revision history
   const revisions = [
@@ -194,6 +217,27 @@ const Profile = () => {
     setActiveLayoutOption(layoutIndex);
   };
 
+  // Functions for profile editing
+  const startEditing = (field: string, value: string) => {
+    setEditField(field);
+    setTempFieldValue(value);
+  };
+  
+  const saveField = () => {
+    if (editField === 'name') {
+      setName(tempFieldValue);
+    } else if (editField === 'rupkin') {
+      setRupkin(tempFieldValue.startsWith('@') ? tempFieldValue : `@${tempFieldValue}`);
+    } else if (editField === 'nickname') {
+      setNickname(tempFieldValue);
+    }
+    setEditField(null);
+  };
+  
+  const cancelEditing = () => {
+    setEditField(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
@@ -203,7 +247,244 @@ const Profile = () => {
           <h1 className="text-3xl font-bold">
             <EditableText id="profile-title">Profile</EditableText> <Settings className="inline h-5 w-5 text-gray-400" /> <Eye className="inline h-5 w-5 text-gray-400" />
           </h1>
+        </div>
+        
+        {/* Profile Information Section */}
+        <div className="mb-8">
+          <div className="flex items-center mb-4">
+            <h2 className="text-xl font-bold mr-2">
+              <EditableText id="profile-information-heading">Profile information</EditableText>
+            </h2>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className="h-5 w-5 text-gray-400" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    <EditableText id="profile-information-tooltip">
+                      Your profile information is displayed on your public profile
+                    </EditableText>
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Left column for profile picture */}
+            <div className="flex flex-col items-center space-y-3">
+              <div className="relative">
+                <Avatar className="h-32 w-32 border-2 border-gray-200">
+                  {profileImage ? (
+                    <AvatarImage src={profileImage} alt={name} />
+                  ) : (
+                    <AvatarFallback className="bg-purple-100 text-purple-600 text-4xl">
+                      <User className="h-16 w-16" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0 bg-purple-600 hover:bg-purple-700"
+                      onClick={() => setIsUploadDialogOpen(true)}
+                    >
+                      <PencilLine className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <ProfilePictureUpload onImageChange={handleProfileImageChange} />
+                </Dialog>
+              </div>
+              <Button
+                variant="outline"
+                className="text-purple-600 border-purple-600 hover:bg-purple-50"
+                onClick={() => setIsUploadDialogOpen(true)}
+              >
+                <EditableText id="change-photo-text">Change photo</EditableText>
+              </Button>
+            </div>
+            
+            {/* Right column for profile details */}
+            <div className="md:col-span-2 space-y-6">
+              {/* Profile fields */}
+              <div className="space-y-4">
+                {/* Name field */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm text-gray-500">
+                      <EditableText id="name-label">Name</EditableText>
+                    </Label>
+                    {editField === 'name' ? (
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
+                          <Check className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => startEditing('name', name)}
+                        className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                      >
+                        <EditableText id="edit-button">Edit</EditableText>
+                      </Button>
+                    )}
+                  </div>
+                  {editField === 'name' ? (
+                    <Input 
+                      value={tempFieldValue}
+                      onChange={(e) => setTempFieldValue(e.target.value)}
+                      className="mt-1"
+                      autoFocus
+                    />
+                  ) : (
+                    <div className="font-medium">{name}</div>
+                  )}
+                </div>
+                
+                {/* Rupkin field */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm text-gray-500">
+                      <EditableText id="rupkin-label">Rupkin</EditableText>
+                    </Label>
+                    {editField === 'rupkin' ? (
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
+                          <Check className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => startEditing('rupkin', rupkin)}
+                        className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                      >
+                        <EditableText id="edit-button">Edit</EditableText>
+                      </Button>
+                    )}
+                  </div>
+                  {editField === 'rupkin' ? (
+                    <Input 
+                      value={tempFieldValue}
+                      onChange={(e) => setTempFieldValue(e.target.value)}
+                      className="mt-1"
+                      autoFocus
+                    />
+                  ) : (
+                    <div className="font-medium text-gray-800">{rupkin}</div>
+                  )}
+                </div>
+                
+                {/* Nickname field */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm text-gray-500">
+                      <EditableText id="nickname-label">Nickname</EditableText>
+                    </Label>
+                    {editField === 'nickname' ? (
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
+                          <Check className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => startEditing('nickname', nickname)}
+                        className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                      >
+                        <EditableText id="edit-button">Edit</EditableText>
+                      </Button>
+                    )}
+                  </div>
+                  {editField === 'nickname' ? (
+                    <Input 
+                      value={tempFieldValue}
+                      onChange={(e) => setTempFieldValue(e.target.value)}
+                      className="mt-1"
+                      autoFocus
+                    />
+                  ) : (
+                    <div className="font-medium text-gray-800">
+                      {nickname ? nickname : (
+                        <span className="text-gray-400 italic">
+                          <EditableText id="no-nickname-text">No nickname set</EditableText>
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Visibility settings */}
+              <div className="pt-4 border-t border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <Label className="font-medium">
+                    <EditableText id="visibility-label">Visibility</EditableText>
+                  </Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="text-sm text-gray-500 flex items-center gap-1">
+                          <Info className="h-4 w-4" />
+                          <EditableText id="can-be-changed-text">Can be changed any time</EditableText>
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          <EditableText id="visibility-tooltip">
+                            You can change your profile visibility at any time
+                          </EditableText>
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                
+                <RadioGroup 
+                  value={visibilityOption} 
+                  onValueChange={setVisibilityOption}
+                  className="space-y-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="public" id="public" />
+                    <Label htmlFor="public" className="flex items-center gap-2 cursor-pointer">
+                      <Globe className="h-4 w-4 text-purple-600" />
+                      <EditableText id="public-option">Public</EditableText>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="private" id="private" />
+                    <Label htmlFor="private" className="flex items-center gap-2 cursor-pointer">
+                      <User className="h-4 w-4 text-purple-600" />
+                      <EditableText id="private-option">Private</EditableText>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="friends" id="friends" />
+                    <Label htmlFor="friends" className="flex items-center gap-2 cursor-pointer">
+                      <Users className="h-4 w-4 text-purple-600" />
+                      <EditableText id="friends-option">Friends only</EditableText>
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
         </div>
         
         {/* Interests/Hobbies Section */}
