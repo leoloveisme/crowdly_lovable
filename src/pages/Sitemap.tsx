@@ -55,6 +55,12 @@ const Sitemap = () => {
             </p>
 
 
+           
+          </div>
+        </div>
+      </div>
+
+
 <div className="border-b pb-2">
                     <Link 
                       to="/suggest-feature" 
@@ -110,10 +116,7 @@ const Sitemap = () => {
                       </EditableText>
                     </Link>
                   </div>
-           
-          </div>
-        </div>
-      </div>
+
       
       <CrowdlyFooter />
     </div>
