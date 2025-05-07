@@ -313,7 +313,7 @@ const Profile = () => {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm text-gray-500">
-                      <EditableText id="first-name">First name</EditableText>
+                      <EditableText id="name-label">Name</EditableText>
                     </Label>
                     {editField === 'name' ? (
                       <div className="flex space-x-2">
@@ -351,7 +351,7 @@ const Profile = () => {
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm text-gray-500">
-                      <EditableText id="last-name">Last name/EditableText>
+                      <EditableText id="rupkin-label">Rupkin</EditableText>
                     </Label>
                     {editField === 'rupkin' ? (
                       <div className="flex space-x-2">
