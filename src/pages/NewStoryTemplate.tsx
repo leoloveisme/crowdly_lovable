@@ -200,7 +200,18 @@ const NewStoryTemplate = () => {
           {/* Story Title */}
           <div className="text-center">
             <h1 className="text-3xl font-bold">
-              <EditableText id="story-title">Sample story</EditableText>
+              <EditableText id="story-title">Sample story</EditableText>            
+             <div className="flex justify-between items-center mb-4">
+                <div className="flex gap-2">
+                <button onClick={() => handleSettingsClick("Story")} className="cursor-pointer hover:text-blue-500">
+                  <Settings size={16} />
+                </button>
+                <button onClick={() => handleEyeClick("Story")} className="cursor-pointer hover:text-blue-500">
+                  <Eye size={16} />
+                </button>
+                <HelpCircle size={16} />
+              </div>
+            </div>
             </h1>
             <h2 className="text-xl">
               <EditableText id="story-subtitle">of your life</EditableText>
