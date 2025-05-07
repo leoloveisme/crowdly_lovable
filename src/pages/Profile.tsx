@@ -1194,7 +1194,7 @@ const Profile = () => {
           </h1>
         </div>
 </div>
-</div>
+
       
       <CrowdlyFooter />
     </div>
