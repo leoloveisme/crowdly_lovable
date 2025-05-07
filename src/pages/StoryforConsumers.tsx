@@ -18,6 +18,12 @@ import {
   Video, AudioLines, ThumbsUp, ThumbsDown, Play
 } from "lucide-react";
 import EditableText from "@/components/EditableText";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const StoryforConsumers = () => {
   const { user } = useAuth();
@@ -167,10 +173,56 @@ const StoryforConsumers = () => {
           {/* Left Sidebar - Chapter Navigation */}
           <div className="lg:col-span-1">
             <Card>
-              <CardHeader>
-                <CardTitle>
-                  <EditableText id="chapters-title">Chapters</EditableText>
-                </CardTitle>
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-center">
+                  <CardTitle>
+                    <EditableText id="chapters-title">Chapters</EditableText>
+                  </CardTitle>
+                  
+                  {/* New Settings/Read/Help buttons */}
+                  <div className="flex items-center space-x-1">
+                    {/* Settings Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuItem className="flex items-center">
+                          <Copy className="mr-2 h-4 w-4" />
+                          <EditableText id="clone-menu-item">Clone</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Volume className="mr-2 h-4 w-4" />
+                          <EditableText id="generate-audio-menu-item">Generate Audio</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Mic className="mr-2 h-4 w-4" />
+                          <EditableText id="record-audio-menu-item">Record Audio</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Video className="mr-2 h-4 w-4" />
+                          <EditableText id="record-video-menu-item">Record Video</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Video className="mr-2 h-4 w-4" />
+                          <EditableText id="generate-video-menu-item">Generate Video</EditableText>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    
+                    {/* Read Button */}
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    
+                    {/* Help Button */}
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -205,7 +257,7 @@ const StoryforConsumers = () => {
           
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            {/* Story Controls - Updated to add Record Video and Generate Video buttons */}
+            {/* Story Controls - We'll remove these buttons since they're now in the dropdown */}
             <div className="flex justify-between items-center mb-4">
               <div className="flex space-x-2">
                 <Button variant="outline" size="sm" className="flex items-center">
@@ -221,6 +273,7 @@ const StoryforConsumers = () => {
                   <EditableText id="help-btn">Help</EditableText>
                 </Button>
               </div>
+              {/* We'll keep these buttons for now to maintain existing functionality */}
               <div className="flex space-x-2">
                 <Button variant="outline" size="sm" className="flex items-center">
                   <Copy className="h-4 w-4 mr-1" />
@@ -234,7 +287,6 @@ const StoryforConsumers = () => {
                   <Mic className="h-4 w-4 mr-1" />
                   <EditableText id="record-audio-btn">Record Audio</EditableText>
                 </Button>
-                {/* New buttons for video recording and generation */}
                 <Button variant="outline" size="sm" className="flex items-center">
                   <Video className="h-4 w-4 mr-1" />
                   <EditableText id="record-video-btn">Record Video</EditableText>
