@@ -561,11 +561,8 @@ const NewStoryTemplate = () => {
             </div>
            
             {branchesOpen && (
-              
-            )}
-          </div>
 
- {/* This below is the text from the Intro chapter */} 
+ {/* This below is actually the text from the Intro chapter and should be NOT toggle-able */} 
           
             <div className="bg-white rounded-md shadow-sm border p-4">
                 <div className="text-sm">
@@ -580,6 +577,12 @@ const NewStoryTemplate = () => {
                   <span>10</span>
                 </div>
               </div>
+
+      
+            )}
+          </div>
+
+
 
 
           
