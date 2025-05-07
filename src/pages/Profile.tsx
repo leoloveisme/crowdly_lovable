@@ -107,6 +107,9 @@ const Profile = () => {
   const [visibilityOption, setVisibilityOption] = useState("public");
   const [editField, setEditField] = useState<string | null>(null);
   const [tempFieldValue, setTempFieldValue] = useState("");
+  
+  // Add new state for settings popover
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Add new state for preview mode
   const [previewMode, setPreviewMode] = useState(false);
@@ -190,6 +193,10 @@ const Profile = () => {
   const togglePreviewMode = () => {
     const newPreviewMode = !previewMode;
     setPreviewMode(newPreviewMode);
+    // Close the settings popover when entering preview mode
+    if (newPreviewMode) {
+      setIsSettingsOpen(false);
+    }
     toast({
       title: newPreviewMode ? "Preview Mode Activated" : "Edit Mode Activated",
       description: newPreviewMode ? "Viewing profile as others see it" : "You can now edit your profile",
@@ -266,20 +273,80 @@ const Profile = () => {
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-3xl font-bold">
             <EditableText id="profile-title">Profile</EditableText> 
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-            >
-              <Settings className="h-5 w-5" />
-            </Button>
+            {!previewMode && (
+              <Popover open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                <PopoverTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="ml-2 p-1 text-gray-400 hover:text-gray-600"
+                  >
+                    <Settings className="h-5 w-5" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72 p-4" align="start">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-sm">
+                        <EditableText id="visibility-popup-label">Visibility</EditableText>
+                      </h4>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="text-xs text-gray-500 flex items-center gap-1">
+                              <Info className="h-4 w-4" />
+                              <EditableText id="can-be-changed-text-popup">Can be changed any time</EditableText>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              <EditableText id="visibility-tooltip-popup">
+                                You can change your profile visibility at any time
+                              </EditableText>
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    
+                    <RadioGroup 
+                      value={visibilityOption} 
+                      onValueChange={setVisibilityOption}
+                      className="space-y-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="public" id="public-popup" />
+                        <Label htmlFor="public-popup" className="flex items-center gap-2 cursor-pointer">
+                          <Globe className="h-4 w-4 text-purple-600" />
+                          <EditableText id="public-option-popup">Public</EditableText>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="private" id="private-popup" />
+                        <Label htmlFor="private-popup" className="flex items-center gap-2 cursor-pointer">
+                          <User className="h-4 w-4 text-purple-600" />
+                          <EditableText id="private-option-popup">Private</EditableText>
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="friends" id="friends-popup" />
+                        <Label htmlFor="friends-popup" className="flex items-center gap-2 cursor-pointer">
+                          <Users className="h-4 w-4 text-purple-600" />
+                          <EditableText id="friends-option-popup">Friends only</EditableText>
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
             <Button 
               variant="ghost" 
               size="sm" 
               className={`p-1 ${previewMode ? 'text-purple-600' : 'text-gray-400 hover:text-gray-600'}`}
               onClick={togglePreviewMode}
             >
-              {previewMode ? <Eye className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              {previewMode ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
             </Button>
           </h1>
         </div>
@@ -469,60 +536,21 @@ const Profile = () => {
                 </div>
               </div>
               
-              {/* Visibility settings */}
-              <div className="pt-4 border-t border-gray-200">
-                <div className="flex items-center justify-between mb-3">
-                  <Label className="font-medium">
-                    <EditableText id="visibility-label">Visibility</EditableText>
-                  </Label>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <span className="text-sm text-gray-500 flex items-center gap-1">
-                          <Info className="h-4 w-4" />
-                          <EditableText id="can-be-changed-text">Can be changed any time</EditableText>
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          <EditableText id="visibility-tooltip">
-                            You can change your profile visibility at any time
-                          </EditableText>
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+              {/* Remove inline visibility settings as they are now in the popover */}
+              {previewMode && (
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex items-center gap-2">
+                    {visibilityOption === "public" && <Globe className="h-4 w-4 text-purple-600" />}
+                    {visibilityOption === "private" && <User className="h-4 w-4 text-purple-600" />}
+                    {visibilityOption === "friends" && <Users className="h-4 w-4 text-purple-600" />}
+                    <span className="text-sm">
+                      {visibilityOption === "public" && "Public profile"}
+                      {visibilityOption === "private" && "Private profile"}
+                      {visibilityOption === "friends" && "Friends only profile"}
+                    </span>
+                  </div>
                 </div>
-                
-                <RadioGroup 
-                  value={visibilityOption} 
-                  onValueChange={setVisibilityOption}
-                  className="space-y-2"
-                  disabled={previewMode}
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="public" id="public" />
-                    <Label htmlFor="public" className="flex items-center gap-2 cursor-pointer">
-                      <Globe className="h-4 w-4 text-purple-600" />
-                      <EditableText id="public-option">Public</EditableText>
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="private" id="private" />
-                    <Label htmlFor="private" className="flex items-center gap-2 cursor-pointer">
-                      <User className="h-4 w-4 text-purple-600" />
-                      <EditableText id="private-option">Private</EditableText>
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="friends" id="friends" />
-                    <Label htmlFor="friends" className="flex items-center gap-2 cursor-pointer">
-                      <Users className="h-4 w-4 text-purple-600" />
-                      <EditableText id="friends-option">Friends only</EditableText>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
+              )}
             </div>
           </div>
         </div>
