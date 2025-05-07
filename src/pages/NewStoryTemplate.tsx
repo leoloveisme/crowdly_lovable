@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { 
 Settings, 
 Eye, 
+EyeClosed,
 HelpCircle, 
 CircleX, 
 LayoutTemplate, 
@@ -344,7 +345,7 @@ const NewStoryTemplate = () => {
               <span className="text-blue-500 text-sm hover:underline cursor-pointer">revisions</span>
               <div className="flex">
                 <button onClick={() => toggleSection('revisions')}>
-                  {revisionsOpen ? <Eye size={16} /> : <LayoutTemplate size={16} />}
+                  {revisionsOpen ? <EyeClosed size={16} /> : <LayoutTemplate size={16} />}
                 </button>
               </div>
             </div>
