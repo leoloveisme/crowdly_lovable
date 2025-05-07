@@ -13,11 +13,12 @@ import AccountAdministration from "./pages/AccountAdministration";
 import NewStoryTemplate from "./pages/NewStoryTemplate";
 import StoryforConsumers from "./pages/StoryforConsumers";
 import Profile from "./pages/Profile";
+import Sitemap from "./pages/Sitemap";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import EditingModeToggle from "./components/EditingModeToggle";
-import Sitemap from "./pages/Sitemap";
+
 
 const queryClient = new QueryClient();
 
