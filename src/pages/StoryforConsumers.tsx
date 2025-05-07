@@ -736,10 +736,7 @@ const StoryforConsumers = () => {
                     ))}
                   </div>
                   
-                  <Button variant="outline" size="sm" className="mt-6 w-full">
-                    <Plus className="h-4 w-4 mr-1" />
-                    <EditableText id="create-branch-btn">Create New Branch</EditableText>
-                  </Button>
+                
                 </CardContent>
               </Card>
             )}
