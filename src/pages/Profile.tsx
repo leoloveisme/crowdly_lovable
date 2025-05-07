@@ -261,9 +261,9 @@ const Profile = () => {
   
   const saveField = () => {
     if (editField === 'name') {
-      setName(tempFieldValue);
+      setFirstName(tempFieldValue);
     } else if (editField === 'rupkin') {
-      setRupkin(tempFieldValue.startsWith('@') ? tempFieldValue : `@${tempFieldValue}`);
+      setLastName(tempFieldValue.startsWith('@') ? tempFieldValue : `@${tempFieldValue}`);
     } else if (editField === 'nickname') {
       setNickname(tempFieldValue);
     }
