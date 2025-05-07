@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -831,4 +832,16 @@ const Profile = () => {
             
             <div className="space-y-4 mt-4">
               <div>
-                <h3 className="font-semibold
+                <h3 className="font-semibold">Story Title</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <CrowdlyFooter />
+    </div>
+  );
+};
+
+export default Profile;
