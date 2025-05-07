@@ -110,8 +110,7 @@ const Index = () => {
                       </EditableText>
                     </Link>
                   </div>
-
-            
+           
           </div>
         </div>
       </div>
