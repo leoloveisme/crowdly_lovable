@@ -423,7 +423,7 @@ const Profile = () => {
         
         {/* Revisions Section */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
+          <div className="flex justify-between items-center mb-4">
             
               <span className="text-blue-500 text-sm hover:underline cursor-pointer"><EditableText id="revisions-heading">Revisions</EditableText></span>
           
