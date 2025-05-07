@@ -496,7 +496,7 @@ const NewStoryTemplate = () => {
               </ResizablePanelGroup>
             </div>
           )}
-        </div>
+       
           
 
           {/* Branches Section */}
