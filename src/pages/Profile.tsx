@@ -430,7 +430,7 @@ const Profile = () => {
                     <Label className="text-sm text-gray-500">
                       <EditableText id="first-name">First name</EditableText>
                     </Label>
-                    {!previewMode && editField === 'name' ? (
+                    {!previewMode && editField === 'first_name' ? (
                       <div className="flex space-x-2">
                         <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
                           <X className="h-4 w-4" />
@@ -443,14 +443,14 @@ const Profile = () => {
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        onClick={() => startEditing('name', name)}
+                        onClick={() => startEditing('first_name', first_name)}
                         className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
                       >
                         <EditableText id="edit-button">Edit</EditableText>
                       </Button>
                     ) : null}
                   </div>
-                  {!previewMode && editField === 'name' ? (
+                  {!previewMode && editField === 'first_name' ? (
                     <Input 
                       value={tempFieldValue}
                       onChange={(e) => setTempFieldValue(e.target.value)}
@@ -458,7 +458,7 @@ const Profile = () => {
                       autoFocus
                     />
                   ) : (
-                    <div className="font-medium">{name}</div>
+                    <div className="font-medium">{first_name}</div>
                   )}
                 </div>
                 
