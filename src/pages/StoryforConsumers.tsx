@@ -343,23 +343,6 @@ const StoryforConsumers = () => {
                         <h2 className="text-xl font-semibold">
                           <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
                         </h2>
-                        {/* Chapter level like/dislike buttons */}
-                        <div className="flex items-center space-x-4">
-                          <button 
-                            onClick={() => handleChapterLike('chapter1')} 
-                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                          >
-                            <ThumbsUp className="h-4 w-4 mr-1" />
-                            <span>{chapterLikes.chapter1 || 0}</span>
-                          </button>
-                          <button 
-                            onClick={() => handleChapterDislike('chapter1')} 
-                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                          >
-                            <ThumbsDown className="h-4 w-4 mr-1" />
-                            <span>{chapterDislikes.chapter1 || 0}</span>
-                          </button>
-                        </div>
                       </div>
                       
                       {/* Text content with branch buttons */}
@@ -550,6 +533,23 @@ const StoryforConsumers = () => {
                           </Button>
                         </div>
                       </div>
+                    </div>
+                    
+                    <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                      <button 
+                        onClick={() => handleChapterLike('chapter1')} 
+                        className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                      >
+                        <ThumbsUp className="h-5 w-5 mr-1" />
+                        <span>{chapterLikes.chapter1 || 0}</span>
+                      </button>
+                      <button 
+                        onClick={() => handleChapterDislike('chapter1')} 
+                        className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                      >
+                        <ThumbsDown className="h-5 w-5 mr-1" />
+                        <span>{chapterDislikes.chapter1 || 0}</span>
+                      </button>
                     </div>
                     
                     <div className="mt-8 pt-4 border-t">
