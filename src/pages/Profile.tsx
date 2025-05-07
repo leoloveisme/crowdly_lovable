@@ -462,13 +462,13 @@ const Profile = () => {
                   )}
                 </div>
                 
-                {/* Rupkin field */}
+                {/* Last name field */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between">
                     <Label className="text-sm text-gray-500">
                       <EditableText id="last-name">Last name</EditableText>
                     </Label>
-                    {!previewMode && editField === 'rupkin' ? (
+                    {!previewMode && editField === 'last_name' ? (
                       <div className="flex space-x-2">
                         <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
                           <X className="h-4 w-4" />
@@ -481,14 +481,14 @@ const Profile = () => {
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        onClick={() => startEditing('rupkin', rupkin)}
+                        onClick={() => startEditing('last_name', last_name)}
                         className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
                       >
                         <EditableText id="edit-button">Edit</EditableText>
                       </Button>
                     ) : null}
                   </div>
-                  {!previewMode && editField === 'rupkin' ? (
+                  {!previewMode && editField === 'last_name' ? (
                     <Input 
                       value={tempFieldValue}
                       onChange={(e) => setTempFieldValue(e.target.value)}
@@ -496,7 +496,7 @@ const Profile = () => {
                       autoFocus
                     />
                   ) : (
-                    <div className="font-medium text-gray-800">{rupkin}</div>
+                    <div className="font-medium text-gray-800">{last_name}</div>
                   )}
                 </div>
                 
