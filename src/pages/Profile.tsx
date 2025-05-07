@@ -858,11 +858,7 @@ const Profile = () => {
               </Link>
             )}
             
-            <div className="space-y-4 mt-4">
-              <div>
-                <h3 className="font-semibold">Story Title</h3>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
