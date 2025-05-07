@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -764,3 +765,173 @@ const StoryforConsumers = () => {
                           <Button 
                             variant="outline" 
                             size="sm"
+                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleCreateBranch('paragraph3')}
+                          >
+                            <GitBranch className="h-3 w-3 mr-1" />
+                            <EditableText id="create-branch-btn3">Create Branch</EditableText>
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      {/* Add like/dislike buttons for the chapter */}
+                      <div className="mt-8 pt-4 border-t flex items-center space-x-2">
+                        <button 
+                          onClick={() => handleChapterLike('chapter1')} 
+                          className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                        >
+                          <ThumbsUp className="h-5 w-5 mr-1" />
+                          <span>{chapterLikes.chapter1 || 0}</span>
+                        </button>
+                        <button 
+                          onClick={() => handleChapterDislike('chapter1')} 
+                          className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                        >
+                          <ThumbsDown className="h-5 w-5 mr-1" />
+                          <span>{chapterDislikes.chapter1 || 0}</span>
+                        </button>
+                      </div>
+                      
+                      {/* Add Comments section for chapter */}
+                      <CommentsSection targetId="chapter1" />
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Dialog for creating a new branch */}
+                <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Create a New Branch</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="branch-name">Branch Name</Label>
+                        <Input id="branch-name" placeholder="Enter a name for your branch" />
+                      </div>
+                      <div>
+                        <Label htmlFor="branch-description">Description</Label>
+                        <Textarea id="branch-description" placeholder="Briefly describe your branch" />
+                      </div>
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" onClick={() => setShowBranchDialog(false)}>
+                          Cancel
+                        </Button>
+                        <Button>
+                          Create Branch
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            ) : null}
+            
+            {/* Contributors Content */}
+            {activeSection === 'contributors' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <EditableText id="contributors-title">Contributors</EditableText>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>
+                          <EditableText id="contributor-name">Name</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="words-contributed">Words</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="paragraphs-contributed">Paragraphs</EditableText>
+                        </TableHead>
+                        <TableHead>
+                          <EditableText id="chapters-contributed">Chapters</EditableText>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {contributorsData.map((contributor) => (
+                        <TableRow key={contributor.id}>
+                          <TableCell className="font-medium">{contributor.name}</TableCell>
+                          <TableCell>{contributor.words}</TableCell>
+                          <TableCell>{contributor.paragraphs}</TableCell>
+                          <TableCell>{contributor.chapters}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Revisions Content */}
+            {activeSection === 'revisions' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <EditableText id="revisions-title">Revision History</EditableText>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {revisionsData.map((revision) => (
+                      <div key={revision.id} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
+                        <div>
+                          <div className="font-medium">{revision.description}</div>
+                          <div className="text-gray-500 text-sm">{revision.timestamp}</div>
+                        </div>
+                        <Button variant="ghost" size="sm">
+                          <Eye className="h-4 w-4 mr-1" />
+                          <EditableText id="view-revision-btn">View</EditableText>
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Branches Content */}
+            {activeSection === 'branches' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    <EditableText id="branches-title">Story Branches</EditableText>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {branchesData.map((branch) => (
+                      <div key={branch.id} className="flex justify-between items-center p-3 border rounded-lg">
+                        <div>
+                          <div className="font-medium">{branch.title}</div>
+                          <div className="text-gray-500 text-sm">By {branch.author} · {branch.chapters} chapters</div>
+                        </div>
+                        <Button variant="outline" size="sm" className="flex items-center">
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <Button variant="outline" size="sm" className="mt-4 w-full">
+                    <Plus className="h-4 w-4 mr-1" />
+                    <EditableText id="new-branch-btn">Create New Branch</EditableText>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
+      </main>
+      
+      <CrowdlyFooter />
+    </div>
+  );
+};
+
+export default StoryforConsumers;
