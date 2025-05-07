@@ -203,32 +203,7 @@ const Profile = () => {
           <h1 className="text-3xl font-bold">
             <EditableText id="profile-title">Profile</EditableText> <Settings className="inline h-5 w-5 text-gray-400" /> <Eye className="inline h-5 w-5 text-gray-400" />
           </h1>
-          <div className="flex items-center space-x-4">
-            <div className="flex flex-col items-end">
-              <div className="flex items-center mb-1">
-                <Checkbox 
-                  id="private-profile" 
-                  checked={isPrivate} 
-                  onCheckedChange={() => setIsPrivate(!isPrivate)} 
-                  className="mr-2" 
-                />
-                <Label htmlFor="private-profile">
-                  <EditableText id="private-label">private</EditableText>
-                </Label>
-              </div>
-              <div className="flex items-center mb-1">
-                <Checkbox 
-                  id="can-be-tagged" 
-                  checked={canBeTagged} 
-                  onCheckedChange={() => setCanBeTagged(!canBeTagged)} 
-                  className="mr-2" 
-                />
-                <Label htmlFor="can-be-tagged">
-                  <EditableText id="tag-label">can be tagged any time</EditableText>
-                </Label>
-              </div>
-            </div>            
-          </div>
+          
         </div>
         
         {/* Interests/Hobbies Section */}
