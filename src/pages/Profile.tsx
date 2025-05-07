@@ -346,7 +346,7 @@ const Profile = () => {
               className={`p-1 ${previewMode ? 'text-purple-600' : 'text-gray-400 hover:text-gray-600'}`}
               onClick={togglePreviewMode}
             >
-              {previewMode ? <Eye className="h-5 w-5" /> : <EyeOff className="h-5 w-5" />}
+              {previewMode ? <Eye className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </Button>
           </h1>
         </div>
