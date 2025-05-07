@@ -39,6 +39,7 @@ const App = () => {
                 <Route path="/new-story-template" element={<NewStoryTemplate />} />
                 <Route path="/story-for-consumers" element={<StoryforConsumers />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/sitemap" element={<Sitemap />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
