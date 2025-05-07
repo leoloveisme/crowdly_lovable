@@ -102,8 +102,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
   // Original state
-  const [name, setName] = useState("Username");
-  const [rupkin, setRupkin] = useState("@username");
+  const [first_name, setFirstName] = useState("Max");
+  const [last_name, setLastName] = useState("Riprin");
   const [nickname, setNickname] = useState("");
   const [about, setAbout] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
