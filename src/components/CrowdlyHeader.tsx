@@ -142,13 +142,7 @@ const CrowdlyHeader = () => {
           </div>
           
           <Popover open={showPopover} onOpenChange={setShowPopover}>
-            <PopoverTrigger asChild>
 
-
-
-
-              
-            </PopoverTrigger>
             <PopoverContent className="w-64 p-0">
               <div className="relative p-4">
                 <Button 
