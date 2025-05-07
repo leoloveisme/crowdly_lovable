@@ -366,20 +366,12 @@ const Profile = () => {
             <h2 className="text-xl font-bold mr-2">
               <EditableText id="profile-information-heading">Profile information</EditableText>
             </h2>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className="h-5 w-5 text-gray-400" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    <EditableText id="profile-information-tooltip">
-                      Your profile information is displayed on your public profile
-                    </EditableText>
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+
+
+
+
+
+            
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
