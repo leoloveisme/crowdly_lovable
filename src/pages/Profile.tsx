@@ -226,28 +226,7 @@ const Profile = () => {
                 </Label>
               </div>
             </div>
-            <div className="border border-gray-300 p-2 rounded-md">
-              <div className="grid grid-cols-3 gap-1">
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <span className="text-xl">≡</span>
-                </Button>
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <span className="text-xl">⋮</span>
-                </Button>
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <span className="text-xl">⋯</span>
-                </Button>
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <span className="text-xl">⬒</span>
-                </Button>
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <span className="text-xl">⬓</span>
-                </Button>
-                <Button variant="ghost" size="sm" className="p-1 h-auto">
-                  <span className="text-xl">⬒</span>
-                </Button>
-              </div>
-            </div>
+            
           </div>
         </div>
         
