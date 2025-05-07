@@ -505,19 +505,19 @@ const Profile = () => {
                   <EditableText id="authoring-heading">Authoring</EditableText>
                 </h3>
                 <div className="space-y-1">
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="text-label">Text</EditableText></span>
                     <span className="text-blue-500">{stats.author.text}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="images-label">Images</EditableText></span>
                     <span className="text-blue-500">{stats.author.images}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="audio-label">Audio</EditableText></span>
                     <span className="text-blue-500">{stats.author.audio}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="video-label">Video</EditableText></span>
                     <span className="text-blue-500">{stats.author.video}</span>
                   </div>
@@ -529,19 +529,19 @@ const Profile = () => {
                   <EditableText id="consuming-heading">Consuming</EditableText>
                 </h3>
                 <div className="space-y-1">
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="text-label">Text</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.text}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="images-label">Images</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.images}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="audio-label">Audio</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.audio}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex">
                     <span><EditableText id="video-label">Video</EditableText></span>
                     <span className="text-blue-500">{stats.consumer.video}</span>
                   </div>
@@ -552,7 +552,7 @@ const Profile = () => {
                 <h3 className="font-semibold mb-2">
                   <EditableText id="producing-heading">Producing</EditableText>
                 </h3>
-                <div className="flex justify-between">
+                <div className="flex">
                   <span>
                     <EditableText id="story-label">Story</EditableText>
                   </span>
@@ -569,25 +569,25 @@ const Profile = () => {
                     <EditableText id="contributing-heading">Contributing</EditableText>
                   </h4>
                   <div className="space-y-1">
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="text-label">Text</EditableText>
                       </span>
                       <span className="text-blue-500">{stats.community.contributing.text}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="images-label">Images</EditableText>
                       </span>
                       <span className="text-blue-500">{stats.community.contributing.images}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="audio-label">Audio</EditableText>
                       </span>
                       <span className="text-blue-500">{stats.community.contributing.audio}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="video-label">Video</EditableText>
                       </span>
@@ -596,25 +596,25 @@ const Profile = () => {
                   </div>
                   
                   <div className="space-y-1">
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="feedback-label">Sent feedback</EditableText>
                       </span>
                       <span className="text-blue-500">{stats.community.sentFeedback}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="suggested-features-label">Suggested features</EditableText>
                       </span>
                       <span className="text-blue-500">{stats.community.suggestedFeatures}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="submitted-bug-reports-label">Submitted bug reports</EditableText>
                       </span>
                       <span className="text-blue-500">{stats.community.submittedBugReports}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex">
                       <span>
                         <EditableText id="contact-requests-label">Contact requests</EditableText>
                       </span>
