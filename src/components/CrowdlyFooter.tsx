@@ -13,8 +13,8 @@ const CrowdlyFooter = () => {
               <EditableText id="footer-company-title">Company</EditableText>
             </h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-600 hover:text-blue-500">
-                <EditableText id="footer-about">About</EditableText>
+              <li><a href="/about-us" className="text-gray-600 hover:text-blue-500">
+                <EditableText id="footer-about">About Us</EditableText>
               </a></li>
               <li><a href="#" className="text-gray-600 hover:text-blue-500">
                 <EditableText id="footer-careers">Careers</EditableText>

@@ -14,6 +14,7 @@ import NewStoryTemplate from "./pages/NewStoryTemplate";
 import StoryforConsumers from "./pages/StoryforConsumers";
 import Profile from "./pages/Profile";
 import Sitemap from "./pages/Sitemap";
+import AboutUs from "./pages/AboutUs";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
@@ -40,6 +41,7 @@ const App = () => {
                 <Route path="/story-for-consumers" element={<StoryforConsumers />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/sitemap" element={<Sitemap />} />
+                <Route path="/about-us" element={<AboutUs />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
