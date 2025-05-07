@@ -424,9 +424,9 @@ const Profile = () => {
         {/* Revisions Section */}
         <div className="mb-8">
           <div className="flex items-center mb-4">
-            <h2 className="text-xl font-bold mr-2">
+            
               <span className="text-blue-500 text-sm hover:underline cursor-pointer"><EditableText id="revisions-heading">Revisions</EditableText></span>
-            </h2>
+          
             <Info className="h-5 w-5 text-gray-400" />
             <TooltipProvider>
               <Tooltip>
