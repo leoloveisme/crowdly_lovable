@@ -566,8 +566,7 @@ const Profile = () => {
               <TextArea 
                   id="about_user"
                   placeholder="Write a couple of words about yourself" 
-                  className="flex-grow" 
-                />
+              />
         
         {/* Interests/Hobbies Section */}
         <div className="mb-8">
