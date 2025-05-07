@@ -176,7 +176,7 @@ const CrowdlyHeader = () => {
                     </div>
                   )}
                   
-              </div>
+              
             </PopoverContent>
           </Popover>
           
