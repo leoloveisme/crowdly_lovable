@@ -434,48 +434,7 @@ const StoryforConsumers = () => {
           
           {/* Main Content Area */}
           <div className="lg:col-span-3">
-            {/* Story Controls - We'll remove these buttons since they're now in the dropdown */}
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex space-x-2">
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <Settings className="h-4 w-4 mr-1" />
-                  <EditableText id="settings-btn">Settings</EditableText>
-                </Button>
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <Eye className="h-4 w-4 mr-1" />
-                  <EditableText id="preview-btn">Preview</EditableText>
-                </Button>
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <HelpCircle className="h-4 w-4 mr-1" />
-                  <EditableText id="help-btn">Help</EditableText>
-                </Button>
-              </div>
-              {/* We'll keep these buttons for now to maintain existing functionality */}
-              <div className="flex space-x-2">
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <Copy className="h-4 w-4 mr-1" />
-                  <EditableText id="clone-btn">Clone</EditableText>
-                </Button>
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <Volume className="h-4 w-4 mr-1" />
-                  <EditableText id="generate-audio-btn">Generate Audio</EditableText>
-                </Button>
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <Mic className="h-4 w-4 mr-1" />
-                  <EditableText id="record-audio-btn">Record Audio</EditableText>
-                </Button>
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <Video className="h-4 w-4 mr-1" />
-                  <EditableText id="record-video-btn">Record Video</EditableText>
-                </Button>
-                <Button variant="outline" size="sm" className="flex items-center">
-                  <Video className="h-4 w-4 mr-1" />
-                  <EditableText id="generate-video-btn">Generate Video</EditableText>
-                </Button>
-              </div>
-            </div>
-            
-            {/* Tabs for different views */}
+          
             <div className="flex border-b mb-6">
               <Button 
                 variant="ghost" 
