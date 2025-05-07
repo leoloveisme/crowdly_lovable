@@ -68,7 +68,7 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import EditableText from "@/components/EditableText";
 
 import React, { useState } from "react";
-import { Info, Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, Columns4, LayoutGrid, LayoutList, Grid2x2, LayoutDashboard } from "lucide-react";
+import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, Columns4, LayoutGrid, LayoutList, Grid2x2, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
