@@ -193,6 +193,63 @@ const Profile = () => {
   };
 
   return (
+    <div className="min-h-screen flex flex-col">
+      <CrowdlyHeader />
+      
+      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
+        <div className="flex justify-between items-start mb-8">
+          <h1 className="text-3xl font-bold">
+            <EditableText id="profile-title">Profile</EditableText> <Info className="inline h-5 w-5 text-gray-400" />
+          </h1>
+          <div className="flex items-center space-x-4">
+            <div className="flex flex-col items-end">
+              <div className="flex items-center mb-1">
+                <Checkbox 
+                  id="private-profile" 
+                  checked={isPrivate} 
+                  onCheckedChange={() => setIsPrivate(!isPrivate)} 
+                  className="mr-2" 
+                />
+                <Label htmlFor="private-profile">
+                  <EditableText id="private-label">private</EditableText>
+                </Label>
+              </div>
+              <div className="flex items-center mb-1">
+                <Checkbox 
+                  id="can-be-tagged" 
+                  checked={canBeTagged} 
+                  onCheckedChange={() => setCanBeTagged(!canBeTagged)} 
+                  className="mr-2" 
+                />
+                <Label htmlFor="can-be-tagged">
+                  <EditableText id="tag-label">can be tagged any time</EditableText>
+                </Label>
+              </div>
+            </div>
+            <div className="border border-gray-300 p-2 rounded-md">
+              <div className="grid grid-cols-3 gap-1">
+                <Button variant="ghost" size="sm" className="p-1 h-auto">
+                  <span className="text-xl">≡</span>
+                </Button>
+                <Button variant="ghost" size="sm" className="p-1 h-auto">
+                  <span className="text-xl">⋮</span>
+                </Button>
+                <Button variant="ghost" size="sm" className="p-1 h-auto">
+                  <span className="text-xl">⋯</span>
+                </Button>
+                <Button variant="ghost" size="sm" className="p-1 h-auto">
+                  <span className="text-xl">⬒</span>
+                </Button>
+                <Button variant="ghost" size="sm" className="p-1 h-auto">
+                  <span className="text-xl">⬓</span>
+                </Button>
+                <Button variant="ghost" size="sm" className="p-1 h-auto">
+                  <span className="text-xl">⬒</span>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
         
         {/* Interests/Hobbies Section */}
         <div className="mb-8">
