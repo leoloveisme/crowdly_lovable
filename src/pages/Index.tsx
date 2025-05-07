@@ -47,7 +47,7 @@ const Index = () => {
             <p className="mb-2">
               <EditableText id="feedback-message">
                 Here will be your favorite stories, which you've added to your favorites. 
-They're only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
+On this page they're only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
               </EditableText>
             </p>           
           </div>
