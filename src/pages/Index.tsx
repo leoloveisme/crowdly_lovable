@@ -67,7 +67,7 @@ const Index = () => {
 
           <p className="text-xl text-gray-600 mb-8">
             <EditableText id="main-subtitle">
-              Most popular
+              Most active
             </EditableText>
           </p>
 
