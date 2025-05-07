@@ -71,7 +71,7 @@ import React, { useState } from "react";
 import { Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, LayoutGrid, LayoutList, LayoutDashboard } from "lucide-react";
 
 import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useToast } from "@/hooks/use-toast";
