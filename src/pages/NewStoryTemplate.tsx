@@ -477,15 +477,7 @@ const NewStoryTemplate = () => {
 
           {/* Branches Section */}
           <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-blue-500 text-sm hover:underline cursor-pointer">branches</span>
-              <div className="flex">
-                <button onClick={() => toggleSection('branches')}>
-                  {branchesOpen ? <CircleX size={16} /> : <LayoutTemplate size={16} />}
-                </button>
-              </div>
-            </div>
-            {/* This below is the text from the Intro chapter */} 
+          {/* This below is the text from the Intro chapter */} 
             {branchesOpen && (
               <div className="bg-white rounded-md shadow-sm border p-4">
                 <div className="text-sm">
