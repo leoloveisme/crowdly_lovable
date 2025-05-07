@@ -29,7 +29,7 @@ const Sitemap = () => {
       
       <div className="flex-grow flex items-center justify-center bg-gray-50">
 
-<div className="border-b pb-2">
+                <div className="border-b pb-2">
                     <Link 
                       to="/suggest-feature" 
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
@@ -40,7 +40,9 @@ const Sitemap = () => {
                       </EditableText>
                     </Link>
                   </div>
-                  <div>
+      </div>
+<div className="flex-grow flex items-center justify-center bg-gray-50">
+      <div>
                     <Link 
                       to="/account-administration" 
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
@@ -51,7 +53,9 @@ const Sitemap = () => {
                       </EditableText>
                     </Link>
                   </div>
-                  <div>
+</div>
+<div className="flex-grow flex items-center justify-center bg-gray-50">
+      <div>
                     <Link 
                       to="/new-story-template" 
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
@@ -62,7 +66,9 @@ const Sitemap = () => {
                       </EditableText>
                     </Link>
                   </div>
-                  <div>
+</div>
+<div className="flex-grow flex items-center justify-center bg-gray-50">
+      <div>
                     <Link 
                       to="/story-for-consumers" 
                       className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
@@ -73,6 +79,8 @@ const Sitemap = () => {
                       </EditableText>
                     </Link>
                   </div>
+</div>
+<div className="flex-grow flex items-center justify-center bg-gray-50">
                   <div>
                     <Link 
                       to="/profile" 
@@ -84,7 +92,7 @@ const Sitemap = () => {
                       </EditableText>
                     </Link>
                   </div>
-
+</div>
 
         
       </div>
