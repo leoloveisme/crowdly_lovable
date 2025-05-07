@@ -57,9 +57,27 @@ const Index = () => {
               <EditableText id="feedback-message">
                 We value your feedback and ideas!
               </EditableText>
-            </p>
-            
+            </p>           
           </div>
+
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="main-subtitle">
+              Favorites
+            </EditableText>
+          </p>
+
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="main-subtitle">
+              Newest
+            </EditableText>
+          </p>
+
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="main-subtitle">
+              Most popular
+            </EditableText>
+          </p>
+
         </div>
       </div>
       
