@@ -43,17 +43,37 @@ const Index = () => {
             </EditableText>
           </p>
 
+          <div className="space-y-4">
+            <p className="mb-2">
+              <EditableText id="feedback-message">
+                Here will be your favorite stories, which you've added to your favorites
+              </EditableText>
+            </p>           
+          </div>
+
           <p className="text-xl text-gray-600 mb-8">
             <EditableText id="main-subtitle">
               Newest
             </EditableText>
           </p>
 
+
           <p className="text-xl text-gray-600 mb-8">
             <EditableText id="main-subtitle">
               Most popular
             </EditableText>
           </p>
+
+
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="main-subtitle">
+              Most popular
+            </EditableText>
+          </p>
+
+
+
+
 
         </div>
       </div>
