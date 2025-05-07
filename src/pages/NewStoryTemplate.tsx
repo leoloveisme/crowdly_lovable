@@ -76,11 +76,6 @@ import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useToast } from "@/hooks/use-toast";
 
 
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
 
 const NewStoryTemplate = () => {
   const [visibilityOpen, setVisibilityOpen] = useState(false);
