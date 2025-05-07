@@ -225,8 +225,7 @@ const Profile = () => {
                   <EditableText id="tag-label">can be tagged any time</EditableText>
                 </Label>
               </div>
-            </div>
-            
+            </div>            
           </div>
         </div>
         
@@ -236,15 +235,7 @@ const Profile = () => {
             <h2 className="text-xl font-bold mr-2">
               <EditableText id="interests-heading">Interests/Hobbies</EditableText>
             </h2>
-            <Info className="h-5 w-5 text-gray-400" />
-            <div className="ml-auto flex items-center">
-              <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+            <Info className="h-5 w-5 text-gray-400" />            
           </div>
           
           <div className="mb-3">
