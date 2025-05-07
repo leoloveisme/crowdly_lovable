@@ -1111,7 +1111,6 @@ const Profile = () => {
                           <TooltipTrigger asChild>
                             <div className="text-xs text-gray-500 flex items-center gap-1">
                               <Info className="h-4 w-4" />
-                              <EditableText id="can-be-changed-text-popup">Can be changed any time</EditableText>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent>
