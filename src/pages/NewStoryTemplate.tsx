@@ -70,14 +70,6 @@ import EditableText from "@/components/EditableText";
 import React, { useState } from "react";
 import { Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, LayoutGrid, LayoutList, LayoutDashboard } from "lucide-react";
 
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
