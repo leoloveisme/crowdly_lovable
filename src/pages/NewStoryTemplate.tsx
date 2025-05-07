@@ -473,7 +473,7 @@ const NewStoryTemplate = () => {
               </div>
             )}
           </div>           
-          </div>
+          
 
           {/* Branches Section */}
           <div className="mb-4">
