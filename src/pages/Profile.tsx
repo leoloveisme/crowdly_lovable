@@ -662,19 +662,6 @@ const Profile = () => {
           )}
         </div>
         
-        {/* Layout Options */}
-        <div className="mb-8">
-          <div className="border p-4 rounded">
-            <div className="grid grid-cols-5 gap-2">
-              <Button variant="ghost" className="p-2 h-12">≡</Button>
-              <Button variant="ghost" className="p-2 h-12">⋮</Button>
-              <Button variant="ghost" className="p-2 h-12">⋯</Button>
-              <Button variant="ghost" className="p-2 h-12">⬒</Button>
-              <Button variant="ghost" className="p-2 h-12">⊞</Button>
-            </div>
-          </div>
-        </div>
-        
         {/* Stories Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">
