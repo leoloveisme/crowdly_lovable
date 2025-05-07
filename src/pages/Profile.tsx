@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -818,4 +819,289 @@ const Profile = () => {
                             </EditableText>
                           </p>
                           <p>
-                            <EditableText id="revision-2-
+                            <EditableText id="revision-2-content-2">
+                              This shows the changes made.
+                            </EditableText>
+                          </p>
+                        </div>
+                      </div>
+                    </ResizablePanel>
+                    
+                    <ResizableHandle withHandle />
+                    
+                    <ResizablePanel defaultSize={33}>
+                      <div className="p-2 h-full bg-white">
+                        <div className="text-sm font-medium mb-1">
+                          <EditableText id="revision-3-title">Revision 3</EditableText>
+                        </div>
+                        <div className="text-xs">
+                          <p>
+                            <EditableText id="revision-3-content-1">
+                              Latest text content from revision 3.
+                            </EditableText>
+                          </p>
+                          <p>
+                            <EditableText id="revision-3-content-2">
+                              This shows the most recent changes.
+                            </EditableText>
+                          </p>
+                        </div>
+                      </div>
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+        
+        {/* Stories Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">
+            <EditableText id="stories-heading">Stories</EditableText>
+          </h2>
+          <div className="mb-6">
+            {!previewMode && (
+              <Link to="#" className="text-blue-500 hover:underline mb-4 block">
+                <EditableText id="add-story-link">Add story</EditableText>
+              </Link>
+            )}
+            
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  <EditableText id="stats-title">Stats</EditableText>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="author">
+                  <TabsList className="mb-4 w-full justify-start">
+                    <TabsTrigger value="author" className="flex items-center gap-1">
+                      <PencilLine className="h-4 w-4" />
+                      <EditableText id="author-tab">Author</EditableText>
+                    </TabsTrigger>
+                    <TabsTrigger value="consumer" className="flex items-center gap-1">
+                      <BookOpen className="h-4 w-4" />
+                      <EditableText id="consumer-tab">Consumer</EditableText>
+                    </TabsTrigger>
+                    <TabsTrigger value="producer" className="flex items-center gap-1">
+                      <Award className="h-4 w-4" />
+                      <EditableText id="producer-tab">Producer</EditableText>
+                    </TabsTrigger>
+                    <TabsTrigger value="community" className="flex items-center gap-1">
+                      <Users className="h-4 w-4" />
+                      <EditableText id="community-tab">Community</EditableText>
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="author">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <FileText className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.author.text}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="text-stats">Text</EditableText>
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <Image className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.author.images}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="images-stats">Images</EditableText>
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <AudioLines className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.author.audio}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="audio-stats">Audio</EditableText>
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <Video className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.author.video}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="video-stats">Video</EditableText>
+                        </span>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="consumer">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <FileText className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.consumer.text}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="text-consumer-stats">Text</EditableText>
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <Image className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.consumer.images}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="images-consumer-stats">Images</EditableText>
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <AudioLines className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.consumer.audio}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="audio-consumer-stats">Audio</EditableText>
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <Video className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.consumer.video}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="video-consumer-stats">Video</EditableText>
+                        </span>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="producer">
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                      <div className="flex flex-col items-center p-3 border rounded">
+                        <BookOpen className="h-8 w-8 text-purple-600 mb-1" />
+                        <span className="text-xl font-bold">{stats.producer.story}</span>
+                        <span className="text-sm text-gray-500">
+                          <EditableText id="story-stats">Story</EditableText>
+                        </span>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="community">
+                    <div className="space-y-6">
+                      <div>
+                        <h3 className="text-md font-medium mb-2">
+                          <EditableText id="contributing-title">Contributing</EditableText>
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <FileText className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.contributing.text}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="text-community-stats">Text</EditableText>
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <Image className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.contributing.images}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="images-community-stats">Images</EditableText>
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <AudioLines className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.contributing.audio}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="audio-community-stats">Audio</EditableText>
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <Video className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.contributing.video}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="video-community-stats">Video</EditableText>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <h3 className="text-md font-medium mb-2">
+                          <EditableText id="other-contributions-title">Other Contributions</EditableText>
+                        </h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <MessageSquare className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.sentFeedback}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="feedback-stats">Sent Feedback</EditableText>
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <Star className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.suggestedFeatures}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="features-stats">Suggested Features</EditableText>
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <Send className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.submittedBugReports}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="bugs-stats">Bug Reports</EditableText>
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center p-3 border rounded">
+                            <Users className="h-8 w-8 text-purple-600 mb-1" />
+                            <span className="text-xl font-bold">{stats.community.contactRequests}</span>
+                            <span className="text-sm text-gray-500">
+                              <EditableText id="contact-stats">Contact Requests</EditableText>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        
+        {/* Contributions Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">
+            <EditableText id="contributions-heading">Contributions</EditableText>
+          </h2>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>
+                    <EditableText id="story-header">Story</EditableText>
+                  </TableHead>
+                  <TableHead>
+                    <EditableText id="chapter-header">Chapter</EditableText>
+                  </TableHead>
+                  <TableHead>
+                    <EditableText id="date-header">Date</EditableText>
+                  </TableHead>
+                  <TableHead>
+                    <EditableText id="time-header">Time</EditableText>
+                  </TableHead>
+                  <TableHead>
+                    <EditableText id="words-header">Words</EditableText>
+                  </TableHead>
+                  <TableHead>
+                    <EditableText id="likes-header">Likes</EditableText>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {contributions.map((contribution) => (
+                  <TableRow key={contribution.id}>
+                    <TableCell className="text-blue-500">{contribution.storyTitle}</TableCell>
+                    <TableCell>{contribution.chapterName}</TableCell>
+                    <TableCell>{contribution.date}</TableCell>
+                    <TableCell>{contribution.time}</TableCell>
+                    <TableCell>{contribution.words}</TableCell>
+                    <TableCell className="text-center">{contribution.likes}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </div>
+      
+      <CrowdlyFooter />
+    </div>
+  );
+};
+
+export default Profile;
