@@ -321,182 +321,158 @@ const NewStoryTemplate = () => {
                   </TooltipProvider>
                 </div>
                 
-          {/* Comparison Container */}
-          {compareOpen && selectedRevisions.length > 0 && (
-            <div className="border rounded-md p-4 bg-gray-50 mb-4">
-              <h4 className="font-medium mb-2">
-                <EditableText id="compare-revisions-title">
-                  Compare Revisions
-                </EditableText>
-              </h4>
-              
-              <div className="mb-4">
-                <h5 className="text-sm font-medium mb-2">
-                  <EditableText id="layout-options-title">
-                    Layout options:
-                  </EditableText>
-                </h5>
-                
-                <div className="grid grid-cols-7 gap-2 mb-3">
-                  {/* Option 1: one horizontal and two vertical */}
-                  <button 
-                    onClick={() => handleLayoutOptionClick(0)}
-                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 0 ? 'border-blue-500 bg-blue-50' : ''}`}
-                    title="One horizontal and two vertical"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" />
-                      <line x1="3" y1="12" x2="21" y2="12" />
-                      <line x1="12" y1="12" x2="12" y2="21" />
-                    </svg>
-                  </button>
-                  
-                  {/* Option 2: two horizontal and two vertical */}
-                  <button 
-                    onClick={() => handleLayoutOptionClick(1)}
-                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 1 ? 'border-blue-500 bg-blue-50' : ''}`}
-                    title="Two horizontal and two vertical"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" />
-                      <line x1="3" y1="9" x2="21" y2="9" />
-                      <line x1="3" y1="15" x2="21" y2="15" />
-                      <line x1="12" y1="15" x2="12" y2="21" />
-                    </svg>
-                  </button>
-                  
-                  {/* Option 3: four vertical */}
-                  <button 
-                    onClick={() => handleLayoutOptionClick(2)}
-                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 2 ? 'border-blue-500 bg-blue-50' : ''}`}
-                    title="Four vertical"
-                  >
-                    <Columns4 size={24} />
-                  </button>
-                  
-                  {/* Option 4: four horizontal */}
-                  <button 
-                    onClick={() => handleLayoutOptionClick(3)}
-                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 3 ? 'border-blue-500 bg-blue-50' : ''}`}
-                    title="Four horizontal"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" />
-                      <line x1="3" y1="7.5" x2="21" y2="7.5" />
-                      <line x1="3" y1="12" x2="21" y2="12" />
-                      <line x1="3" y1="16.5" x2="21" y2="16.5" />
-                    </svg>
-                  </button>
-                  
-                  {/* Option 5: four squares within a square */}
-                  <button 
-                    onClick={() => handleLayoutOptionClick(4)}
-                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 4 ? 'border-blue-500 bg-blue-50' : ''}`}
-                    title="Four squares within a square"
-                  >
-                    <Grid2x2 size={24} />
-                  </button>
-                  
-                  {/* Option 6: two vertical and two horizontal */}
-                  <button 
-                    onClick={() => handleLayoutOptionClick(5)}
-                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 5 ? 'border-blue-500 bg-blue-50' : ''}`}
-                    title="Two vertical and two horizontal"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" />
-                      <line x1="12" y1="3" x2="12" y2="9" />
-                      <line x1="3" y1="15" x2="21" y2="15" /> 
-                      <line x1="3" y1="9" x2="21" y2="9" />                                                      
-                    </svg>
-                  </button>
-                  
-                  {/* Option 7: two vertical and one horizontal */}
-                  <button 
-                    onClick={() => handleLayoutOptionClick(6)}
-                    className={`border p-2 flex items-center justify-center ${activeLayoutOption === 6 ? 'border-blue-500 bg-blue-50' : ''}`}
-                    title="Two vertical and one horizontal"
-                  >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="18" height="18" />
-                      <line x1="12" y1="3" x2="12" y2="12" />
-                      <line x1="3" y1="12" x2="21" y2="12" />
-                    </svg>
-                  </button>
-                </div>
+                {/* Comparison Container */}
+                {compareOpen && (
+                  <div className="mt-4 border rounded-md p-2 bg-gray-50">
+                    <h4 className="font-medium mb-2">Compare Revisions</h4>
+                    
+                    {/* Layout options */}
+                    <div className="mb-4">
+                      <h5 className="text-sm font-medium mb-2">7 viewing options:</h5>
+                      
+                      <div className="grid grid-cols-7 gap-2">
+                        {/* Option 1: one horizontal and two vertical - Custom SVG to match screenshot */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(0)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 0 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="One horizontal and two vertical"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="12" y1="12" x2="12" y2="21" />
+                          </svg>
+                        </button>
+                        
+                        {/* Option 2: two horizontal and two vertical - Custom SVG to match screenshot */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(1)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 1 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Two horizontal and two vertical"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />
+                            <line x1="12" y1="15" x2="12" y2="21" />
+                          </svg>
+                        </button>
+                        
+                        {/* Option 3: four vertical */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(2)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 2 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Four vertical"
+                        >
+                          <Columns4 size={24} />
+                        </button>
+                        
+                        {/* Option 4: four horizontal - Custom SVG to match uploaded image */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(3)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 3 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Four horizontal"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="3" y1="7.5" x2="21" y2="7.5" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="16.5" x2="21" y2="16.5" />
+                          </svg>
+                        </button>
+                        
+                        {/* Option 5: four squares within a square */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(4)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 4 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Four squares within a square"
+                        >
+                          <Grid2x2 size={24} />
+                        </button>
+                        
+                        {/* Option 6: two vertical and two horizontal - Flipped version of option 2 */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(5)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 5 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Two vertical and two horizontal"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="12" y1="3" x2="12" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" /> 
+                            <line x1="3" y1="9" x2="21" y2="9" />                                                      
+                          </svg>
+                        </button>
+                        
+                        {/* Option 7: two vertical and one horizontal - Updated to match screenshot */}
+                        <button 
+                          onClick={() => handleLayoutOptionClick(6)}
+                          className={`border p-2 flex items-center justify-center ${activeLayoutOption === 6 ? 'border-blue-500 bg-blue-50' : ''}`}
+                          title="Two vertical and one horizontal"
+                        >
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="3" y="3" width="18" height="18" />
+                            <line x1="12" y1="3" x2="12" y2="12" />
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                          </svg>
+                        </button>
+                      </div>
+                      
+                      {/* Layout descriptions */}
+                      <div className="mt-2 text-xs text-gray-500">
+                        <p>1. One horizontal and two vertical (for the case 3 versions were chosen to compare)</p>
+                        <p>2. Two horizontal and two vertical (if 4 versions were chosen)</p>
+                        <p>3. Four vertical (from one to four chosen)</p>
+                        <p>4. Four horizontal (from one to four chosen)</p>
+                        <p>5. Four squares within a square</p>
+                        <p>6. Two vertical and two horizontal</p>
+                        <p>7. Two vertical and one horizontal</p>
+                      </div>
+                    </div>
+                    
+                    <ResizablePanelGroup
+                      direction="horizontal"
+                      className="min-h-[200px] max-w-full border rounded"
+                    >
+                      <ResizablePanel defaultSize={33}>
+                        <div className="p-2 h-full bg-white">
+                          <div className="text-sm font-medium mb-1">Revision 1</div>
+                          <div className="text-xs">
+                            <p>Original text content from revision 1.</p>
+                            <p>This shows the first version.</p>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+                      
+                      <ResizableHandle withHandle />
+                      
+                      <ResizablePanel defaultSize={33}>
+                        <div className="p-2 h-full bg-white">
+                          <div className="text-sm font-medium mb-1">Revision 2</div>
+                          <div className="text-xs">
+                            <p>Modified text content from revision 2.</p>
+                            <p>This shows the changes made.</p>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+                      
+                      <ResizableHandle withHandle />
+                      
+                      <ResizablePanel defaultSize={33}>
+                        <div className="p-2 h-full bg-white">
+                          <div className="text-sm font-medium mb-1">Revision 3</div>
+                          <div className="text-xs">
+                            <p>Latest text content from revision 3.</p>
+                            <p>This shows the most recent changes.</p>
+                          </div>
+                        </div>
+                      </ResizablePanel>
+                    </ResizablePanelGroup>
+                  </div>
+                )}
               </div>
-              
-              <ResizablePanelGroup
-                direction="horizontal"
-                className="min-h-[200px] max-w-full border rounded"
-              >
-                <ResizablePanel defaultSize={33}>
-                  <div className="p-2 h-full bg-white">
-                    <div className="text-sm font-medium mb-1">
-                      <EditableText id="revision-1-title">Revision 1</EditableText>
-                    </div>
-                    <div className="text-xs">
-                      <p>
-                        <EditableText id="revision-1-content-1">
-                          Original text content from revision 1.
-                        </EditableText>
-                      </p>
-                      <p>
-                        <EditableText id="revision-1-content-2">
-                          This shows the first version.
-                        </EditableText>
-                      </p>
-                    </div>
-                  </div>
-                </ResizablePanel>
-                
-                <ResizableHandle withHandle />
-                
-                <ResizablePanel defaultSize={33}>
-                  <div className="p-2 h-full bg-white">
-                    <div className="text-sm font-medium mb-1">
-                      <EditableText id="revision-2-title">Revision 2</EditableText>
-                    </div>
-                    <div className="text-xs">
-                      <p>
-                        <EditableText id="revision-2-content-1">
-                          Modified text content from revision 2.
-                        </EditableText>
-                      </p>
-                      <p>
-                        <EditableText id="revision-2-content-2">
-                          This shows the changes made.
-                        </EditableText>
-                      </p>
-                    </div>
-                  </div>
-                </ResizablePanel>
-                
-                <ResizableHandle withHandle />
-                
-                <ResizablePanel defaultSize={33}>
-                  <div className="p-2 h-full bg-white">
-                    <div className="text-sm font-medium mb-1">
-                      <EditableText id="revision-3-title">Revision 3</EditableText>
-                    </div>
-                    <div className="text-xs">
-                      <p>
-                        <EditableText id="revision-3-content-1">
-                          Latest text content from revision 3.
-                        </EditableText>
-                      </p>
-                      <p>
-                        <EditableText id="revision-3-content-2">
-                          This shows the most recent changes.
-                        </EditableText>
-                      </p>
-                    </div>
-                  </div>
-                </ResizablePanel>
-              </ResizablePanelGroup>
-            </div>
-          )}
-        </div>
+            )}
+          </div>           
           
 
           {/* Branches Section */}
