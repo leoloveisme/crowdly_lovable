@@ -74,7 +74,7 @@ import { Switch } from "@/components/ui/switch";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useToast } from "@/hooks/use-toast";
-import EditableText from "@/components/EditableText";
+
 import {
   Tooltip,
   TooltipContent,
