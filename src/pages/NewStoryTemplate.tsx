@@ -62,8 +62,7 @@ import {
   Columns4
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import CrowdlyHeader from "@/components/CrowdlyHeader";
-import CrowdlyFooter from "@/components/CrowdlyFooter";
+
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import EditableText from "@/components/EditableText";
 
