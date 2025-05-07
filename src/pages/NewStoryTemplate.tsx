@@ -485,7 +485,7 @@ const NewStoryTemplate = () => {
                 </button>
               </div>
             </div>
-            
+            {/* This below is the text from the Intro chapter */} 
             {branchesOpen && (
               <div className="bg-white rounded-md shadow-sm border p-4">
                 <div className="text-sm">
