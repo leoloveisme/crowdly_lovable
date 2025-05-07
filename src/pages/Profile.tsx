@@ -555,6 +555,15 @@ const Profile = () => {
             </div>
           </div>
         </div>
+
+
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="main-subtitle">
+              About
+            </EditableText>
+          </p>
+
+
         
         {/* Interests/Hobbies Section */}
         <div className="mb-8">
