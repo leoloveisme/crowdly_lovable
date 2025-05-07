@@ -472,17 +472,7 @@ const NewStoryTemplate = () => {
                 )}
               </div>
             )}
-          </div>
-
-          {/* Layout Options */}
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <button onClick={() => toggleSection('layoutOptions')}>
-                {layoutOptionsOpen ? <CircleX size={16} /> : <LayoutTemplate size={16} />}
-              </button>
-            </div>
-            
-           
+          </div>           
           </div>
 
           {/* Branches Section */}
