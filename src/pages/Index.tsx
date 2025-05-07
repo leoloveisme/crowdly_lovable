@@ -59,6 +59,32 @@ const Index = () => {
               </EditableText>
             </p>
             
+            {/* Adding quick links to common pages */}
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+              <Button asChild variant="outline">
+                <Link to="/suggest-feature">
+                  <EditableText id="home-suggest-feature">Suggest a Feature</EditableText>
+                </Link>
+              </Button>
+              
+              <Button asChild variant="outline">
+                <Link to="/new-story-template">
+                  <EditableText id="home-new-story">New Story Template</EditableText>
+                </Link>
+              </Button>
+              
+              <Button asChild variant="outline">
+                <Link to="/story-for-consumers">
+                  <EditableText id="home-story-consumers">Story for consumers</EditableText>
+                </Link>
+              </Button>
+              
+              <Button asChild variant="outline">
+                <Link to="/sitemap">
+                  <EditableText id="home-sitemap">Sitemap</EditableText>
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
