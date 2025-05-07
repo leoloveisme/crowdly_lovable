@@ -51,7 +51,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { 
+import {
+  Settings,
   Edit, 
   Info, 
   X, 
@@ -199,7 +200,7 @@ const Profile = () => {
       <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-3xl font-bold">
-            <EditableText id="profile-title">Profile</EditableText> <Info className="inline h-5 w-5 text-gray-400" />
+            <EditableText id="profile-title">Profile</EditableText> <Settings Eye className="inline h-5 w-5 text-gray-400" />
           </h1>
           <div className="flex items-center space-x-4">
             <div className="flex flex-col items-end">
