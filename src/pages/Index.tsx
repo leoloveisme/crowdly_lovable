@@ -53,29 +53,7 @@ const Index = () => {
                 We value your feedback and ideas!
               </EditableText>
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button asChild className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-6 text-lg">
-                <Link to="/suggest-feature">
-                  <EditableText id="suggest-feature-button">
-                    Suggest a Feature
-                  </EditableText>
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="px-8 py-6 text-lg">
-                <Link to="/account-administration">
-                  <EditableText id="account-admin-button">
-                    Account Administration
-                  </EditableText>
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="px-8 py-6 text-lg">
-                <Link to="/new-story-template">
-                  <EditableText id="new-story-button">
-                    New Story Template
-                  </EditableText>
-                </Link>
-              </Button>
-            </div>
+            
           </div>
         </div>
       </div>
