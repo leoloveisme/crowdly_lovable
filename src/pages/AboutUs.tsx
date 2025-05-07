@@ -7,7 +7,7 @@ import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useAuth } from "@/contexts/AuthContext";
 import EditableText from "@/components/EditableText";
 
-const Index = () => {
+const About Us = () => {
   const { user, hasRole, roles } = useAuth();
   
   // Debug logging
@@ -36,26 +36,30 @@ const Index = () => {
               </EditableText>
             </h2>
           )}
-
+          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
+            <EditableText id="main-title">
+              Crowd created entertainment
+            </EditableText>
+          </h1>
+          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
+            <EditableText id="main-title2">
+              Entertainment Platform
+            </EditableText>
+          </h1>          
           <p className="text-xl text-gray-600 mb-8">
             <EditableText id="main-subtitle">
-              Favorites
+              The entertainment platform where your voice matters
             </EditableText>
           </p>
-
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="main-subtitle">
-              Newest
-            </EditableText>
-          </p>
-
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="main-subtitle">
-              Most popular
-            </EditableText>
-          </p>
-
-        </div>
+          
+          <div className="space-y-4">
+            <p className="mb-2">
+              <EditableText id="feedback-message">
+                We value your feedback and ideas!
+              </EditableText>
+            </p>           
+          </div>
+       </div>
       </div>
       
       <CrowdlyFooter />
@@ -63,4 +67,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default AboutUs;
