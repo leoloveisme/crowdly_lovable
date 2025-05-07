@@ -38,9 +38,14 @@ const Index = () => {
           )}
           <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
             <EditableText id="main-title">
-              Crowd created entertainment Entertainment Platform
+              Crowd created entertainment
             </EditableText>
           </h1>
+          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
+            <EditableText id="main-title2">
+              Entertainment Platform
+            </EditableText>
+          </h1>          
           <p className="text-xl text-gray-600 mb-8">
             <EditableText id="main-subtitle">
               The entertainment platform where your voice matters
