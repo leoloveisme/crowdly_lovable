@@ -7,7 +7,7 @@ import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { useAuth } from "@/contexts/AuthContext";
 import EditableText from "@/components/EditableText";
 
-const About Us = () => {
+const AboutUs = () => {
   const { user, hasRole, roles } = useAuth();
   
   // Debug logging
