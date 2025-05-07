@@ -10,7 +10,19 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Edit, Settings, Eye, HelpCircle, CircleX, LayoutTemplate, Heart, Columns2, Columns3, Columns4, LayoutGrid, LayoutList, Grid2x2, LayoutDashboard } from "lucide-react";
+import { 
+Settings, 
+Eye, 
+HelpCircle, 
+CircleX, 
+LayoutTemplate, 
+Heart, 
+Columns2, 
+Columns3, 
+LayoutGrid, 
+LayoutList, 
+LayoutDashboard 
+} from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -70,6 +82,9 @@ import CrowdlyFooter from "@/components/CrowdlyFooter";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
+
+
+
 const NewStoryTemplate = () => {
   const [visibilityOpen, setVisibilityOpen] = useState(false);
   const [contributorsOpen, setContributorsOpen] = useState(true);
