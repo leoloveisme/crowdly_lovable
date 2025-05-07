@@ -886,9 +886,8 @@ const StoryforConsumers = () => {
 
 
       <Button variant="outline" size="sm" className="mt-4 w-full">
-                  <Plus className="h-4 w-4 mr-1" />
-                  <EditableText id="add-chapter-btn">Next Chapter</EditableText>
-                </Button>
+      <EditableText id="add-chapter-btn">Next Chapter</EditableText>
+      </Button>
 
       
       <CrowdlyFooter />
