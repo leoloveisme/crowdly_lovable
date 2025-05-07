@@ -29,13 +29,39 @@ const StoryforConsumers = () => {
   const { user } = useAuth();
   const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(["text"]);
   const [activeSection, setActiveSection] = useState<string>("story");
-  // Changed to store likes/dislikes per chapter instead of per paragraph
+  
+  // Changed to store likes/dislikes per chapter and media type
   const [chapterLikes, setChapterLikes] = useState<{[key: string]: number}>({
     chapter1: 35
   });
   const [chapterDislikes, setChapterDislikes] = useState<{[key: string]: number}>({
     chapter1: 6
   });
+  
+  // Add state for image/presentation likes/dislikes
+  const [imageLikes, setImageLikes] = useState<{[key: string]: number}>({
+    presentation1: 12
+  });
+  const [imageDislikes, setImageDislikes] = useState<{[key: string]: number}>({
+    presentation1: 3
+  });
+  
+  // Add state for audio likes/dislikes
+  const [audioLikes, setAudioLikes] = useState<{[key: string]: number}>({
+    audio1: 24
+  });
+  const [audioDislikes, setAudioDislikes] = useState<{[key: string]: number}>({
+    audio1: 2
+  });
+  
+  // Add state for video likes/dislikes
+  const [videoLikes, setVideoLikes] = useState<{[key: string]: number}>({
+    video1: 43
+  });
+  const [videoDislikes, setVideoDislikes] = useState<{[key: string]: number}>({
+    video1: 5
+  });
+  
   const [showBranchDialog, setShowBranchDialog] = useState(false);
   const [selectedParagraphForBranch, setSelectedParagraphForBranch] = useState<string | null>(null);
   
@@ -82,6 +108,51 @@ const StoryforConsumers = () => {
   
   const handleChapterDislike = (id: string) => {
     setChapterDislikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  // Image/presentation like/dislike handlers
+  const handleImageLike = (id: string) => {
+    setImageLikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  const handleImageDislike = (id: string) => {
+    setImageDislikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  // Audio like/dislike handlers
+  const handleAudioLike = (id: string) => {
+    setAudioLikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  const handleAudioDislike = (id: string) => {
+    setAudioDislikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  // Video like/dislike handlers
+  const handleVideoLike = (id: string) => {
+    setVideoLikes(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
+  
+  const handleVideoDislike = (id: string) => {
+    setVideoDislikes(prev => ({
       ...prev,
       [id]: (prev[id] || 0) + 1
     }));
@@ -423,6 +494,24 @@ const StoryforConsumers = () => {
                           <p className="text-sm text-gray-500 mt-2">
                             <EditableText id="image-caption">Slide caption: Describe what is shown in the presentation slide.</EditableText>
                           </p>
+                          
+                          {/* Add like/dislike buttons to the image container */}
+                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleImageLike('presentation1')} 
+                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            >
+                              <ThumbsUp className="h-5 w-5 mr-1" />
+                              <span>{imageLikes.presentation1 || 0}</span>
+                            </button>
+                            <button 
+                              onClick={() => handleImageDislike('presentation1')} 
+                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            >
+                              <ThumbsDown className="h-5 w-5 mr-1" />
+                              <span>{imageDislikes.presentation1 || 0}</span>
+                            </button>
+                          </div>
                         </div>
                       )}
                       
@@ -461,6 +550,24 @@ const StoryforConsumers = () => {
                             <p className="text-sm text-gray-500 italic">
                               <EditableText id="audio-description">Audio description: Narrative of Chapter 1, read by the author.</EditableText>
                             </p>
+                          </div>
+                          
+                          {/* Add like/dislike buttons to the audio container */}
+                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleAudioLike('audio1')} 
+                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            >
+                              <ThumbsUp className="h-5 w-5 mr-1" />
+                              <span>{audioLikes.audio1 || 0}</span>
+                            </button>
+                            <button 
+                              onClick={() => handleAudioDislike('audio1')} 
+                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            >
+                              <ThumbsDown className="h-5 w-5 mr-1" />
+                              <span>{audioDislikes.audio1 || 0}</span>
+                            </button>
                           </div>
                         </div>
                       )}
@@ -509,6 +616,24 @@ const StoryforConsumers = () => {
                           <p className="text-sm text-gray-500 mt-2">
                             <EditableText id="video-caption">Video caption: Visual interpretation of Chapter 1 - The Beginning.</EditableText>
                           </p>
+                          
+                          {/* Add like/dislike buttons to the video container */}
+                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleVideoLike('video1')} 
+                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            >
+                              <ThumbsUp className="h-5 w-5 mr-1" />
+                              <span>{videoLikes.video1 || 0}</span>
+                            </button>
+                            <button 
+                              onClick={() => handleVideoDislike('video1')} 
+                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            >
+                              <ThumbsDown className="h-5 w-5 mr-1" />
+                              <span>{videoDislikes.video1 || 0}</span>
+                            </button>
+                          </div>
                         </div>
                       )}
                       
