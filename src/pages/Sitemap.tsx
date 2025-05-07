@@ -29,9 +29,6 @@ const Sitemap = () => {
       
       <div className="flex-grow flex items-center justify-center bg-gray-50">
 
-      </div>
-
-
 <div className="border-b pb-2">
                     <Link 
                       to="/suggest-feature" 
@@ -87,6 +84,12 @@ const Sitemap = () => {
                       </EditableText>
                     </Link>
                   </div>
+
+
+        
+      </div>
+
+
 
       
       <CrowdlyFooter />
