@@ -38,7 +38,7 @@ const Index = () => {
           )}
           <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
             <EditableText id="main-title">
-              Crowdly Entertainment Platform
+              Crowd created entertainment Entertainment Platform
             </EditableText>
           </h1>
           <p className="text-xl text-gray-600 mb-8">
