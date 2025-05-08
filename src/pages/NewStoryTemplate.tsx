@@ -14,6 +14,7 @@ import {
 Settings, 
 Eye, 
 EyeClosed,
+EyeOff,  
 HelpCircle, 
 CircleX, 
 LayoutTemplate, 
@@ -356,7 +357,7 @@ const NewStoryTemplate = () => {
               <span className="text-blue-500 text-sm hover:underline cursor-pointer">revisions</span>
               <div className="flex">
                 <button onClick={() => toggleSection('revisions')}>
-                  {revisionsOpen ? <EyeClosed size={16} /> : <LayoutTemplate size={16} />}
+                  {revisionsOpen ? <EyeOff size={16} /> : <LayoutTemplate size={16} />}
                 </button>
               </div>
             </div>
