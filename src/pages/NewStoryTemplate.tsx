@@ -183,11 +183,12 @@ const navigate = useNavigate();
   };
 
 
+const handleEyeClick = (path: string) => {
 
-const handleEyeClick = () => { // No 'section' parameter
-  navigate('/story-to-live');
-  // toast({ title: "Redirecting...", description: "Going to Story to Live" });
+navigate(path);
+
 };
+
 
   
 
@@ -306,7 +307,7 @@ const handleEyeClick = () => { // No 'section' parameter
                     </div>
                   </PopoverContent>
                 </Popover>
-                <button onClick={() => handleEyeClick("Story")} className="cursor-pointer hover:text-blue-500">
+                <button onClick={() => handleEyeClick("/story-to-live")} className="cursor-pointer hover:text-blue-500">
                   <Eye size={16} />
                 </button>
                 <HelpCircle size={16} />
