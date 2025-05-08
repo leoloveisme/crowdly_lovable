@@ -104,6 +104,7 @@ const NewStoryTemplate = () => {
   const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { toast } = useToast();
+const navigate = useNavigate();
 
   const toggleSection = (section: string) => {
     switch(section) {
