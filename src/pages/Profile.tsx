@@ -645,64 +645,6 @@ const Profile = () => {
  
 
 
-        {/* Contributions Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">
-            <EditableText id="contributions-section">Contributions</EditableText>
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">
-                  <EditableText id="contribution-1-title">Contribution 1</EditableText>
-                </h3>
-                <span className="text-xs text-muted-foreground">1024 words</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                <EditableText id="contribution-1-description">
-                  This is a description of the first contribution. It includes details about what was contributed and when.
-                </EditableText>
-              </p>
-              <div className="flex items-center gap-2 text-xs">
-                <span className="bg-gray-100 rounded-full px-2 py-1">
-                  <EditableText id="story-label">Story</EditableText>
-                </span>
-                <span className="bg-gray-100 rounded-full px-2 py-1">
-                  <EditableText id="chapter-label">Chapter 1</EditableText>
-                </span>
-                <span className="text-muted-foreground ml-auto">
-                  <EditableText id="date-1">May 5, 2023</EditableText>
-                </span>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">
-                  <EditableText id="contribution-2-title">Contribution 2</EditableText>
-                </h3>
-                <span className="text-xs text-muted-foreground">768 words</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-2">
-                <EditableText id="contribution-2-description">
-                  This is a description of the second contribution. It includes details about what was contributed and when.
-                </EditableText>
-              </p>
-              <div className="flex items-center gap-2 text-xs">
-                <span className="bg-gray-100 rounded-full px-2 py-1">
-                  <EditableText id="story-2-label">Story</EditableText>
-                </span>
-                <span className="bg-gray-100 rounded-full px-2 py-1">
-                  <EditableText id="chapter-2-label">Chapter 2</EditableText>
-                </span>
-                <span className="text-muted-foreground ml-auto">
-                  <EditableText id="date-2">May 12, 2023</EditableText>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
         
         {/* Hide editing features in preview mode */}
         {!previewMode && (
