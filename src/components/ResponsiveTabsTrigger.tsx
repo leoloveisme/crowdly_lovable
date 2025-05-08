@@ -7,12 +7,14 @@ import { cn } from "@/lib/utils";
 interface ResponsiveTabsTriggerProps extends React.ComponentPropsWithoutRef<typeof TabsTrigger> {
   icon: React.ReactNode;
   text: string;
+  onClick?: () => void;
 }
 
 const ResponsiveTabsTrigger = ({ 
   icon, 
   text, 
   className,
+  onClick,
   ...props 
 }: ResponsiveTabsTriggerProps) => {
   const isMobile = useIsMobile();
@@ -20,6 +22,7 @@ const ResponsiveTabsTrigger = ({
   return (
     <TabsTrigger 
       className={cn("flex items-center gap-1", className)} 
+      onClick={onClick}
       {...props}
     >
       {icon}

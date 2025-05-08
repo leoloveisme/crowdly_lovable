@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -12,7 +12,7 @@ const Sitemap = () => {
   const [showPopover, setShowPopover] = useState(false);
   
   // Debug logging
-  useEffect(() => {
+  React.useEffect(() => {
     if (user) {
       console.log("Current user:", user?.email);
       console.log("User roles:", roles);

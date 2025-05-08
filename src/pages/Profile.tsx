@@ -120,6 +120,7 @@ const Profile = () => {
   const [visibilityOption, setVisibilityOption] = useState("public");
   const [editField, setEditField] = useState<string | null>(null);
   const [tempFieldValue, setTempFieldValue] = useState("");
+  const [activeTab, setActiveTab] = useState("author");
   
   // Add new state for settings popover
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -626,6 +627,315 @@ const Profile = () => {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+        
+        {/* Stats and activity tabs */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">
+            <EditableText id="stats-heading">Stats & Activity</EditableText>
+          </h2>
+          
+          <Tabs defaultValue="author" className="w-full">
+            <TabsList className="bg-gray-100 p-1 mb-6 w-full md:w-auto overflow-x-auto flex">
+              <ResponsiveTabsTrigger
+                value="author"
+                icon={<FileText className="h-5 w-5" />}
+                text="Author"
+                onClick={() => setActiveTab("author")}
+              />
+              <ResponsiveTabsTrigger
+                value="consumer"
+                icon={<BookOpen className="h-5 w-5" />}
+                text="Consumer"
+                onClick={() => setActiveTab("consumer")}
+              />
+              <ResponsiveTabsTrigger
+                value="producer"
+                icon={<Award className="h-5 w-5" />}
+                text="Producer"
+                onClick={() => setActiveTab("producer")}
+              />
+              <ResponsiveTabsTrigger
+                value="community"
+                icon={<Users className="h-5 w-5" />}
+                text="Community"
+                onClick={() => setActiveTab("community")}
+              />
+            </TabsList>
+            
+            {/* Author Tab Content */}
+            <TabsContent value="author" className="space-y-4">
+              <h3 className="text-lg font-semibold">
+                <EditableText id="author-contributions">Authoring</EditableText>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.author.text}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="author-text-count">Text</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.author.images}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="author-images-count">Images</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.author.audio}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="author-audio-count">Audio</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.author.video}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="author-video-count">Video</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <h3 className="text-lg font-semibold mt-6">
+                <EditableText id="contributions-heading">Contributions</EditableText>
+              </h3>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>
+                      <EditableText id="story-title-heading">Story Title</EditableText>
+                    </TableHead>
+                    <TableHead>
+                      <EditableText id="chapter-heading">Chapter</EditableText>
+                    </TableHead>
+                    <TableHead>
+                      <EditableText id="date-heading">Date</EditableText>
+                    </TableHead>
+                    <TableHead>
+                      <EditableText id="words-heading">Words</EditableText>
+                    </TableHead>
+                    <TableHead>
+                      <EditableText id="likes-heading">Likes</EditableText>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {contributions.map(contribution => (
+                    <TableRow key={contribution.id}>
+                      <TableCell>{contribution.storyTitle}</TableCell>
+                      <TableCell>{contribution.chapterName}</TableCell>
+                      <TableCell>{contribution.date}</TableCell>
+                      <TableCell>{contribution.words}</TableCell>
+                      <TableCell>{contribution.likes}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TabsContent>
+            
+            {/* Consumer Tab Content */}
+            <TabsContent value="consumer" className="space-y-4">
+              <h3 className="text-lg font-semibold">
+                <EditableText id="consumer-stats">Consumer Stats</EditableText>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.consumer.text}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="consumer-text-count">Text</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.consumer.images}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="consumer-images-count">Images</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.consumer.audio}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="consumer-audio-count">Audio</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.consumer.video}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="consumer-video-count">Video</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+            
+            {/* Producer Tab Content */}
+            <TabsContent value="producer" className="space-y-4">
+              <h3 className="text-lg font-semibold">
+                <EditableText id="producer-stats">Producer Stats</EditableText>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.producer.story}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="producer-story-count">Stories</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+            
+            {/* Community Tab Content */}
+            <TabsContent value="community" className="space-y-4">
+              <h3 className="text-lg font-semibold">
+                <EditableText id="community-contributing">Contributing</EditableText>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.contributing.text}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="community-text-count">Text</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.contributing.images}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="community-images-count">Images</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.contributing.audio}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="community-audio-count">Audio</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.contributing.video}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="community-video-count">Video</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <h3 className="text-lg font-semibold mt-6">
+                <EditableText id="community-engagement">Community Engagement</EditableText>
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.sentFeedback}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="sent-feedback-count">Sent Feedback</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.suggestedFeatures}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="suggested-features-count">Suggested Features</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.submittedBugReports}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="submitted-bug-reports">Submitted Bug Reports</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6 text-center">
+                    <p className="text-2xl font-bold">{stats.community.contactRequests}</p>
+                    <p className="text-sm text-muted-foreground">
+                      <EditableText id="contact-requests-count">Contact Requests</EditableText>
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+        
+        {/* Contributions Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">
+            <EditableText id="contributions-section">Contributions</EditableText>
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold">
+                  <EditableText id="contribution-1-title">Contribution 1</EditableText>
+                </h3>
+                <span className="text-xs text-muted-foreground">1024 words</span>
+              </div>
+              <p className="text-sm text-gray-600 mb-2">
+                <EditableText id="contribution-1-description">
+                  This is a description of the first contribution. It includes details about what was contributed and when.
+                </EditableText>
+              </p>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="bg-gray-100 rounded-full px-2 py-1">
+                  <EditableText id="story-label">Story</EditableText>
+                </span>
+                <span className="bg-gray-100 rounded-full px-2 py-1">
+                  <EditableText id="chapter-label">Chapter 1</EditableText>
+                </span>
+                <span className="text-muted-foreground ml-auto">
+                  <EditableText id="date-1">May 5, 2023</EditableText>
+                </span>
+              </div>
+            </div>
+            
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-semibold">
+                  <EditableText id="contribution-2-title">Contribution 2</EditableText>
+                </h3>
+                <span className="text-xs text-muted-foreground">768 words</span>
+              </div>
+              <p className="text-sm text-gray-600 mb-2">
+                <EditableText id="contribution-2-description">
+                  This is a description of the second contribution. It includes details about what was contributed and when.
+                </EditableText>
+              </p>
+              <div className="flex items-center gap-2 text-xs">
+                <span className="bg-gray-100 rounded-full px-2 py-1">
+                  <EditableText id="story-2-label">Story</EditableText>
+                </span>
+                <span className="bg-gray-100 rounded-full px-2 py-1">
+                  <EditableText id="chapter-2-label">Chapter 2</EditableText>
+                </span>
+                <span className="text-muted-foreground ml-auto">
+                  <EditableText id="date-2">May 12, 2023</EditableText>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
         
