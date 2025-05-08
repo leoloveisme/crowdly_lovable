@@ -36,7 +36,7 @@ const Sitemap = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-4">
-              <EditableText id="features-section">Features & Suggestions</EditableText>
+              <EditableText id="community-section">Community</EditableText>
             </h2>
             <div className="space-y-2">
               <Link 
