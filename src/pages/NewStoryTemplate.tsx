@@ -567,7 +567,7 @@ const NewStoryTemplate = () => {
               <span className="text-blue-500 text-sm hover:underline cursor-pointer">branches</span>
               <div className="flex">
                 <button onClick={() => toggleSection('branches')}>
-                  {branchesOpen ? <Eye size={16} /> : <LayoutTemplate size={16} />}
+                  {branchesOpen ? <EyeOff size={16} /> : <LayoutTemplate size={16} />}
                 </button>
               </div>
             </div>
