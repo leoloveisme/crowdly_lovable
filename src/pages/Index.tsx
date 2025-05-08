@@ -54,7 +54,7 @@ On this page they're only for you to see. The same functionality will be availab
 
 
       <div className="container mx-auto px-4 pt-8 pb-16 flex-grow items-center justify-center">
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex items-center justify-center justify-between items-start mb-8">
           <h1 className="text-3xl font-bold">
             <EditableText id="StoriesToLiveToExperience">Story(-ies) to live / to experience</EditableText> 
           </h1>
@@ -86,7 +86,7 @@ On this page they're only for you to see. The same functionality will be availab
 
 
       <div className="container mx-auto px-4 pt-8 pb-16 flex-grow items-center justify-center">
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex items-center justify-center justify-between items-start mb-8">
           <h1 className="text-3xl font-bold">
             <EditableText id="LivingTheStories">Living / Experiencing the story(-ies)</EditableText> 
           </h1>
@@ -104,7 +104,7 @@ This section is only for you to see. The same functionality will be available in
 
 
       <div className="container mx-auto px-4 pt-8 pb-16 flex-grow items-center justify-center">
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex items-center justify-center justify-between items-start mb-8">
           <h1 className="text-3xl font-bold">
             <EditableText id="LivedThoseStories">Lived / Experienced those story(-ies)</EditableText> 
           </h1>
