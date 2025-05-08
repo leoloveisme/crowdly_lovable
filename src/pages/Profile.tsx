@@ -157,23 +157,23 @@ const Profile = () => {
       video: 5
     },
     consumer: {
-      text: 5,
-      images: 50,
-      audio: 10,
-      video: 5
+      text: 15,
+      images: 5,
+      audio: 100,
+      video: 55
     },
     producer: {
       story: 5
     },
     community: {
       contributing: {
-        text: 5,
-        images: 50,
-        audio: 10,
-        video: 5
+        text: 23,
+        images: 0,
+        audio: 14,
+        video: 8
       },
-      sentFeedback: 5,
-      suggestedFeatures: 50,
+      sentFeedback: 3,
+      suggestedFeatures: 44,
       submittedBugReports: 10,
       contactRequests: 5
     }
@@ -875,7 +875,7 @@ const Profile = () => {
         {/* Stats and activity tabs */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">
-            <EditableText id="stats-heading">Stats & Activity</EditableText>
+            <EditableText id="stats-heading">Story(-ies) & activity stats</EditableText>
           </h2>
           
           <Tabs defaultValue="author" className="w-full">
