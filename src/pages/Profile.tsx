@@ -1212,6 +1212,7 @@ const Profile = () => {
 
 
   <Button variant="outline" size="sm" className="mt-4 w-full">
+<Link="/account-administration">
       <EditableText id="jumpToAccountAdministration">Account Administration</EditableText>
       </Button>
 
