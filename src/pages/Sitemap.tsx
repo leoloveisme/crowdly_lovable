@@ -81,6 +81,19 @@ const Sitemap = () => {
                   </div>
 </div>
 <div className="flex-grow flex items-center justify-center bg-gray-50">
+      <div>
+                    <Link 
+                      to="/story-to-live" 
+                      className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                      onClick={() => setShowPopover(false)}
+                    >
+                      <EditableText id="story-for-consumers">
+                        Story(-ies) to live / to experience
+                      </EditableText>
+                    </Link>
+                  </div>
+</div>
+<div className="flex-grow flex items-center justify-center bg-gray-50">
                   <div>
                     <Link 
                       to="/profile" 

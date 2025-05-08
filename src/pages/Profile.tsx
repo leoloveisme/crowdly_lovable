@@ -1197,6 +1197,33 @@ const Profile = () => {
         </div>
 </div>
 
+
+      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
+        <div className="flex justify-between items-start mb-8">
+          <h1 className="text-3xl font-bold">
+            <EditableText id="favorites">Story(-ies) to live / to experience</EditableText> 
+          </h1>
+        </div>
+     </div>
+
+      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
+        <div className="flex justify-between items-start mb-8">
+          <h1 className="text-3xl font-bold">
+            <EditableText id="favorites">Living / Experiencing the story(-ies)</EditableText> 
+          </h1>
+        </div>
+     </div>
+
+      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
+        <div className="flex justify-between items-start mb-8">
+          <h1 className="text-3xl font-bold">
+            <EditableText id="favorites">Lived / Experienced stories</EditableText> 
+          </h1>
+        </div>
+     </div>
+
+
+
       
       <CrowdlyFooter />
     </div>

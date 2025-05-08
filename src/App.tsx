@@ -12,6 +12,7 @@ import FeatureSuggestions from "./pages/FeatureSuggestions";
 import AccountAdministration from "./pages/AccountAdministration";
 import NewStoryTemplate from "./pages/NewStoryTemplate";
 import StoryforConsumers from "./pages/StoryforConsumers";
+import StoryToLiveToExperience from "./pages/StoryToLiveToExperience";
 import Profile from "./pages/Profile";
 import Sitemap from "./pages/Sitemap";
 import AboutUs from "./pages/AboutUs";
@@ -39,6 +40,7 @@ const App = () => {
                 <Route path="/account-administration" element={<AccountAdministration />} />
                 <Route path="/new-story-template" element={<NewStoryTemplate />} />
                 <Route path="/story-for-consumers" element={<StoryforConsumers />} />
+                <Route path="/story-to-live" element={<StoryToLiveToExperience />} />   
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/sitemap" element={<Sitemap />} />
                 <Route path="/about-us" element={<AboutUs />} />
