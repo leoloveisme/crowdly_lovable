@@ -1188,8 +1188,8 @@ const Profile = () => {
                 Here will be messages and discussions which you can Like, 
 Reply to,  
 Delete,
-Moved to a folder,
-Cloned into a chapter / paragraph of a story,
+Move to a folder,
+Clone into a chapter / paragraph of a story,
 Copy into a branch
               </EditableText>
             </p>           
@@ -1205,7 +1205,7 @@ Copy into a branch
                 Here will be comments which you can Like,
 Reply to,
 Delete,
-Cloned into a chapter / paragraph of a story,
+Clone into a chapter / paragraph of a story,
 Copy into a branch
               </EditableText>
             </p>           
