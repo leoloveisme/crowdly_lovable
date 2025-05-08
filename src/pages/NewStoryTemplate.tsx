@@ -311,39 +311,6 @@ const NewStoryTemplate = () => {
             <button className="text-blue-500 hover:underline">add chapter</button>
           </div>
 
-          {/* Visibility Options */}
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <label className="flex items-center gap-2 text-sm">
-               <input type="radio" name="visibility" />
-                public
-              </label>             
-              <button onClick={() => toggleSection('visibility')}>
-                {visibilityOpen ? <CircleX size={16} /> : <HelpCircle size={16} className="text-gray-400" />}
-              </button>
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="flex items-center gap-2 text-sm">
-                <input type="radio" name="visibility" />
-                invitation only
-              </label>
-              <HelpCircle size={16} className="text-gray-400" />
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="flex items-center gap-2 text-sm">
-                <input type="radio" name="visibility" />
-                private
-              </label>
-              <HelpCircle size={16} className="text-gray-400" />
-            </div>
-            <div className="flex justify-between items-center">
-              <label className="flex items-center gap-2 text-sm">
-                <input type="radio" name="visibility" />
-                read only
-              </label>
-              <HelpCircle size={16} className="text-gray-400" />
-            </div>
-          </div>
 
           {/* Intro Section */}
           <div className="border-b pb-4">
