@@ -232,9 +232,12 @@ const CrowdlyHeader = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="English">English</SelectItem>
+                <SelectItem value="Russian">Russian</SelectItem>
+                <SelectItem value="Chinese">中文</SelectItem>
+                <SelectItem value="Portuguese">Portuguese</SelectItem>
                 <SelectItem value="Spanish">Spanish</SelectItem>
                 <SelectItem value="French">French</SelectItem>
-                <SelectItem value="German">German</SelectItem>
+                <SelectItem value="Arabic">Arabic</SelectItem>
               </SelectContent>
             </Select>
             
