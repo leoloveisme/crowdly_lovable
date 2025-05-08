@@ -185,7 +185,7 @@ const navigate = useNavigate();
 
 const handleEyeClick = (path: string) => {
 
-navigate(path);
+// navigate(path);
 
 };
 
