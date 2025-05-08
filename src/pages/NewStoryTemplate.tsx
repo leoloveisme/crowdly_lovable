@@ -230,6 +230,33 @@ const NewStoryTemplate = () => {
                     </div>
                     <div className="space-y-3 mt-2">
                       <div className="space-y-1">
+
+          {/* Story Actions */}
+          <div className="space-y-1 text-sm">
+            <div className="flex items-center gap-2">
+              <button 
+                className="text-blue-500 hover:underline"
+                onClick={togglePublishStatus}
+              >
+                {isPublished ? "unpublish" : "publish"}
+              </button>
+            </div>
+            <div className="flex items-center gap-1">
+              <button className="text-blue-500 hover:underline">clone</button>
+              <HelpCircle size={14} className="text-gray-400" />
+            </div>
+            <div className="flex items-center gap-1">
+              <button className="text-blue-500 hover:underline">delete</button>
+              <HelpCircle size={14} className="text-gray-400" />
+            </div>
+            <div className="flex items-center gap-1">
+              <button className="text-blue-500 hover:underline">read</button>
+              <HelpCircle size={14} className="text-gray-400" />
+            </div>
+            <button className="text-blue-500 hover:underline">add chapter</button>
+          </div>
+
+
                         <Label className="text-xs text-gray-500">Privacy</Label>
                         <div className="space-y-2">
 
@@ -286,30 +313,7 @@ const NewStoryTemplate = () => {
             </h2>
           </div>
 
-          {/* Story Actions */}
-          <div className="space-y-1 text-sm">
-            <div className="flex items-center gap-2">
-              <button 
-                className="text-blue-500 hover:underline"
-                onClick={togglePublishStatus}
-              >
-                {isPublished ? "unpublish" : "publish"}
-              </button>
-            </div>
-            <div className="flex items-center gap-1">
-              <button className="text-blue-500 hover:underline">clone</button>
-              <HelpCircle size={14} className="text-gray-400" />
-            </div>
-            <div className="flex items-center gap-1">
-              <button className="text-blue-500 hover:underline">delete</button>
-              <HelpCircle size={14} className="text-gray-400" />
-            </div>
-            <div className="flex items-center gap-1">
-              <button className="text-blue-500 hover:underline">read</button>
-              <HelpCircle size={14} className="text-gray-400" />
-            </div>
-            <button className="text-blue-500 hover:underline">add chapter</button>
-          </div>
+
 
 
           {/* Intro Section */}
