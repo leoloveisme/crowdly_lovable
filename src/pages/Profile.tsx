@@ -1166,7 +1166,7 @@ const Profile = () => {
 <div className="space-y-4">
             <p className="mb-2">
               <EditableText id="notifications_messages_placeholder">
-                 Here will be your notifications about deletions, branch activity, etc
+                 Here will be your notifications about deletions, branch activity, etc which you can delete or archive
               </EditableText>
             </p>           
           </div>
@@ -1185,7 +1185,12 @@ const Profile = () => {
 <div className="space-y-4">
             <p className="mb-2">
               <EditableText id="discussions_placeholder">
-                Here will be messages and discussions
+                Here will be messages and discussions which you can Like, 
+Reply to,  
+Delete,
+Moved to a folder,
+Cloned into a chapter / paragraph of a story,
+Copy into a branch
               </EditableText>
             </p>           
           </div>
@@ -1197,7 +1202,11 @@ const Profile = () => {
 <div className="space-y-4">
             <p className="mb-2">
               <EditableText id="comments_placeholder">
-                Here will be comments
+                Here will be comments which you can Like,
+Reply to,
+Delete,
+Cloned into a chapter / paragraph of a story,
+Copy into a branch
               </EditableText>
             </p>           
           </div>
