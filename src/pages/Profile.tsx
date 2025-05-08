@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -66,15 +67,12 @@ import {
   HoverCardTrigger
 } from "@/components/ui/hover-card";
 import {
-  Eye,
-  EyeOff,
   Settings,
   Edit, 
-  Info, 
   X, 
+  ChevronDown,
   Plus,
   Check,
-  ChevronDown,
   Upload,
   Grid2x2,
   Columns4,
@@ -90,7 +88,10 @@ import {
   MessageSquare,
   Send,
   Award,
-  Star
+  Star,
+  Eye,
+  EyeOff,
+  Info
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -816,4 +817,44 @@ const Profile = () => {
                             </EditableText>
                           </p>
                           <p>
-                            <EditableText id="revision
+                            <EditableText id="revision-1-content-2">
+                              Additional content from revision 1.
+                            </EditableText>
+                          </p>
+                        </div>
+                      </div>
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel defaultSize={67}>
+                      <div className="p-2 h-full bg-white">
+                        <div className="text-sm font-medium mb-1">
+                          <EditableText id="revision-2-title">Revision 2</EditableText>
+                        </div>
+                        <div className="text-xs">
+                          <p>
+                            <EditableText id="revision-2-content-1">
+                              Updated text content from revision 2.
+                            </EditableText>
+                          </p>
+                          <p>
+                            <EditableText id="revision-2-content-2">
+                              Additional content from revision 2 with changes highlighted.
+                            </EditableText>
+                          </p>
+                        </div>
+                      </div>
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+      
+      <CrowdlyFooter />
+    </div>
+  );
+};
+
+export default Profile;
