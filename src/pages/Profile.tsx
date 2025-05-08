@@ -1155,7 +1155,46 @@ const Profile = () => {
             </TabsContent>
           </Tabs>
         </div>
-        
+ 
+
+          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
+            <EditableText id="notifications">
+              Notifications
+            </EditableText>
+          </h1>          
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="notification_messages">
+              Here will be your notifications
+            </EditableText>
+          </p>
+
+
+<div className="space-y-4">
+            <p className="mb-2">
+              <EditableText id="feedback-message">
+                about deletions, branch activity, etc
+              </EditableText>
+            </p>           
+          </div>
+
+
+          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
+            <EditableText id="communication">
+              Communication
+            </EditableText>
+          </h1>          
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="discussions">
+              Discussions / Messages
+            </EditableText>
+          </p>
+          <p className="text-xl text-gray-600 mb-8">
+            <EditableText id="comments">
+              Comments
+            </EditableText>
+          </p>
+
+       
 
 
  <Link 
