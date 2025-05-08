@@ -1162,17 +1162,11 @@ const Profile = () => {
               Notifications
             </EditableText>
           </h1>          
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="notification_messages">
-              Here will be your notifications
-            </EditableText>
-          </p>
-
 
 <div className="space-y-4">
             <p className="mb-2">
-              <EditableText id="notifications_placeholder">
-                about deletions, branch activity, etc
+              <EditableText id="notifications_messages_placeholder">
+                 Here will be your notifications about deletions, branch activity, etc
               </EditableText>
             </p>           
           </div>
