@@ -875,7 +875,7 @@ const Profile = () => {
         {/* Stats and activity tabs */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">
-            <EditableText id="stats-heading">Stats & Activity</EditableText>
+            <EditableText id="stats-heading">Story(-ies) & activity stats</EditableText>
           </h2>
           
           <Tabs defaultValue="author" className="w-full">
@@ -1171,7 +1171,7 @@ const Profile = () => {
 
 <div className="space-y-4">
             <p className="mb-2">
-              <EditableText id="feedback-message">
+              <EditableText id="notifications_placeholder">
                 about deletions, branch activity, etc
               </EditableText>
             </p>           
@@ -1188,12 +1188,25 @@ const Profile = () => {
               Discussions / Messages
             </EditableText>
           </p>
+<div className="space-y-4">
+            <p className="mb-2">
+              <EditableText id="discussions_placeholder">
+                Here will be messages and discussions
+              </EditableText>
+            </p>           
+          </div>
           <p className="text-xl text-gray-600 mb-8">
             <EditableText id="comments">
               Comments
             </EditableText>
           </p>
-
+<div className="space-y-4">
+            <p className="mb-2">
+              <EditableText id="comments_placeholder">
+                Here will be comments
+              </EditableText>
+            </p>           
+          </div>
        
 
 
