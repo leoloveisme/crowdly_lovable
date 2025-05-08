@@ -91,7 +91,8 @@ import {
   Star,
   Eye,
   EyeOff,
-  Info
+  Info,
+  HelpCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -144,6 +145,9 @@ const Profile = () => {
   const [compareOpen, setCompareOpen] = useState(false);
   const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
 
+  // Add contribution filter state
+  const [contributionFilter, setContributionFilter] = useState("total");
+
   // Stats for stories and contributions
   const stats = {
     author: {
@@ -184,7 +188,8 @@ const Profile = () => {
       date: "2023-05-01",
       time: "11:28",
       words: 550,
-      likes: 3
+      likes: 3,
+      status: "approved"
     },
     { 
       id: 2, 
@@ -193,7 +198,8 @@ const Profile = () => {
       date: "2023-05-03",
       time: "14:15",
       words: 320,
-      likes: 7
+      likes: 7,
+      status: "denied"
     },
     { 
       id: 3, 
@@ -202,7 +208,8 @@ const Profile = () => {
       date: "2023-05-05",
       time: "09:45",
       words: 480,
-      likes: 12
+      likes: 12,
+      status: "undecided"
     }
   ];
 
@@ -285,6 +292,12 @@ const Profile = () => {
   const cancelEditing = () => {
     setEditField(null);
   };
+
+  // Filter contributions based on selected filter
+  const filteredContributions = contributions.filter(contribution => {
+    if (contributionFilter === "total") return true;
+    return contribution.status === contributionFilter;
+  });
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -707,6 +720,40 @@ const Profile = () => {
               <h3 className="text-lg font-semibold mt-6">
                 <EditableText id="contributions-heading">Contributions</EditableText>
               </h3>
+              
+              {/* Add contribution filter buttons */}
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center">
+                  <HelpCircle className="h-4 w-4 text-gray-400 mr-2" />
+                </div>
+                <div className="flex space-x-4 text-sm">
+                  <button 
+                    className={`${contributionFilter === 'total' ? 'text-blue-500' : 'text-gray-500'}`}
+                    onClick={() => setContributionFilter('total')}
+                  >
+                    <EditableText id="filter-total">total</EditableText>
+                  </button>
+                  <button 
+                    className={`${contributionFilter === 'approved' ? 'text-blue-500' : 'text-gray-500'}`}
+                    onClick={() => setContributionFilter('approved')}
+                  >
+                    <EditableText id="filter-approved">approved</EditableText>
+                  </button>
+                  <button 
+                    className={`${contributionFilter === 'denied' ? 'text-blue-500' : 'text-gray-500'}`}
+                    onClick={() => setContributionFilter('denied')}
+                  >
+                    <EditableText id="filter-denied">denied</EditableText>
+                  </button>
+                  <button 
+                    className={`${contributionFilter === 'undecided' ? 'text-blue-500' : 'text-gray-500'}`}
+                    onClick={() => setContributionFilter('undecided')}
+                  >
+                    <EditableText id="filter-undecided">undecided</EditableText>
+                  </button>
+                </div>
+              </div>
+              
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -728,7 +775,7 @@ const Profile = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {contributions.map(contribution => (
+                  {filteredContributions.map(contribution => (
                     <TableRow key={contribution.id}>
                       <TableCell>{contribution.storyTitle}</TableCell>
                       <TableCell>{contribution.chapterName}</TableCell>
@@ -1168,3 +1215,4 @@ const Profile = () => {
 };
 
 export default Profile;
+
