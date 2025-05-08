@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,9 +9,9 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input, TextArea } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
 import { 
   Table, 
   TableBody, 
@@ -98,7 +97,10 @@ import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import EditableText from "@/components/EditableText";
+import EditableBio from "@/components/EditableBio";
 import { useToast } from "@/hooks/use-toast";
+import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Profile = () => {
   // Original state
@@ -106,6 +108,7 @@ const Profile = () => {
   const [last_name, setLastName] = useState("Riprin");
   const [nickname, setNickname] = useState("");
   const [about, setAbout] = useState("");
+  const [bio, setBio] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
   const [newInterest, setNewInterest] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
@@ -123,6 +126,9 @@ const Profile = () => {
   // Add new state for preview mode
   const [previewMode, setPreviewMode] = useState(false);
   const { toast } = useToast();
+  
+  // For responsive design
+  const isMobile = useIsMobile();
   
   // For the revision history
   const revisions = [
@@ -229,6 +235,10 @@ const Profile = () => {
     setIsUploadDialogOpen(false);
   };
   
+  const handleBioSave = (newBio: string) => {
+    setBio(newBio);
+  };
+  
   // Functions for revision comparison
   const toggleCompare = () => {
     setCompareOpen(!compareOpen);
@@ -294,58 +304,65 @@ const Profile = () => {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-72 p-4" align="start">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm">
-                        <EditableText id="visibility-popup-label">Visibility</EditableText>
-                      </h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="text-xs text-gray-500 flex items-center gap-1">
-                              <Info className="h-4 w-4" />
-                              <EditableText id="can-be-changed-text-popup">Can be changed any time</EditableText>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              <EditableText id="visibility-tooltip-popup">
-                                You can change your profile visibility at any time
-                              </EditableText>
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    
-                    <RadioGroup 
-                      value={visibilityOption} 
-                      onValueChange={setVisibilityOption}
-                      className="space-y-2"
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="font-medium text-sm">
+                      <EditableText id="visibility-popup-label">Visibility</EditableText>
+                    </h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 w-6 p-0 -mt-1 -mr-1"
+                      onClick={() => setIsSettingsOpen(false)}
                     >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="public" id="public-popup" />
-                        <Label htmlFor="public-popup" className="flex items-center gap-2 cursor-pointer">
-                          <Globe className="h-4 w-4 text-purple-600" />
-                          <EditableText id="public-option-popup">Public</EditableText>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="private" id="private-popup" />
-                        <Label htmlFor="private-popup" className="flex items-center gap-2 cursor-pointer">
-                          <User className="h-4 w-4 text-purple-600" />
-                          <EditableText id="private-option-popup">Private</EditableText>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="friends" id="friends-popup" />
-                        <Label htmlFor="friends-popup" className="flex items-center gap-2 cursor-pointer">
-                          <Users className="h-4 w-4 text-purple-600" />
-                          <EditableText id="friends-option-popup">Friends only</EditableText>
-                        </Label>
-                      </div>
-                    </RadioGroup>
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="text-xs text-gray-500 flex items-center gap-1 mb-3">
+                          <Info className="h-4 w-4" />
+                          <EditableText id="can-be-changed-text-popup">Can be changed any time</EditableText>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          <EditableText id="visibility-tooltip-popup">
+                            You can change your profile visibility at any time
+                          </EditableText>
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  
+                  <RadioGroup 
+                    value={visibilityOption} 
+                    onValueChange={setVisibilityOption}
+                    className="space-y-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="public" id="public-popup" />
+                      <Label htmlFor="public-popup" className="flex items-center gap-2 cursor-pointer">
+                        <Globe className="h-4 w-4 text-purple-600" />
+                        <EditableText id="public-option-popup">Public</EditableText>
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="private" id="private-popup" />
+                      <Label htmlFor="private-popup" className="flex items-center gap-2 cursor-pointer">
+                        <User className="h-4 w-4 text-purple-600" />
+                        <EditableText id="private-option-popup">Private</EditableText>
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="friends" id="friends-popup" />
+                      <Label htmlFor="friends-popup" className="flex items-center gap-2 cursor-pointer">
+                        <Users className="h-4 w-4 text-purple-600" />
+                        <EditableText id="friends-option-popup">Friends only</EditableText>
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </PopoverContent>
               </Popover>
             )}
@@ -366,12 +383,6 @@ const Profile = () => {
             <h2 className="text-xl font-bold mr-2">
               <EditableText id="profile-information-heading">Profile information</EditableText>
             </h2>
-
-
-
-
-
-            
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -380,7 +391,7 @@ const Profile = () => {
               <div className="relative">
                 <Avatar className="h-32 w-32 border-2 border-gray-200">
                   {profileImage ? (
-                    <AvatarImage src={profileImage} alt={name} />
+                    <AvatarImage src={profileImage} alt={first_name} />
                   ) : (
                     <AvatarFallback className="bg-purple-100 text-purple-600 text-4xl">
                       <User className="h-16 w-16" />
@@ -556,14 +567,21 @@ const Profile = () => {
           </div>
         </div>
 
-
-          <p className="text-xl text-gray-600 mb-8">
+        <div className="mb-8">
+          <p className="text-xl text-gray-600 mb-4">
             <EditableText id="main-subtitle">
               About
             </EditableText>
           </p>
 
-        
+          {/* Bio section */}
+          <EditableBio 
+            initialValue={bio} 
+            isPreviewMode={previewMode} 
+            onSave={handleBioSave}
+            className="mb-8"
+          />
+        </div>
         
         {/* Interests/Hobbies Section */}
         <div className="mb-8">
@@ -798,436 +816,4 @@ const Profile = () => {
                             </EditableText>
                           </p>
                           <p>
-                            <EditableText id="revision-1-content-2">
-                              This shows the first version.
-                            </EditableText>
-                          </p>
-                        </div>
-                      </div>
-                    </ResizablePanel>
-                    
-                    <ResizableHandle withHandle />
-                    
-                    <ResizablePanel defaultSize={33}>
-                      <div className="p-2 h-full bg-white">
-                        <div className="text-sm font-medium mb-1">
-                          <EditableText id="revision-2-title">Revision 2</EditableText>
-                        </div>
-                        <div className="text-xs">
-                          <p>
-                            <EditableText id="revision-2-content-1">
-                              Modified text content from revision 2.
-                            </EditableText>
-                          </p>
-                          <p>
-                            <EditableText id="revision-2-content-2">
-                              This shows the changes made.
-                            </EditableText>
-                          </p>
-                        </div>
-                      </div>
-                    </ResizablePanel>
-                    
-                    <ResizableHandle withHandle />
-                    
-                    <ResizablePanel defaultSize={33}>
-                      <div className="p-2 h-full bg-white">
-                        <div className="text-sm font-medium mb-1">
-                          <EditableText id="revision-3-title">Revision 3</EditableText>
-                        </div>
-                        <div className="text-xs">
-                          <p>
-                            <EditableText id="revision-3-content-1">
-                              Latest text content from revision 3.
-                            </EditableText>
-                          </p>
-                          <p>
-                            <EditableText id="revision-3-content-2">
-                              This shows the most recent changes.
-                            </EditableText>
-                          </p>
-                        </div>
-                      </div>
-                    </ResizablePanel>
-                  </ResizablePanelGroup>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-        
-        {/* Stories Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">
-            <EditableText id="stories-heading">Stories</EditableText>
-          </h2>
-          <div className="mb-6">
-            {!previewMode && (
-              <Link to="#" className="text-blue-500 hover:underline mb-4 block">
-                <EditableText id="add-story-link">Add story</EditableText>
-              </Link>
-            )}
-            
-            <Card className="mt-4">
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  <EditableText id="stats-title">Stats</EditableText>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="author">
-                  <TabsList className="mb-4 w-full justify-start">
-                    <TabsTrigger value="author" className="flex items-center gap-1">
-                      <PencilLine className="h-4 w-4" />
-                      <EditableText id="author-tab">Author</EditableText>
-                    </TabsTrigger>
-                    <TabsTrigger value="consumer" className="flex items-center gap-1">
-                      <BookOpen className="h-4 w-4" />
-                      <EditableText id="consumer-tab">Consumer</EditableText>
-                    </TabsTrigger>
-                    <TabsTrigger value="producer" className="flex items-center gap-1">
-                      <Award className="h-4 w-4" />
-                      <EditableText id="producer-tab">Producer</EditableText>
-                    </TabsTrigger>
-                    <TabsTrigger value="community" className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      <EditableText id="community-tab">Community</EditableText>
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="author">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <FileText className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.author.text}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="text-stats">Text</EditableText>
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <Image className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.author.images}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="images-stats">Images</EditableText>
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <AudioLines className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.author.audio}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="audio-stats">Audio</EditableText>
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <Video className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.author.video}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="video-stats">Video</EditableText>
-                        </span>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="consumer">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <FileText className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.consumer.text}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="text-consumer-stats">Text</EditableText>
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <Image className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.consumer.images}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="images-consumer-stats">Images</EditableText>
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <AudioLines className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.consumer.audio}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="audio-consumer-stats">Audio</EditableText>
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <Video className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.consumer.video}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="video-consumer-stats">Video</EditableText>
-                        </span>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="producer">
-                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                      <div className="flex flex-col items-center p-3 border rounded">
-                        <BookOpen className="h-8 w-8 text-purple-600 mb-1" />
-                        <span className="text-xl font-bold">{stats.producer.story}</span>
-                        <span className="text-sm text-gray-500">
-                          <EditableText id="story-stats">Story</EditableText>
-                        </span>
-                      </div>
-                    </div>
-                  </TabsContent>
-                  
-                  <TabsContent value="community">
-                    <div className="space-y-6">
-                      <div>
-                        <h3 className="text-md font-medium mb-2">
-                          <EditableText id="contributing-title">Contributing</EditableText>
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <FileText className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.contributing.text}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="text-community-stats">Text</EditableText>
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <Image className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.contributing.images}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="images-community-stats">Images</EditableText>
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <AudioLines className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.contributing.audio}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="audio-community-stats">Audio</EditableText>
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <Video className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.contributing.video}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="video-community-stats">Video</EditableText>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-md font-medium mb-2">
-                          <EditableText id="other-contributions-title">Other Contributions</EditableText>
-                        </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <MessageSquare className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.sentFeedback}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="feedback-stats">Sent Feedback</EditableText>
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <Star className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.suggestedFeatures}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="features-stats">Suggested Features</EditableText>
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <Send className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.submittedBugReports}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="bugs-stats">Bug Reports</EditableText>
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center p-3 border rounded">
-                            <Users className="h-8 w-8 text-purple-600 mb-1" />
-                            <span className="text-xl font-bold">{stats.community.contactRequests}</span>
-                            <span className="text-sm text-gray-500">
-                              <EditableText id="contact-stats">Contact Requests</EditableText>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-        
-        {/* Contributions Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">
-            <EditableText id="contributions-heading">Contributions</EditableText>
-          </h2>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>
-                    <EditableText id="story-header">Story</EditableText>
-                  </TableHead>
-                  <TableHead>
-                    <EditableText id="chapter-header">Chapter</EditableText>
-                  </TableHead>
-                  <TableHead>
-                    <EditableText id="date-header">Date</EditableText>
-                  </TableHead>
-                  <TableHead>
-                    <EditableText id="time-header">Time</EditableText>
-                  </TableHead>
-                  <TableHead>
-                    <EditableText id="words-header">Words</EditableText>
-                  </TableHead>
-                  <TableHead>
-                    <EditableText id="likes-header">Likes</EditableText>
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {contributions.map((contribution) => (
-                  <TableRow key={contribution.id}>
-                    <TableCell className="text-blue-500">{contribution.storyTitle}</TableCell>
-                    <TableCell>{contribution.chapterName}</TableCell>
-                    <TableCell>{contribution.date}</TableCell>
-                    <TableCell>{contribution.time}</TableCell>
-                    <TableCell>{contribution.words}</TableCell>
-                    <TableCell className="text-center">{contribution.likes}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </div>
-
-
-      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
-        <div className="flex justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">
-            <EditableText id="favorites">Favorites</EditableText> 
-
-
-
-            {!previewMode && (
-              <Popover open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-                <PopoverTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    className="ml-2 p-1 text-gray-400 hover:text-gray-600"
-                  >
-                    <Settings className="h-5 w-5" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-72 p-4" align="start">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-sm">
-                        <EditableText id="visibility-popup-label">Visibility</EditableText>
-                      </h4>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="text-xs text-gray-500 flex items-center gap-1">
-                              <Info className="h-4 w-4" />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              <EditableText id="visibility-tooltip-popup">
-                                You can change the visibility of your Favorites at any time
-                              </EditableText>
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    
-                    <RadioGroup 
-                      value={visibilityOption} 
-                      onValueChange={setVisibilityOption}
-                      className="space-y-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="public" id="public-popup" />
-                        <Label htmlFor="public-popup" className="flex items-center gap-2 cursor-pointer">
-                          <Globe className="h-4 w-4 text-purple-600" />
-                          <EditableText id="public-option-popup">Public</EditableText>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="private" id="private-popup" />
-                        <Label htmlFor="private-popup" className="flex items-center gap-2 cursor-pointer">
-                          <User className="h-4 w-4 text-purple-600" />
-                          <EditableText id="private-option-popup">Private</EditableText>
-                        </Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="friends" id="friends-popup" />
-                        <Label htmlFor="friends-popup" className="flex items-center gap-2 cursor-pointer">
-                          <Users className="h-4 w-4 text-purple-600" />
-                          <EditableText id="friends-option-popup">Friends only</EditableText>
-                        </Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            )}
-          </h1>
-
-                    <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="text-xs text-gray-500 flex items-center gap-1">
-                              <Info className="h-4 w-4" />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              <EditableText id="visibility-tooltip-popup">
-                                You can change the visibility of your Favorites at any time
-                              </EditableText>
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-
-        </div>
-</div>
-
-
-      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
-        <div className="flex justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">
-            <EditableText id="favorites">Story(-ies) to live / to experience</EditableText> 
-          </h1>
-        </div>
-     </div>
-
-      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
-        <div className="flex justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">
-            <EditableText id="favorites">Living / Experiencing the story(-ies)</EditableText> 
-          </h1>
-        </div>
-     </div>
-
-      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
-        <div className="flex justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">
-            <EditableText id="favorites">Lived / Experienced stories</EditableText> 
-          </h1>
-        </div>
-     </div>
-
-
-
-      
-      <CrowdlyFooter />
-    </div>
-  );
-};
-
-export default Profile;
+                            <EditableText id="revision

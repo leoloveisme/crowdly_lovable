@@ -78,14 +78,17 @@ import {
   Grid2x2,
   Columns4
 } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from "@/components/ui/popover";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
-
-
 
 const NewStoryTemplate = () => {
   const [visibilityOpen, setVisibilityOpen] = useState(false);
@@ -98,6 +101,7 @@ const NewStoryTemplate = () => {
   const [selectedRevisions, setSelectedRevisions] = useState<number[]>([]);
   const [columnChecked, setColumnChecked] = useState<number[]>([]);
   const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { toast } = useToast();
 
   const toggleSection = (section: string) => {
@@ -168,9 +172,10 @@ const NewStoryTemplate = () => {
   };
   
   const handleSettingsClick = (section: string) => {
+    setSettingsOpen(!settingsOpen);
     toast({
-      title: "Settings opened",
-      description: `Settings for ${section} opened`,
+      title: settingsOpen ? "Settings closed" : "Settings opened",
+      description: settingsOpen ? `Settings for ${section} closed` : `Settings for ${section} opened`,
       duration: 3000,
     });
   };
@@ -199,21 +204,60 @@ const NewStoryTemplate = () => {
       <div className="flex-grow container mx-auto px-4 py-8 max-w-3xl">
         <div className="space-y-8">
           {/* Story Title */}
-          <div className="text-center">
-            <h1 className="text-3xl font-bold">
-              <EditableText id="story-title">Sample story</EditableText>            
-             <div className="flex justify-between items-center mb-4">
-                <div className="flex gap-2">
-                <button onClick={() => handleSettingsClick("Story")} className="cursor-pointer hover:text-blue-500">
-                  <Settings size={16} />
-                </button>
+          <div className="text-center relative">
+            <div className="flex justify-center items-center gap-4">
+              <h1 className="text-3xl font-bold inline-flex items-center">
+                <EditableText id="story-title">Sample story</EditableText>
+              </h1>
+              <div className="flex gap-2">
+                <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
+                  <PopoverTrigger asChild>
+                    <button onClick={() => handleSettingsClick("Story")} className="cursor-pointer hover:text-blue-500">
+                      <Settings size={16} />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-4" align="end">
+                    <div className="flex justify-between items-start mb-2">
+                      <h4 className="font-medium text-sm">Story Settings</h4>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 w-6 p-0 -mt-1 -mr-1"
+                        onClick={() => setSettingsOpen(false)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="space-y-3 mt-2">
+                      <div className="space-y-1">
+                        <Label className="text-xs text-gray-500">Story Format</Label>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline" className="text-xs">Novel</Button>
+                          <Button size="sm" variant="outline" className="text-xs">Short Story</Button>
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-gray-500">Privacy</Label>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="public-setting" />
+                            <Label htmlFor="public-setting" className="text-xs">Public</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox id="private-setting" checked={true} />
+                            <Label htmlFor="private-setting" className="text-xs">Private</Label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
                 <button onClick={() => handleEyeClick("Story")} className="cursor-pointer hover:text-blue-500">
                   <Eye size={16} />
                 </button>
                 <HelpCircle size={16} />
               </div>
             </div>
-            </h1>
             <h2 className="text-xl">
               <EditableText id="story-subtitle">of your life</EditableText>
             </h2>
@@ -557,7 +601,6 @@ const NewStoryTemplate = () => {
 
 
           
-
 
             {/*  end of my addition */}
 
