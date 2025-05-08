@@ -192,13 +192,20 @@ const navigate = useNavigate();
   };
 
 
+
 //const handleEyeClick = (path: string) => {
 
-// navigate(path);
+// navigate(path); // give path as "/path-to-wherever"
 
 //};
 
 
+/*
+
+multi line comment
+yes, baby
+
+*/
   
 
 
