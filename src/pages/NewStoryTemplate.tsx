@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -179,14 +180,16 @@ const NewStoryTemplate = () => {
       duration: 3000,
     });
   };
+
+
+
+const handleEyeClick = () => { // No 'section' parameter
+  navigate('/story-to-live');
+  // toast({ title: "Redirecting...", description: "Going to Story to Live" });
+};
+
   
-  const handleEyeClick = (section: string) => {
-    toast({
-      title: "Preview mode activated",
-      description: `Previewing ${section}`,
-      duration: 3000,
-    });
-  };
+
 
   const handleLayoutOptionClick = (layoutIndex: number) => {
     setActiveLayoutOption(layoutIndex);
