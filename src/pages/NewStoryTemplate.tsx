@@ -183,11 +183,20 @@ const navigate = useNavigate();
   };
 
 
-const handleEyeClick = (path: string) => {
+  const handleEyeClick = (section: string) => {
+    toast({
+      title: "Preview mode activated",
+      description: `Previewing ${section}`,
+      duration: 3000,
+    });
+  };
+
+
+//const handleEyeClick = (path: string) => {
 
 // navigate(path);
 
-};
+//};
 
 
   
@@ -307,7 +316,7 @@ const handleEyeClick = (path: string) => {
                     </div>
                   </PopoverContent>
                 </Popover>
-                <button onClick={() => handleEyeClick("/story-to-live")} className="cursor-pointer hover:text-blue-500">
+                <button onClick={() => handleEyeClick("Story")} className="cursor-pointer hover:text-blue-500">
                   <Eye size={16} />
                 </button>
                 <HelpCircle size={16} />
