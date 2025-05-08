@@ -1210,17 +1210,15 @@ const Profile = () => {
       </div>
 
 
-
  <Link 
-                to="/story-to-live" 
+                to="/account-administration" 
                 className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
                 onClick={() => setShowPopover(false)}
               >
-                <EditableText id="story-to-live">
-                  Story(-ies) to live / to experience
+                <EditableText id="account-administration">
+                  Account Administration
                 </EditableText>
               </Link>
-
       
       <CrowdlyFooter />
     </div>
