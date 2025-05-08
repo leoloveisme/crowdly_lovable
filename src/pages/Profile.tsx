@@ -1291,7 +1291,7 @@ const Profile = () => {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
+
 
 
 
