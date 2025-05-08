@@ -230,23 +230,46 @@ const NewStoryTemplate = () => {
                     </div>
                     <div className="space-y-3 mt-2">
                       <div className="space-y-1">
-                        <Label className="text-xs text-gray-500">Story Format</Label>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="text-xs">Novel</Button>
-                          <Button size="sm" variant="outline" className="text-xs">Short Story</Button>
-                        </div>
-                      </div>
-                      <div className="space-y-1">
                         <Label className="text-xs text-gray-500">Privacy</Label>
                         <div className="space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="public-setting" />
-                            <Label htmlFor="public-setting" className="text-xs">Public</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="private-setting" checked={true} />
-                            <Label htmlFor="private-setting" className="text-xs">Private</Label>
-                          </div>
+
+{/* Visibility Options */}
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <label className="flex items-center gap-2 text-sm">
+               <input type="radio" name="visibility" />
+                public
+              </label>             
+              <button onClick={() => toggleSection('visibility')}>
+                {visibilityOpen ? <CircleX size={16} /> : <HelpCircle size={16} className="text-gray-400" />}
+              </button>
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="radio" name="visibility" />
+                invitation only
+              </label>
+              <HelpCircle size={16} className="text-gray-400" />
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="radio" name="visibility" />
+                private
+              </label>
+              <HelpCircle size={16} className="text-gray-400" />
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="radio" name="visibility" />
+                read only
+              </label>
+              <HelpCircle size={16} className="text-gray-400" />
+            </div>
+          </div>
+
+
+
+
                         </div>
                       </div>
                     </div>
