@@ -78,7 +78,7 @@ const FeatureSuggestions = () => {
       
       <div className="flex-grow container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-[#1A1F2C]">Feature Suggestions</h1>
+          <h1 className="text-4xl font-bold text-[#1A1F2C]">Suggested features</h1>
           <Button 
             asChild 
             className="bg-indigo-600 hover:bg-indigo-700"
