@@ -27,6 +27,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
+import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
 
 const StoryToLiveToExperience = () => {
   const { user } = useAuth();
@@ -435,451 +437,451 @@ const StoryToLiveToExperience = () => {
           {/* Main Content Area */}
           <div className="lg:col-span-3">
           
-            <div className="flex border-b mb-6">
-              <Button 
-                variant="ghost" 
-                className={`${activeSection === 'story' ? 'border-b-2 border-primary rounded-none' : ''}`}
-                onClick={() => toggleSection('story')}
-              >
-                <EditableText id="story-tab">Story</EditableText>
-              </Button>
-              <Button 
-                variant="ghost" 
-                className={`${activeSection === 'contributors' ? 'border-b-2 border-primary rounded-none' : ''}`}
-                onClick={() => toggleSection('contributors')}
-              >
-                <Users className="h-4 w-4 mr-1" />
-                <EditableText id="contributors-tab">Contributors</EditableText>
-              </Button>
-              <Button 
-                variant="ghost" 
-                className={`${activeSection === 'revisions' ? 'border-b-2 border-primary rounded-none' : ''}`}
-                onClick={() => toggleSection('revisions')}
-              >
-                <History className="h-4 w-4 mr-1" />
-                <EditableText id="revisions-tab">Revisions</EditableText>
-              </Button>
-              <Button 
-                variant="ghost" 
-                className={`${activeSection === 'branches' ? 'border-b-2 border-primary rounded-none' : ''}`}
-                onClick={() => toggleSection('branches')}
-              >
-                <GitBranch className="h-4 w-4 mr-1" />
-                <EditableText id="branches-tab">Branches</EditableText>
-              </Button>
-            </div>
+            {/* Replace the old tabs with new responsive tabs */}
+            <Tabs defaultValue="story" className="w-full">
+              <TabsList className="w-full mb-6 border-b overflow-x-auto flex justify-start">
+                <ResponsiveTabsTrigger 
+                  value="story"
+                  icon={<Book className="h-4 w-4" />}
+                  text={<EditableText id="story-tab">Story</EditableText>}
+                  active={activeSection === 'story' || activeSection === ''}
+                  onClick={() => toggleSection('story')}
+                />
+                <ResponsiveTabsTrigger 
+                  value="contributors"
+                  icon={<Users className="h-4 w-4" />} 
+                  text={<EditableText id="contributors-tab">Contributors</EditableText>}
+                  active={activeSection === 'contributors'}
+                  onClick={() => toggleSection('contributors')}
+                />
+                <ResponsiveTabsTrigger 
+                  value="revisions"
+                  icon={<History className="h-4 w-4" />} 
+                  text={<EditableText id="revisions-tab">Revisions</EditableText>}
+                  active={activeSection === 'revisions'}
+                  onClick={() => toggleSection('revisions')}
+                />
+                <ResponsiveTabsTrigger 
+                  value="branches"
+                  icon={<GitBranch className="h-4 w-4" />} 
+                  text={<EditableText id="branches-tab">Branches</EditableText>}
+                  active={activeSection === 'branches'}
+                  onClick={() => toggleSection('branches')}
+                />
+              </TabsList>
             
-            {/* Story Content */}
-            {activeSection === 'story' || activeSection === '' ? (
-              <div className="space-y-6">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="prose max-w-none">
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">
-                          <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
-                        </h2>
-                      </div>
-                      
-                      {/* Text content with branch buttons */}
-                      <div className="mb-6">
-                        <div className="group relative">
-                          <p className="mb-2">
-                            <EditableText id="paragraph-1">
-                              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
-                              nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
-                              nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
-                            </EditableText>
-                          </p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => handleCreateBranch('paragraph1')}
-                          >
-                            <GitBranch className="h-3 w-3 mr-1" />
-                            <EditableText id="create-branch-btn">Create Branch</EditableText>
-                          </Button>
+              {/* Story Content */}
+              {activeSection === 'story' || activeSection === '' ? (
+                <div className="space-y-6">
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="prose max-w-none">
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="text-xl font-semibold">
+                            <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
+                          </h2>
                         </div>
-                      </div>
-                      
-                      <div className="mb-6">
-                        <div className="group relative">
-                          <p className="mb-2">
-                            <EditableText id="paragraph-2">
-                              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
-                              totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
-                              dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
-                              sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-                            </EditableText>
-                          </p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => handleCreateBranch('paragraph2')}
-                          >
-                            <GitBranch className="h-3 w-3 mr-1" />
-                            <EditableText id="create-branch-btn2">Create Branch</EditableText>
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      {/* Image Player Container */}
-                      {selectedContentTypes.includes('images') && (
-                        <div className="my-8 border p-4 rounded-lg">
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium flex items-center">
-                              <Image className="h-5 w-5 mr-2" />
-                              <EditableText id="presentation-title">Presentation / Cartoon</EditableText>
-                            </h3>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm">
-                                <ZoomIn className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Share2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="bg-gray-200 h-64 flex flex-col items-center justify-center rounded">
-                            <div className="h-48 w-48 bg-gray-300 rounded flex items-center justify-center mb-4">
-                              <Play className="h-12 w-12 text-gray-500" />
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Button variant="outline" size="sm">
-                                <EditableText id="prev-image">Previous</EditableText>
-                              </Button>
-                              <span className="text-sm">1 / 5</span>
-                              <Button variant="outline" size="sm">
-                                <EditableText id="next-image">Next</EditableText>
-                              </Button>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-500 mt-2">
-                            <EditableText id="image-caption">Slide caption: Describe what is shown in the presentation slide.</EditableText>
-                          </p>
-                          
-                          {/* Add like/dislike buttons to the image container */}
-                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleImageLike('presentation1')} 
-                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                            >
-                              <ThumbsUp className="h-5 w-5 mr-1" />
-                              <span>{imageLikes.presentation1 || 0}</span>
-                            </button>
-                            <button 
-                              onClick={() => handleImageDislike('presentation1')} 
-                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                            >
-                              <ThumbsDown className="h-5 w-5 mr-1" />
-                              <span>{imageDislikes.presentation1 || 0}</span>
-                            </button>
-                          </div>
-                          
-                          {/* Add Comments section for presentation */}
-                          <CommentsSection targetId="presentation1" />
-                        </div>
-                      )}
-                      
-                      {/* Audio Player Container */}
-                      {selectedContentTypes.includes('audio') && (
-                        <div className="my-8 border p-4 rounded-lg">
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium flex items-center">
-                              <AudioLines className="h-5 w-5 mr-2" />
-                              <EditableText id="audio-title">Audio Player</EditableText>
-                            </h3>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm">
-                                <Share2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="bg-gray-100 p-4 rounded">
-                            <div className="flex items-center space-x-2 mb-3">
-                              <Button variant="outline" size="icon" className="h-10 w-10 rounded-full flex items-center justify-center">
-                                <Play className="h-6 w-6" />
-                              </Button>
-                              <div className="w-full">
-                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
-                                  <div className="bg-primary h-full w-1/3 rounded-full"></div>
-                                </div>
-                                <div className="flex justify-between mt-1 text-xs text-gray-500">
-                                  <span>1:23</span>
-                                  <span>3:45</span>
-                                </div>
-                              </div>
-                              <Button variant="ghost" size="sm">
-                                <Volume className="h-5 w-5" />
-                              </Button>
-                            </div>
-                            <p className="text-sm text-gray-500 italic">
-                              <EditableText id="audio-description">Audio description: Narrative of Chapter 1, read by the author.</EditableText>
+                        
+                        {/* Text content with branch buttons */}
+                        <div className="mb-6">
+                          <div className="group relative">
+                            <p className="mb-2">
+                              <EditableText id="paragraph-1">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
+                                nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
+                                nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
+                              </EditableText>
                             </p>
-                          </div>
-                          
-                          {/* Add like/dislike buttons to the audio container */}
-                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleAudioLike('audio1')} 
-                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleCreateBranch('paragraph1')}
                             >
-                              <ThumbsUp className="h-5 w-5 mr-1" />
-                              <span>{audioLikes.audio1 || 0}</span>
-                            </button>
-                            <button 
-                              onClick={() => handleAudioDislike('audio1')} 
-                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                            >
-                              <ThumbsDown className="h-5 w-5 mr-1" />
-                              <span>{audioDislikes.audio1 || 0}</span>
-                            </button>
+                              <GitBranch className="h-3 w-3 mr-1" />
+                              <EditableText id="create-branch-btn">Create Branch</EditableText>
+                            </Button>
                           </div>
-                          
-                          {/* Add Comments section for audio */}
-                          <CommentsSection targetId="audio1" />
                         </div>
-                      )}
-                      
-                      {/* Video Player Container */}
-                      {selectedContentTypes.includes('video') && (
-                        <div className="my-8 border p-4 rounded-lg">
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium flex items-center">
-                              <Video className="h-5 w-5 mr-2" />
-                              <EditableText id="video-title">Video Player</EditableText>
-                            </h3>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm">
-                                <ZoomIn className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Share2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                        
+                        <div className="mb-6">
+                          <div className="group relative">
+                            <p className="mb-2">
+                              <EditableText id="paragraph-2">
+                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                                totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                                dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                              </EditableText>
+                            </p>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleCreateBranch('paragraph2')}
+                            >
+                              <GitBranch className="h-3 w-3 mr-1" />
+                              <EditableText id="create-branch-btn2">Create Branch</EditableText>
+                            </Button>
                           </div>
-                          <div className="bg-gray-800 h-72 rounded flex flex-col items-center justify-center">
-                            <Play className="h-16 w-16 text-white opacity-70 hover:opacity-100 cursor-pointer" />
+                        </div>
+                        
+                        {/* Image Player Container */}
+                        {selectedContentTypes.includes('images') && (
+                          <div className="my-8 border p-4 rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="text-lg font-medium flex items-center">
+                                <Image className="h-5 w-5 mr-2" />
+                                <EditableText id="presentation-title">Presentation / Cartoon</EditableText>
+                              </h3>
+                              <div className="flex space-x-2">
+                                <Button variant="ghost" size="sm">
+                                  <ZoomIn className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm">
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="bg-gray-200 h-64 flex flex-col items-center justify-center rounded">
+                              <div className="h-48 w-48 bg-gray-300 rounded flex items-center justify-center mb-4">
+                                <Play className="h-12 w-12 text-gray-500" />
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button variant="outline" size="sm">
+                                  <EditableText id="prev-image">Previous</EditableText>
+                                </Button>
+                                <span className="text-sm">1 / 5</span>
+                                <Button variant="outline" size="sm">
+                                  <EditableText id="next-image">Next</EditableText>
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-500 mt-2">
+                              <EditableText id="image-caption">Slide caption: Describe what is shown in the presentation slide.</EditableText>
+                            </p>
                             
-                            <div className="absolute bottom-4 w-11/12 opacity-0 hover:opacity-100 transition-opacity">
-                              <div className="bg-gray-900 bg-opacity-70 p-2 rounded">
-                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
-                                  <div className="bg-primary h-full w-1/4 rounded-full"></div>
-                                </div>
-                                <div className="flex justify-between items-center mt-1">
-                                  <div className="flex items-center space-x-2">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
-                                      <Play className="h-4 w-4" />
-                                    </Button>
-                                    <span className="text-xs text-gray-200">0:35 / 2:18</span>
+                            {/* Add like/dislike buttons to the image container */}
+                            <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                              <button 
+                                onClick={() => handleImageLike('presentation1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                              >
+                                <ThumbsUp className="h-5 w-5 mr-1" />
+                                <span>{imageLikes.presentation1 || 0}</span>
+                              </button>
+                              <button 
+                                onClick={() => handleImageDislike('presentation1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                              >
+                                <ThumbsDown className="h-5 w-5 mr-1" />
+                                <span>{imageDislikes.presentation1 || 0}</span>
+                              </button>
+                            </div>
+                            
+                            {/* Add Comments section for presentation */}
+                            <CommentsSection targetId="presentation1" />
+                          </div>
+                        )}
+                        
+                        {/* Audio Player Container */}
+                        {selectedContentTypes.includes('audio') && (
+                          <div className="my-8 border p-4 rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="text-lg font-medium flex items-center">
+                                <AudioLines className="h-5 w-5 mr-2" />
+                                <EditableText id="audio-title">Audio Player</EditableText>
+                              </h3>
+                              <div className="flex space-x-2">
+                                <Button variant="ghost" size="sm">
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="bg-gray-100 p-4 rounded">
+                              <div className="flex items-center space-x-2 mb-3">
+                                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full flex items-center justify-center">
+                                  <Play className="h-6 w-6" />
+                                </Button>
+                                <div className="w-full">
+                                  <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                    <div className="bg-primary h-full w-1/3 rounded-full"></div>
                                   </div>
-                                  <div className="flex items-center">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
-                                      <Volume className="h-4 w-4" />
-                                    </Button>
+                                  <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                    <span>1:23</span>
+                                    <span>3:45</span>
+                                  </div>
+                                </div>
+                                <Button variant="ghost" size="sm">
+                                  <Volume className="h-5 w-5" />
+                                </Button>
+                              </div>
+                              <p className="text-sm text-gray-500 italic">
+                                <EditableText id="audio-description">Audio description: Narrative of Chapter 1, read by the author.</EditableText>
+                              </p>
+                            </div>
+                            
+                            {/* Add like/dislike buttons to the audio container */}
+                            <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                              <button 
+                                onClick={() => handleAudioLike('audio1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                              >
+                                <ThumbsUp className="h-5 w-5 mr-1" />
+                                <span>{audioLikes.audio1 || 0}</span>
+                              </button>
+                              <button 
+                                onClick={() => handleAudioDislike('audio1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                              >
+                                <ThumbsDown className="h-5 w-5 mr-1" />
+                                <span>{audioDislikes.audio1 || 0}</span>
+                              </button>
+                            </div>
+                            
+                            {/* Add Comments section for audio */}
+                            <CommentsSection targetId="audio1" />
+                          </div>
+                        )}
+                        
+                        {/* Video Player Container */}
+                        {selectedContentTypes.includes('video') && (
+                          <div className="my-8 border p-4 rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="text-lg font-medium flex items-center">
+                                <Video className="h-5 w-5 mr-2" />
+                                <EditableText id="video-title">Video Player</EditableText>
+                              </h3>
+                              <div className="flex space-x-2">
+                                <Button variant="ghost" size="sm">
+                                  <ZoomIn className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm">
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="bg-gray-800 h-72 rounded flex flex-col items-center justify-center">
+                              <Play className="h-16 w-16 text-white opacity-70 hover:opacity-100 cursor-pointer" />
+                              
+                              <div className="absolute bottom-4 w-11/12 opacity-0 hover:opacity-100 transition-opacity">
+                                <div className="bg-gray-900 bg-opacity-70 p-2 rounded">
+                                  <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                    <div className="bg-primary h-full w-1/4 rounded-full"></div>
+                                  </div>
+                                  <div className="flex justify-between items-center mt-1">
+                                    <div className="flex items-center space-x-2">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                        <Play className="h-4 w-4" />
+                                      </Button>
+                                      <span className="text-xs text-gray-200">0:35 / 2:18</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                        <Volume className="h-4 w-4" />
+                                      </Button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
+                            <p className="text-sm text-gray-500 mt-2">
+                              <EditableText id="video-caption">Video caption: Visual interpretation of Chapter 1 - The Beginning.</EditableText>
+                            </p>
+                            
+                            {/* Add like/dislike buttons to the video container */}
+                            <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                              <button 
+                                onClick={() => handleVideoLike('video1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                              >
+                                <ThumbsUp className="h-5 w-5 mr-1" />
+                                <span>{videoLikes.video1 || 0}</span>
+                              </button>
+                              <button 
+                                onClick={() => handleVideoDislike('video1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                              >
+                                <ThumbsDown className="h-5 w-5 mr-1" />
+                                <span>{videoDislikes.video1 || 0}</span>
+                              </button>
+                            </div>
+                            
+                            {/* Add Comments section for video */}
+                            <CommentsSection targetId="video1" />
                           </div>
-                          <p className="text-sm text-gray-500 mt-2">
-                            <EditableText id="video-caption">Video caption: Visual interpretation of Chapter 1 - The Beginning.</EditableText>
-                          </p>
-                          
-                          {/* Add like/dislike buttons to the video container */}
-                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleVideoLike('video1')} 
-                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                        )}
+                        
+                        <div className="mb-6">
+                          <div className="group relative">
+                            <p className="mb-2">
+                              <EditableText id="paragraph-3">
+                                Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
+                                sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
+                                Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
+                                aliquid ex ea commodi consequatur?
+                              </EditableText>
+                            </p>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleCreateBranch('paragraph3')}
                             >
-                              <ThumbsUp className="h-5 w-5 mr-1" />
-                              <span>{videoLikes.video1 || 0}</span>
-                            </button>
-                            <button 
-                              onClick={() => handleVideoDislike('video1')} 
-                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                            >
-                              <ThumbsDown className="h-5 w-5 mr-1" />
-                              <span>{videoDislikes.video1 || 0}</span>
-                            </button>
+                              <GitBranch className="h-3 w-3 mr-1" />
+                              <EditableText id="create-branch-btn3">Create Branch</EditableText>
+                            </Button>
                           </div>
-                          
-                          {/* Add Comments section for video */}
-                          <CommentsSection targetId="video1" />
                         </div>
-                      )}
-                      
-                      <div className="mb-6">
-                        <div className="group relative">
-                          <p className="mb-2">
-                            <EditableText id="paragraph-3">
-                              Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
-                              sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
-                              Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
-                              aliquid ex ea commodi consequatur?
-                            </EditableText>
-                          </p>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => handleCreateBranch('paragraph3')}
+                        
+                        {/* Add like/dislike buttons for the chapter */}
+                        <div className="mt-8 pt-4 border-t flex items-center space-x-2">
+                          <button 
+                            onClick={() => handleChapterLike('chapter1')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
                           >
-                            <GitBranch className="h-3 w-3 mr-1" />
-                            <EditableText id="create-branch-btn3">Create Branch</EditableText>
+                            <ThumbsUp className="h-5 w-5 mr-1" />
+                            <span>{chapterLikes.chapter1 || 0}</span>
+                          </button>
+                          <button 
+                            onClick={() => handleChapterDislike('chapter1')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                          >
+                            <ThumbsDown className="h-5 w-5 mr-1" />
+                            <span>{chapterDislikes.chapter1 || 0}</span>
+                          </button>
+                        </div>
+                        
+                        {/* Add Comments section for chapter */}
+                        <CommentsSection targetId="chapter1" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Dialog for creating a new branch */}
+                  <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Create a New Branch</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="branch-name">Branch Name</Label>
+                          <Input id="branch-name" placeholder="Enter a name for your branch" />
+                        </div>
+                        <div>
+                          <Label htmlFor="branch-description">Description</Label>
+                          <Textarea id="branch-description" placeholder="Briefly describe your branch" />
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setShowBranchDialog(false)}>
+                            Cancel
+                          </Button>
+                          <Button>
+                            Create Branch
                           </Button>
                         </div>
                       </div>
-                      
-                      {/* Add like/dislike buttons for the chapter */}
-                      <div className="mt-8 pt-4 border-t flex items-center space-x-2">
-                        <button 
-                          onClick={() => handleChapterLike('chapter1')} 
-                          className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                        >
-                          <ThumbsUp className="h-5 w-5 mr-1" />
-                          <span>{chapterLikes.chapter1 || 0}</span>
-                        </button>
-                        <button 
-                          onClick={() => handleChapterDislike('chapter1')} 
-                          className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                        >
-                          <ThumbsDown className="h-5 w-5 mr-1" />
-                          <span>{chapterDislikes.chapter1 || 0}</span>
-                        </button>
-                      </div>
-                      
-                      {/* Add Comments section for chapter */}
-                      <CommentsSection targetId="chapter1" />
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              ) : null}
+              
+              {/* Contributors Content */}
+              {activeSection === 'contributors' && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <EditableText id="contributors-title">Contributors</EditableText>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>
+                            <EditableText id="contributor-name">Name</EditableText>
+                          </TableHead>
+                          <TableHead>
+                            <EditableText id="words-contributed">Words</EditableText>
+                          </TableHead>
+                          <TableHead>
+                            <EditableText id="paragraphs-contributed">Paragraphs</EditableText>
+                          </TableHead>
+                          <TableHead>
+                            <EditableText id="chapters-contributed">Chapters</EditableText>
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {contributorsData.map((contributor) => (
+                          <TableRow key={contributor.id}>
+                            <TableCell className="font-medium">{contributor.name}</TableCell>
+                            <TableCell>{contributor.words}</TableCell>
+                            <TableCell>{contributor.paragraphs}</TableCell>
+                            <TableCell>{contributor.chapters}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )}
+              
+              {/* Revisions Content */}
+              {activeSection === 'revisions' && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <EditableText id="revisions-title">Revision History</EditableText>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {revisionsData.map((revision) => (
+                        <div key={revision.id} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
+                          <div>
+                            <div className="font-medium">{revision.description}</div>
+                            <div className="text-gray-500 text-sm">{revision.timestamp}</div>
+                          </div>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4 mr-1" />
+                            <EditableText id="view-revision-btn">View</EditableText>
+                          </Button>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
-                
-                {/* Dialog for creating a new branch */}
-                <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Create a New Branch</DialogTitle>
-                    </DialogHeader>
+              )}
+              
+              {/* Branches Content */}
+              {activeSection === 'branches' && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>
+                      <EditableText id="branches-title">Story Branches</EditableText>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
                     <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="branch-name">Branch Name</Label>
-                        <Input id="branch-name" placeholder="Enter a name for your branch" />
-                      </div>
-                      <div>
-                        <Label htmlFor="branch-description">Description</Label>
-                        <Textarea id="branch-description" placeholder="Briefly describe your branch" />
-                      </div>
-                      <div className="flex justify-end space-x-2">
-                        <Button variant="outline" onClick={() => setShowBranchDialog(false)}>
-                          Cancel
-                        </Button>
-                        <Button>
-                          Create Branch
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            ) : null}
-            
-            {/* Contributors Content */}
-            {activeSection === 'contributors' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <EditableText id="contributors-title">Contributors</EditableText>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>
-                          <EditableText id="contributor-name">Name</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="words-contributed">Words</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="paragraphs-contributed">Paragraphs</EditableText>
-                        </TableHead>
-                        <TableHead>
-                          <EditableText id="chapters-contributed">Chapters</EditableText>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {contributorsData.map((contributor) => (
-                        <TableRow key={contributor.id}>
-                          <TableCell className="font-medium">{contributor.name}</TableCell>
-                          <TableCell>{contributor.words}</TableCell>
-                          <TableCell>{contributor.paragraphs}</TableCell>
-                          <TableCell>{contributor.chapters}</TableCell>
-                        </TableRow>
+                      {branchesData.map((branch) => (
+                        <div key={branch.id} className="flex justify-between items-center p-3 border rounded-lg">
+                          <div>
+                            <div className="font-medium">{branch.title}</div>
+                            <div className="text-gray-500 text-sm">By {branch.author} · {branch.chapters} chapters</div>
+                          </div>
+                          <Button variant="outline" size="sm" className="flex items-center">
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
                       ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Revisions Content */}
-            {activeSection === 'revisions' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <EditableText id="revisions-title">Revision History</EditableText>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {revisionsData.map((revision) => (
-                      <div key={revision.id} className="flex justify-between items-center p-3 hover:bg-gray-50 rounded-lg">
-                        <div>
-                          <div className="font-medium">{revision.description}</div>
-                          <div className="text-gray-500 text-sm">{revision.timestamp}</div>
-                        </div>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4 mr-1" />
-                          <EditableText id="view-revision-btn">View</EditableText>
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {/* Branches Content */}
-            {activeSection === 'branches' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    <EditableText id="branches-title">Story Branches</EditableText>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {branchesData.map((branch) => (
-                      <div key={branch.id} className="flex justify-between items-center p-3 border rounded-lg">
-                        <div>
-                          <div className="font-medium">{branch.title}</div>
-                          <div className="text-gray-500 text-sm">By {branch.author} · {branch.chapters} chapters</div>
-                        </div>
-                        <Button variant="outline" size="sm" className="flex items-center">
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Please DO NOT add "Add New Branch" button here !!!! */}
-                </CardContent>
-              </Card>
-            )}
+                    </div>
+                    {/* Please DO NOT add "Add New Branch" button here !!!! */}
+                  </CardContent>
+                </Card>
+              )}
+            </Tabs>
           </div>
         </div>
       </main>
@@ -896,3 +898,4 @@ const StoryToLiveToExperience = () => {
 };
 
 export default StoryToLiveToExperience;
+
