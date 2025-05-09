@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface ResponsiveTabsTriggerProps extends React.ComponentPropsWithoutRef<typeof TabsTrigger> {
   icon: React.ReactNode;
-  text: string;
+  text: React.ReactNode; // Changed from string to ReactNode to accept any React element
   onClick?: () => void;
   active?: boolean;
 }
