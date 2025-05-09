@@ -633,9 +633,9 @@ yes, baby
             {branchesOpen && (
               <div className="bg-white rounded-md shadow-sm border p-4">
                 <div className="text-sm">
-                  <p>1. Chapter name by sweet melody View Join</p>
-                  <p>2. Chapter name by Master B View Join</p>
-                  <p>3. Chapter name by charminator View Join Delete // This user is logged in as charminator that's why there is Delete link / button</p>
+                  <p>1. Chapter name by sweet melody View // and there contribute if one decides so</p>
+                  <p>2. Chapter name by Master B View // and there contribute if one decides so</p>
+                  <p>3. Chapter name by charminator View Delete // This user is logged in as charminator that's why there is Delete link / button</p>
                 </div>
               </div>
             )}
