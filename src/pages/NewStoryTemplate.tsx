@@ -631,6 +631,13 @@ yes, baby
             </div>
             {/* This below is actually the text from the Intro chapter and it has to be NOT toggle-able  */} 
             {branchesOpen && (
+
+            )}
+          </div>
+
+
+{/*This is the content of Intro chapter */}
+
               <div className="bg-white rounded-md shadow-sm border p-4">
                 <div className="text-sm">
                   <p>Some sample text</p>
@@ -644,8 +651,6 @@ yes, baby
                   <span>10</span>
                 </div>
               </div>
-            )}
-          </div>
 
           {/* Comments Section */}
           <div className="mb-4">
