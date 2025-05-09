@@ -633,15 +633,9 @@ yes, baby
             {branchesOpen && (
               <div className="bg-white rounded-md shadow-sm border p-4">
                 <div className="text-sm">
-                  <p>Some sample text</p>
-                  <p>over</p>
-                  <p>several line</p>
-                </div>
-                <div className="flex justify-end gap-2 mt-2 text-xs items-center">
-                  <Edit size={14} />
-                  <span>5</span>
-                  <Heart size={14} />
-                  <span>10</span>
+                  <p>1. Chapter name by sweet melody View Join</p>
+                  <p>2. Chapter name by Master B View Join</p>
+                  <p>3. Chapter name by charminator View Join Delete // This user is logged in as charminator that's why there is Delete link / button</p>
                 </div>
               </div>
             )}
