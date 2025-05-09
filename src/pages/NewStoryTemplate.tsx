@@ -635,21 +635,9 @@ yes, baby
             )}
           </div>
 
-{/* Text from Intro Chapter */}
+{/* Text from Intro Chapter has to be below here */}
           
-<div className="bg-white rounded-md shadow-sm border p-4">
-                <div className="text-sm">
-                  <p>Some sample text</p>
-                  <p>over</p>
-                  <p>several line</p>
-                </div>
-                <div className="flex justify-end gap-2 mt-2 text-xs items-center">
-                  <Edit size={14} />
-                  <span>5</span>
-                  <Heart size={14} />
-                  <span>10</span>
-                </div>
-              </div>
+
           
 
           {/* Comments Section */}
