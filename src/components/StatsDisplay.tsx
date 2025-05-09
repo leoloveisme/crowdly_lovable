@@ -9,7 +9,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { FileText, Image, AudioLines, Video, Book, Star, Users } from "lucide-react";
+import { FileText, Image, AudioLines, Video, Book, Star, Users, Eye } from "lucide-react";
 import EditableText from "@/components/EditableText";
 
 interface StatsDisplayProps {
