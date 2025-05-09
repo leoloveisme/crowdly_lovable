@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, Menu, X, LogOut } from "lucide-react";
+import { Eye, Menu, X, LogOut, Bell, MessageSquare, User, Users, Heart, Gift, Settings, HelpCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Popover,
@@ -14,6 +15,16 @@ import { useEditableContent } from "@/contexts/EditableContentContext";
 import { toast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 import LoginForm from "@/components/LoginForm";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuGroup, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 const CrowdlyHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,6 +34,8 @@ const CrowdlyHeader = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(3);
+  const [messageCount, setMessageCount] = useState(5);
 
   const { user, signIn, signOut } = useAuth();
   const { currentLanguage, setCurrentLanguage } = useEditableContent();
@@ -70,6 +83,15 @@ const CrowdlyHeader = () => {
     await signOut();
   };
 
+  // Create initials from email for avatar
+  const getInitials = (email: string) => {
+    if (!email) return "U";
+    const parts = email.split('@');
+    if (parts.length === 0) return "U";
+    const name = parts[0];
+    return name.substring(0, 1).toUpperCase();
+  };
+
   return (
     <header className="bg-white p-4 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
@@ -114,19 +136,97 @@ const CrowdlyHeader = () => {
               </SelectContent>
             </Select>
             
-            <div className="space-x-4">
+            <div className="space-x-4 flex items-center">
               {user ? (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm">{user.email}</span>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={handleLogout}
-                    className="flex items-center"
-                  >
-                    <LogOut className="h-4 w-4 mr-1" /> 
-                    <EditableText id="header-logout">Logout</EditableText>
+                <div className="flex items-center space-x-4">
+                  {/* Notification Bell Icon */}
+                  <Button variant="ghost" size="icon" className="relative">
+                    <Bell className="h-5 w-5" />
+                    {notificationCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {notificationCount}
+                      </span>
+                    )}
                   </Button>
+                  
+                  {/* Message Icon */}
+                  <Button variant="ghost" size="icon" className="relative">
+                    <MessageSquare className="h-5 w-5" />
+                    {messageCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {messageCount}
+                      </span>
+                    )}
+                  </Button>
+                  
+                  {/* User Profile Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative p-0 h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src="" alt={user.email || ""} />
+                          <AvatarFallback className="bg-purple-100 text-purple-600">
+                            {getInitials(user.email || "")}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end">
+                      <div className="flex items-center p-2 space-x-2 border-b">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="" alt={user.email || ""} />
+                          <AvatarFallback className="bg-purple-100 text-purple-600">
+                            {getInitials(user.email || "")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{user.email}</span>
+                        </div>
+                      </div>
+                      
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                          <Link to="/profile" className="cursor-pointer flex items-center">
+                            <User className="mr-2 h-4 w-4" /> Profile
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Users className="mr-2 h-4 w-4" /> Friends
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Users className="mr-2 h-4 w-4" /> Groups
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <MessageSquare className="mr-2 h-4 w-4" /> Communications
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Heart className="mr-2 h-4 w-4" /> Favorites
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Gift className="mr-2 h-4 w-4" /> Friends' recommendations
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      
+                      <DropdownMenuSeparator />
+                      
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                          <Link to="/account-administration" className="cursor-pointer flex items-center">
+                            <Settings className="mr-2 h-4 w-4" /> Account settings
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <HelpCircle className="mr-2 h-4 w-4" /> Help
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      
+                      <DropdownMenuSeparator />
+                      
+                      <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+                        <LogOut className="mr-2 h-4 w-4" /> Sign out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ) : (
                 <>
@@ -141,64 +241,13 @@ const CrowdlyHeader = () => {
             </div>
           </div>
           
-          <Popover open={showPopover} onOpenChange={setShowPopover}>
-
-            <PopoverContent className="w-64 p-0">
-              <div className="relative p-4">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute top-2 right-2"
-                  onClick={() => setShowPopover(false)}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                <div className="space-y-2 pt-4">
-                  {user && (
-                    <div className="border-b pb-2 mb-2">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{user.email}</span>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={handleLogout}
-                          className="flex items-center"
-                        >
-                          <LogOut className="h-3 w-3 mr-1" /> 
-                          <EditableText id="popover-logout">Logout</EditableText>
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-
-
-
-                  
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
-          
-          <button 
+          <Button 
             className="md:hidden text-gray-500 focus:outline-none" 
+            variant="ghost"
             onClick={toggleMenu}
           >
-            <svg 
-              className="w-6 h-6" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24" 
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M4 6h16M4 12h16M4 18h16" 
-              />
-            </svg>
-          </button>
-          
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </Button>
         </div>
       </div>
 
@@ -242,13 +291,37 @@ const CrowdlyHeader = () => {
             </Select>
             
             {user ? (
-              <div className="flex flex-col space-y-2">
+              <>
                 <div className="text-sm font-medium">{user.email}</div>
+                <Link to="/profile" className="flex items-center py-2">
+                  <User className="h-4 w-4 mr-2" /> Profile
+                </Link>
+                <div className="flex items-center py-2">
+                  <Users className="h-4 w-4 mr-2" /> Friends
+                </div>
+                <div className="flex items-center py-2">
+                  <Users className="h-4 w-4 mr-2" /> Groups
+                </div>
+                <div className="flex items-center py-2">
+                  <MessageSquare className="h-4 w-4 mr-2" /> Communications
+                </div>
+                <div className="flex items-center py-2">
+                  <Heart className="h-4 w-4 mr-2" /> Favorites
+                </div>
+                <div className="flex items-center py-2">
+                  <Gift className="h-4 w-4 mr-2" /> Friends' recommendations
+                </div>
+                <div className="flex items-center py-2">
+                  <Settings className="h-4 w-4 mr-2" /> Account settings
+                </div>
+                <div className="flex items-center py-2">
+                  <HelpCircle className="h-4 w-4 mr-2" /> Help
+                </div>
                 <Button variant="outline" onClick={handleLogout} className="flex items-center justify-center">
                   <LogOut className="h-4 w-4 mr-1" /> 
-                  <EditableText id="mobile-logout">Logout</EditableText>
+                  <EditableText id="mobile-logout">Sign out</EditableText>
                 </Button>
-              </div>
+              </>
             ) : (
               <div className="flex space-x-2">
                 <Button variant="outline" className="flex-1" onClick={() => window.location.href = "/register"}>

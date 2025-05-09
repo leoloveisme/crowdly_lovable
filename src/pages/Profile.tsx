@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Card, 
-  CardContent, 
-  CardFooter, 
+  CardContent,
+  CardFooter,
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
@@ -14,14 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { 
   Dialog, 
   DialogContent, 
   DialogHeader, 
@@ -29,70 +21,31 @@ import {
   DialogTrigger 
 } from "@/components/ui/dialog";
 import { 
-  DropdownMenu,
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel 
-} from "@/components/ui/form";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  RadioGroup,
-  RadioGroupItem
-} from "@/components/ui/radio-group";
-import {
   Popover,
-  PopoverContent,
-  PopoverTrigger
+  PopoverContent, 
+  PopoverTrigger 
 } from "@/components/ui/popover";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger
-} from "@/components/ui/hover-card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Settings,
   Edit, 
   X, 
-  ChevronDown,
-  Plus,
   Check,
   Upload,
-  Grid2x2,
-  Columns4,
   PencilLine,
   User,
   Globe,
   Users,
   FileText,
-  Image,
-  AudioLines,
-  Video,
   BookOpen,
-  MessageSquare,
-  Send,
   Award,
-  Star,
   Eye,
   EyeOff,
   Info,
-  HelpCircle
+  HelpCircle,
+  Heart,
+  MessageSquare,
+  Gift,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -103,6 +56,9 @@ import EditableBio from "@/components/EditableBio";
 import { useToast } from "@/hooks/use-toast";
 import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
 import { useIsMobile } from "@/hooks/use-mobile";
+import RevisionComparison from "@/components/RevisionComparison";
+import CommunicationsSection from "@/components/CommunicationsSection";
+import StatsDisplay from "@/components/StatsDisplay";
 
 const Profile = () => {
   // Original state
@@ -140,13 +96,16 @@ const Profile = () => {
     { id: 3, text: "Text 3", time: "14:30" },
   ];
   
-  // New state for revisions comparison functionality
-  const [selectedRevisions, setSelectedRevisions] = useState<number[]>([]);
-  const [compareOpen, setCompareOpen] = useState(false);
-  const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
-
   // Add contribution filter state
   const [contributionFilter, setContributionFilter] = useState("total");
+
+  // Stats for the stats display component
+  const statsOverview = {
+    stories: 5,
+    views: 50,
+    likes: 10,
+    contributions: 5
+  };
 
   // Stats for stories and contributions
   const stats = {
@@ -247,29 +206,6 @@ const Profile = () => {
   const handleBioSave = (newBio: string) => {
     setBio(newBio);
   };
-  
-  // Functions for revision comparison
-  const toggleCompare = () => {
-    setCompareOpen(!compareOpen);
-  };
-
-  const toggleRevisionSelection = (revisionId: number) => {
-    setSelectedRevisions(prev => {
-      if (prev.includes(revisionId)) {
-        return prev.filter(id => id !== revisionId);
-      } else {
-        // Limit to 4 selections
-        if (prev.length >= 4) {
-          return [...prev.slice(1), revisionId];
-        }
-        return [...prev, revisionId];
-      }
-    });
-  };
-  
-  const handleLayoutOptionClick = (layoutIndex: number) => {
-    setActiveLayoutOption(layoutIndex);
-  };
 
   // Functions for profile editing
   const startEditing = (field: string, value: string) => {
@@ -282,7 +218,7 @@ const Profile = () => {
     if (editField === 'first_name') {
       setFirstName(tempFieldValue);
     } else if (editField === 'last_name') {
-      setLastName(tempFieldValue.startsWith('@') ? tempFieldValue : `@${tempFieldValue}`);
+      setLastName(tempFieldValue);
     } else if (editField === 'nickname') {
       setNickname(tempFieldValue);
     }
@@ -333,23 +269,10 @@ const Profile = () => {
                     </Button>
                   </div>
                   
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="text-xs text-gray-500 flex items-center gap-1 mb-3">
-                          <Info className="h-4 w-4" />
-                          <EditableText id="can-be-changed-text-popup">Can be changed any time</EditableText>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          <EditableText id="visibility-tooltip-popup">
-                            You can change your profile visibility at any time
-                          </EditableText>
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <div className="text-xs text-gray-500 flex items-center gap-1 mb-3">
+                    <Info className="h-4 w-4" />
+                    <EditableText id="can-be-changed-text-popup">Can be changed any time</EditableText>
+                  </div>
                   
                   <RadioGroup 
                     value={visibilityOption} 
@@ -563,7 +486,6 @@ const Profile = () => {
                 </div>
               </div>
               
-              {/* Remove inline visibility settings as they are now in the popover */}
               {previewMode && (
                 <div className="pt-4 border-t border-gray-200">
                   <div className="flex items-center gap-2">
@@ -618,7 +540,7 @@ const Profile = () => {
                   className="flex-grow" 
                 />
                 <Button onClick={handleAddInterest} size="sm">
-                  <Plus className="h-4 w-4" />
+                  <EditableText id="add-interest">Add</EditableText>
                 </Button>
               </div>
             </div>
@@ -643,236 +565,51 @@ const Profile = () => {
           </div>
         </div>
  
+        {/* Stats & Activity Section - Only shown when not in preview mode */}
+        {!previewMode && (
+          <div className="mb-12">
+            <StatsDisplay
+              stats={statsOverview}
+              contributions={filteredContributions}
+              onFilterChange={setContributionFilter}
+              currentFilter={contributionFilter}
+            />
+          </div>
+        )}
 
-
-        
         {/* Hide editing features in preview mode */}
         {!previewMode && (
           <>
             {/* Revisions Section */}
-            <div className="mb-8">
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-blue-500 text-sm hover:underline cursor-pointer">
-                  <EditableText id="revisions-heading">Revisions</EditableText>
-                </span>
-                <Info className="h-5 w-5 text-gray-400" />
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="ml-4 text-sm text-gray-600">
-                        <EditableText id="compare-tooltip-trigger">
-                          Compare up to 4 revisions
-                        </EditableText>
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>
-                        <EditableText id="compare-tooltip-content">
-                          You can select and compare up to 4 revisions
-                        </EditableText>
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              
-              <div className="mb-4">
-                <Table>
-                  <TableBody>
-                    {revisions.map((revision) => (
-                      <TableRow key={revision.id}>
-                        <TableCell className="font-medium w-10">{revision.id}</TableCell>
-                        <TableCell className="text-blue-500">{revision.time}</TableCell>
-                        <TableCell className="w-8">
-                          <Checkbox 
-                            id={`revision-${revision.id}`} 
-                            checked={selectedRevisions.includes(revision.id)}
-                            onCheckedChange={() => toggleRevisionSelection(revision.id)}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow>
-                      <TableCell colSpan={3}>
-                        <div className="flex justify-between items-center">
-                          <Button 
-                            variant="link" 
-                            size="sm" 
-                            className="text-blue-500 p-0"
-                            onClick={toggleCompare}
-                          >
-                            Compare
-                          </Button>
-                          <Button variant="ghost" size="sm" className="p-1 h-7 w-7">
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-              
-              {/* Comparison Container */}
-              {compareOpen && selectedRevisions.length > 0 && (
-                <div className="border rounded-md p-4 bg-gray-50 mb-4">
-                  <h4 className="font-medium mb-2">
-                    <EditableText id="compare-revisions-title">
-                      Compare Revisions
-                    </EditableText>
-                  </h4>
-                  
-                  <div className="mb-4">
-                    <h5 className="text-sm font-medium mb-2">
-                      <EditableText id="layout-options-title">
-                        Layout options:
-                      </EditableText>
-                    </h5>
-                    
-                    <div className="grid grid-cols-7 gap-2 mb-3">
-                      {/* Option 1: one horizontal and two vertical */}
-                      <button 
-                        onClick={() => handleLayoutOptionClick(0)}
-                        className={`border p-2 flex items-center justify-center ${activeLayoutOption === 0 ? 'border-blue-500 bg-blue-50' : ''}`}
-                        title="One horizontal and two vertical"
-                      >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" />
-                          <line x1="3" y1="12" x2="21" y2="12" />
-                          <line x1="12" y1="12" x2="12" y2="21" />
-                        </svg>
-                      </button>
-                      
-                      {/* Option 2: two horizontal and two vertical */}
-                      <button 
-                        onClick={() => handleLayoutOptionClick(1)}
-                        className={`border p-2 flex items-center justify-center ${activeLayoutOption === 1 ? 'border-blue-500 bg-blue-50' : ''}`}
-                        title="Two horizontal and two vertical"
-                      >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" />
-                          <line x1="3" y1="9" x2="21" y2="9" />
-                          <line x1="3" y1="15" x2="21" y2="15" />
-                          <line x1="12" y1="15" x2="12" y2="21" />
-                        </svg>
-                      </button>
-                      
-                      {/* Option 3: four vertical */}
-                      <button 
-                        onClick={() => handleLayoutOptionClick(2)}
-                        className={`border p-2 flex items-center justify-center ${activeLayoutOption === 2 ? 'border-blue-500 bg-blue-50' : ''}`}
-                        title="Four vertical"
-                      >
-                        <Columns4 size={24} />
-                      </button>
-                      
-                      {/* Option 4: four horizontal */}
-                      <button 
-                        onClick={() => handleLayoutOptionClick(3)}
-                        className={`border p-2 flex items-center justify-center ${activeLayoutOption === 3 ? 'border-blue-500 bg-blue-50' : ''}`}
-                        title="Four horizontal"
-                      >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" />
-                          <line x1="3" y1="7.5" x2="21" y2="7.5" />
-                          <line x1="3" y1="12" x2="21" y2="12" />
-                          <line x1="3" y1="16.5" x2="21" y2="16.5" />
-                        </svg>
-                      </button>
-                      
-                      {/* Option 5: four squares within a square */}
-                      <button 
-                        onClick={() => handleLayoutOptionClick(4)}
-                        className={`border p-2 flex items-center justify-center ${activeLayoutOption === 4 ? 'border-blue-500 bg-blue-50' : ''}`}
-                        title="Four squares within a square"
-                      >
-                        <Grid2x2 size={24} />
-                      </button>
-                      
-                      {/* Option 6: two vertical and two horizontal */}
-                      <button 
-                        onClick={() => handleLayoutOptionClick(5)}
-                        className={`border p-2 flex items-center justify-center ${activeLayoutOption === 5 ? 'border-blue-500 bg-blue-50' : ''}`}
-                        title="Two vertical and two horizontal"
-                      >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" />
-                          <line x1="12" y1="3" x2="12" y2="9" />
-                          <line x1="3" y1="15" x2="21" y2="15" /> 
-                          <line x1="3" y1="9" x2="21" y2="9" />                                                      
-                        </svg>
-                      </button>
-                      
-                      {/* Option 7: two vertical and one horizontal */}
-                      <button 
-                        onClick={() => handleLayoutOptionClick(6)}
-                        className={`border p-2 flex items-center justify-center ${activeLayoutOption === 6 ? 'border-blue-500 bg-blue-50' : ''}`}
-                        title="Two vertical and one horizontal"
-                      >
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="3" width="18" height="18" />
-                          <line x1="12" y1="3" x2="12" y2="12" />
-                          <line x1="3" y1="12" x2="21" y2="12" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <ResizablePanelGroup
-                    direction="horizontal"
-                    className="min-h-[200px] max-w-full border rounded"
-                  >
-                    <ResizablePanel defaultSize={33}>
-                      <div className="p-2 h-full bg-white">
-                        <div className="text-sm font-medium mb-1">
-                          <EditableText id="revision-1-title">Revision 1</EditableText>
-                        </div>
-                        <div className="text-xs">
-                          <p>
-                            <EditableText id="revision-1-content-1">
-                              Original text content from revision 1.
-                            </EditableText>
-                          </p>
-                          <p>
-                            <EditableText id="revision-1-content-2">
-                              Additional content from revision 1.
-                            </EditableText>
-                          </p>
-                        </div>
-                      </div>
-                    </ResizablePanel>
-                    <ResizableHandle withHandle />
-                    <ResizablePanel defaultSize={67}>
-                      <div className="p-2 h-full bg-white">
-                        <div className="text-sm font-medium mb-1">
-                          <EditableText id="revision-2-title">Revision 2</EditableText>
-                        </div>
-                        <div className="text-xs">
-                          <p>
-                            <EditableText id="revision-2-content-1">
-                              Updated text content from revision 2.
-                            </EditableText>
-                          </p>
-                          <p>
-                            <EditableText id="revision-2-content-2">
-                              Additional content from revision 2 with changes highlighted.
-                            </EditableText>
-                          </p>
-                        </div>
-                      </div>
-                    </ResizablePanel>
-                  </ResizablePanelGroup>
-                </div>
-              )}
+            <div className="mb-12">
+              <RevisionComparison revisions={revisions} />
             </div>
           </>
         )}
-      </div>
 
+        {/* Communications Section */}
+        <div className="mb-12">
+          <CommunicationsSection />
+        </div>
 
+        {/* Notifications Section */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
+            <EditableText id="notifications">
+              Notifications
+            </EditableText>
+          </h1>          
 
-       
-        {/* Stats and activity tabs */}
+          <div className="space-y-4">
+            <p className="mb-2">
+              <EditableText id="notifications_messages_placeholder">
+                 Here will be your notifications about deletions, branch activity, etc which you can delete or archive
+              </EditableText>
+            </p>           
+          </div>
+        </div>
+
+        {/* Original Tabs Section for detailed stats */}
         <div className="mb-8">
           <h2 className="text-xl font-bold mb-4">
             <EditableText id="stats-heading">Story(-ies) & activity stats</EditableText>
@@ -906,7 +643,7 @@ const Profile = () => {
               />
             </TabsList>
             
-            {/* Author Tab Content */}
+            {/* Tab contents for each role */}
             <TabsContent value="author" className="space-y-4">
               <h3 className="text-lg font-semibold">
                 <EditableText id="author-contributions">Authoring</EditableText>
@@ -946,11 +683,11 @@ const Profile = () => {
                 </Card>
               </div>
               
+              {/* Author tab additional content */}
               <h3 className="text-lg font-semibold mt-6">
                 <EditableText id="contributions-heading">Contributions</EditableText>
               </h3>
               
-              {/* Add contribution filter buttons */}
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center">
                   <HelpCircle className="h-4 w-4 text-gray-400 mr-2" />
@@ -982,39 +719,6 @@ const Profile = () => {
                   </button>
                 </div>
               </div>
-              
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      <EditableText id="story-title-heading">Story Title</EditableText>
-                    </TableHead>
-                    <TableHead>
-                      <EditableText id="chapter-heading">Chapter</EditableText>
-                    </TableHead>
-                    <TableHead>
-                      <EditableText id="date-heading">Date</EditableText>
-                    </TableHead>
-                    <TableHead>
-                      <EditableText id="words-heading">Words</EditableText>
-                    </TableHead>
-                    <TableHead>
-                      <EditableText id="likes-heading">Likes</EditableText>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredContributions.map(contribution => (
-                    <TableRow key={contribution.id}>
-                      <TableCell>{contribution.storyTitle}</TableCell>
-                      <TableCell>{contribution.chapterName}</TableCell>
-                      <TableCell>{contribution.date}</TableCell>
-                      <TableCell>{contribution.words}</TableCell>
-                      <TableCell>{contribution.likes}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
             </TabsContent>
             
             {/* Consumer Tab Content */}
@@ -1155,73 +859,16 @@ const Profile = () => {
             </TabsContent>
           </Tabs>
         </div>
- 
 
-          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
-            <EditableText id="notifications">
-              Notifications
-            </EditableText>
-          </h1>          
-
-<div className="space-y-4">
-            <p className="mb-2">
-              <EditableText id="notifications_messages_placeholder">
-                 Here will be your notifications about deletions, branch activity, etc which you can delete or archive
-              </EditableText>
-            </p>           
-          </div>
-
-
-          <h1 className="text-4xl font-bold mb-6 text-[#1A1F2C]">
-            <EditableText id="communication">
-              Communication
-            </EditableText>
-          </h1>          
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="discussions">
-              Discussions / Messages
-            </EditableText>
-          </p>
-<div className="space-y-4">
-            <p className="mb-2">
-              <EditableText id="discussions_placeholder">
-                Here will be messages and discussions which you can Like, 
-Reply to,  
-Delete,
-Move to a folder,
-Clone into a chapter / paragraph of a story,
-Copy into a branch
-              </EditableText>
-            </p>           
-          </div>
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="comments">
-              Comments
-            </EditableText>
-          </p>
-<div className="space-y-4">
-            <p className="mb-2">
-              <EditableText id="comments_placeholder">
-                Here will be comments which you can Like,
-Reply to,
-Delete,
-Clone into a chapter / paragraph of a story,
-Copy into a branch
-              </EditableText>
-            </p>           
-          </div>
-       
-
-
- <Link 
-                to="/account-administration" 
-                className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
-                onClick={() => setShowPopover(false)}
-              >
-                <EditableText id="account-administration">
-                  Account Administration
-                </EditableText>
-              </Link>
+        <Link 
+          to="/account-administration" 
+          className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+        >
+          <EditableText id="account-administration">
+            Account Administration
+          </EditableText>
+        </Link>
+      </div>
       
       <CrowdlyFooter />
     </div>
@@ -1229,4 +876,3 @@ Copy into a branch
 };
 
 export default Profile;
-
