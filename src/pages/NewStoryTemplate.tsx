@@ -631,7 +631,19 @@ yes, baby
             </div>
             {/* This below is actually the text from the Intro chapter and it has to be NOT toggle-able  */} 
             {branchesOpen && (
-              
+              <div className="bg-white rounded-md shadow-sm border p-4">
+                <div className="text-sm">
+                  <p>Some sample text</p>
+                  <p>over</p>
+                  <p>several line</p>
+                </div>
+                <div className="flex justify-end gap-2 mt-2 text-xs items-center">
+                  <Edit size={14} />
+                  <span>5</span>
+                  <Heart size={14} />
+                  <span>10</span>
+                </div>
+              </div>
             )}
           </div>
 
