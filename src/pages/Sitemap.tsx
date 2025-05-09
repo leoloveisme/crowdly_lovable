@@ -49,6 +49,20 @@ const Sitemap = () => {
                 </EditableText>
               </Link>
             </div>
+
+            <div className="space-y-2">
+              <Link 
+                to="/feature-suggestions" 
+                className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                onClick={() => setShowPopover(false)}
+              >
+                <EditableText id="popover-feature-suggestions">
+                  Suggested Features
+                </EditableText>
+              </Link>
+            </div>
+
+
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow">
