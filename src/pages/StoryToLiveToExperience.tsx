@@ -309,19 +309,11 @@ const StoryToLiveToExperience = () => {
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center">
                           <Volume className="mr-2 h-4 w-4" />
-                          <EditableText id="generate-audio-menu-item">Generate Audio</EditableText>
+                          <EditableText id="add-chapter-item">Add chapter</EditableText>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center">
                           <Mic className="mr-2 h-4 w-4" />
-                          <EditableText id="record-audio-menu-item">Record Audio</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Video className="mr-2 h-4 w-4" />
-                          <EditableText id="record-video-menu-item">Record Video</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Video className="mr-2 h-4 w-4" />
-                          <EditableText id="generate-video-menu-item">Generate Video</EditableText>
+                          <EditableText id="export-menu-item">Export text</EditableText>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
