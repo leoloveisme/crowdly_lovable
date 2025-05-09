@@ -292,6 +292,54 @@ const StoryToLiveToExperience = () => {
             <h1 className="text-2xl font-bold">
               <EditableText id="story-title">Story of my life</EditableText>
             </h1>
+
+                  {/* New Settings/Read/Help buttons */}
+                  <div className="flex items-center space-x-1">
+                    {/* Settings Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuItem className="flex items-center">
+                          <Copy className="mr-2 h-4 w-4" />
+                          <EditableText id="clone-menu-item">Clone</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Volume className="mr-2 h-4 w-4" />
+                          <EditableText id="generate-audio-menu-item">Generate Audio</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Mic className="mr-2 h-4 w-4" />
+                          <EditableText id="record-audio-menu-item">Record Audio</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Video className="mr-2 h-4 w-4" />
+                          <EditableText id="record-video-menu-item">Record Video</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Video className="mr-2 h-4 w-4" />
+                          <EditableText id="generate-video-menu-item">Generate Video</EditableText>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    
+                    {/* Read Button */}
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    
+                    {/* Help Button */}
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+
+
+
           </div>
           <div>
             <span className="text-gray-600">
@@ -358,49 +406,6 @@ const StoryToLiveToExperience = () => {
                     <EditableText id="chapters-title">Chapters</EditableText>
                   </CardTitle>
                   
-                  {/* New Settings/Read/Help buttons */}
-                  <div className="flex items-center space-x-1">
-                    {/* Settings Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56">
-                        <DropdownMenuItem className="flex items-center">
-                          <Copy className="mr-2 h-4 w-4" />
-                          <EditableText id="clone-menu-item">Clone</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Volume className="mr-2 h-4 w-4" />
-                          <EditableText id="generate-audio-menu-item">Generate Audio</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Mic className="mr-2 h-4 w-4" />
-                          <EditableText id="record-audio-menu-item">Record Audio</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Video className="mr-2 h-4 w-4" />
-                          <EditableText id="record-video-menu-item">Record Video</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Video className="mr-2 h-4 w-4" />
-                          <EditableText id="generate-video-menu-item">Generate Video</EditableText>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    
-                    {/* Read Button */}
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    
-                    {/* Help Button */}
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </CardHeader>
               <CardContent>
