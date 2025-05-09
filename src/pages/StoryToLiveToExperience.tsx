@@ -308,12 +308,12 @@ const StoryToLiveToExperience = () => {
                           <EditableText id="clone-menu-item">Clone</EditableText>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center">
-                          <Volume className="mr-2 h-4 w-4" />
+                          // <Volume className="mr-2 h-4 w-4" />
                           <EditableText id="add-chapter-item">Add chapter</EditableText>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center">
-                          <Mic className="mr-2 h-4 w-4" />
-                          <EditableText id="export-menu-item">Export text</EditableText>
+                          // <Mic className="mr-2 h-4 w-4" />
+                          <EditableText id="export-menu-item">Export</EditableText>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
