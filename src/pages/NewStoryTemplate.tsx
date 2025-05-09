@@ -363,7 +363,7 @@ yes, baby
                 <span className="text-blue-500 text-sm hover:underline cursor-pointer">contributors</span>
                 <div className="flex">
                   <button onClick={() => toggleSection('contributors')}>
-                    {contributorsOpen ? <CircleX size={16} /> : <LayoutTemplate size={16} />}
+                    {contributorsOpen ? <EyeOff size={16} /> : <LayoutTemplate size={16} />}
                   </button>
                 </div>
               </div>
@@ -623,11 +623,11 @@ yes, baby
           <div className="mb-4">
             <div className="flex items-center mb-2">
               <span className="text-blue-500 text-sm hover:underline cursor-pointer">branches</span>
-              <div className="flex">
+             
                 <button onClick={() => toggleSection('branches')}>
                   {branchesOpen ? <EyeOff size={16} /> : <LayoutTemplate size={16} />}
                 </button>
-              </div>
+           
             </div>
             {/* This below is actually the text from the Intro chapter and it has to be NOT toggle-able  */} 
             {branchesOpen && (
