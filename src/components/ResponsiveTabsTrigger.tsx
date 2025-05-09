@@ -8,6 +8,7 @@ interface ResponsiveTabsTriggerProps extends React.ComponentPropsWithoutRef<type
   icon: React.ReactNode;
   text: string;
   onClick?: () => void;
+  active?: boolean;
 }
 
 const ResponsiveTabsTrigger = ({ 
@@ -15,13 +16,18 @@ const ResponsiveTabsTrigger = ({
   text, 
   className,
   onClick,
+  active,
   ...props 
 }: ResponsiveTabsTriggerProps) => {
   const isMobile = useIsMobile();
   
   return (
     <TabsTrigger 
-      className={cn("flex items-center gap-1", className)} 
+      className={cn(
+        "flex items-center gap-1", 
+        active ? "border-b-2 border-primary" : "",
+        className
+      )} 
       onClick={onClick}
       {...props}
     >
