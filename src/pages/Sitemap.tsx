@@ -138,6 +138,26 @@ const Sitemap = () => {
 
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-xl font-semibold mb-4">
+              <EditableText id="finding-your-ways">Finding your ways</EditableText>
+            </h2>
+            <div className="space-y-2">
+                <EditableText id="sitemap">
+                  Sitemap - This page
+                </EditableText>
+            </div>
+            <div className="space-y-2">
+             <Link href="https://www.web.de" target="_blank" rel="noopener noreferrer" className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+                onClick={() => setShowPopover(false)}
+              >
+                <EditableText id="lounge">
+                  Lounge
+                </EditableText>
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-xl font-semibold mb-4">
               <EditableText id="about-section">Company</EditableText>
             </h2>
             <div className="space-y-2">
@@ -154,6 +174,11 @@ const Sitemap = () => {
           </div>
         </div>
       </div>
+
+
+
+
+
       
       <CrowdlyFooter />
     </div>
