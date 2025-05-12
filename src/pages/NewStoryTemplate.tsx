@@ -644,6 +644,17 @@ yes, baby
 {/* Text from Intro Chapter has to be below here */}
           
 
+
+          <div className="border-t pt-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-lg">
+                  <EditableText id="intro">Intro text bla bla </EditableText>
+                </p>
+              </div>
+            </div>
+          </div>
+
           
 
           {/* Comments Section */}
