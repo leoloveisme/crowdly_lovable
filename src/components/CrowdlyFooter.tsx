@@ -49,6 +49,11 @@ const CrowdlyFooter = () => {
                 <EditableText id="footer-sitemap">Sitemap</EditableText>
               </Link></li>
             </ul>
+            <ul className="space-y-2">
+              <li><Link href="https://web.de" className="text-gray-600 hover:text-blue-500">
+                <EditableText id="footer-lounge">Lounge</EditableText>
+              </Link></li>
+            </ul>
           </div>
           
           <div>
