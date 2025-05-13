@@ -379,8 +379,8 @@ yes, baby
                       ].map((contributor, index) => (
                         <tr key={index} className="border-b last:border-0">
                           <td className="py-2 text-blue-500">{contributor.name}</td>
-                          <td className="py-2 text-green-500">$ 5</td>
-                          <td className="py-2 text-green-500">$ 5</td>
+                          <td className="py-2 text-red-500">5</td>
+                          <td className="py-2 text-green-500">5</td>
                           <td className="py-2">{contributor.value}</td>
                           <td className="py-2 text-red-500">
                             <button className="hover:underline">delete</button>
