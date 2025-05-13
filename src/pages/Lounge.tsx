@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -21,7 +20,9 @@ import {
   Video, 
   Mic, 
   Image,
-  Globe 
+  Globe,
+  Lightbulb,
+  FileText
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -153,6 +154,72 @@ const Lounge = () => {
     return languageLabels[language]?.[key] || languageLabels["en"][key];
   };
   
+  // New feature cards based on screenshot
+  const featuredCards = [
+    {
+      id: "casual-conversations",
+      title: "Casual Conversations",
+      icon: <MessageSquare className="h-10 w-10 text-purple-500" />,
+      description: "Join public chat rooms, create a private space for casual discussions with friends.",
+      primaryAction: "Join Public Lounge",
+      secondaryAction: "Create Private Room",
+      color: "bg-purple-100",
+      buttonClass: "bg-purple-600 hover:bg-purple-700"
+    },
+    {
+      id: "brainstorming",
+      title: "Brainstorming Sessions",
+      icon: <Lightbulb className="h-10 w-10 text-teal-500" />,
+      description: "Collaborative sessions with whiteboards, idea sharing, and tools for productive outcomes.",
+      primaryAction: "Join Brainstorming Session",
+      secondaryAction: "Create New Session",
+      color: "bg-teal-100",
+      buttonClass: "bg-teal-600 hover:bg-teal-700"
+    },
+    {
+      id: "audio-recording",
+      title: "Audio Recording",
+      icon: <Mic className="h-10 w-10 text-purple-500" />,
+      description: "Record and share your audio conversations for future reference or for those who couldn't attend.",
+      primaryAction: "Start Audio Recording",
+      secondaryAction: "View Saved Recordings",
+      color: "bg-purple-100",
+      buttonClass: "bg-purple-600 hover:bg-purple-700"
+    },
+    {
+      id: "video-recording",
+      title: "Video Recording",
+      icon: <Video className="h-10 w-10 text-teal-500" />,
+      description: "Capture video of your sessions for review later or share with team members.",
+      primaryAction: "Start Video Recording",
+      secondaryAction: "View Saved Videos",
+      color: "bg-teal-100",
+      buttonClass: "bg-teal-600 hover:bg-teal-700"
+    }
+  ];
+
+  // AI Note Taking features
+  const aiNoteFeatures = [
+    {
+      id: "transcription",
+      title: "Real-time Transcription",
+      icon: <MessageSquare className="h-8 w-8 text-purple-500" />,
+      description: "Automatic transcripts of all conversations as they happen."
+    },
+    {
+      id: "summary",
+      title: "Key Points Summary",
+      icon: <FileText className="h-8 w-8 text-teal-500" />,
+      description: "AI-generated highlights from your discussions."
+    },
+    {
+      id: "multilingual",
+      title: "Multilingual Support",
+      icon: <Globe className="h-8 w-8 text-purple-500" />,
+      description: "Transcription available in multiple languages."
+    }
+  ];
+  
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
@@ -189,9 +256,66 @@ const Lounge = () => {
         
         <p className="text-gray-600 mb-8">
           <EditableText id="lounge-description">
-            {getText("loungeDescription")}
+            A place where creators connect, communicate, and collaborate on creative projects
           </EditableText>
         </p>
+
+        {/* Featured Cards - New Based on Screenshot */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {featuredCards.map((card) => (
+            <Card key={card.id} className={`overflow-hidden border ${card.color} border-gray-200`}>
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="rounded-full p-2 bg-white shadow-sm">
+                    {card.icon}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold mb-2">{card.title}</h3>
+                    <p className="text-gray-600 mb-4">{card.description}</p>
+                    <div className="space-y-2">
+                      <Button className={`w-full ${card.buttonClass} text-white`}>
+                        {card.primaryAction}
+                      </Button>
+                      <Button variant="outline" className="w-full">
+                        {card.secondaryAction}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* AI Note Taking Section */}
+        <Card className="bg-purple-50 mb-10">
+          <CardContent className="p-6">
+            <h2 className="text-2xl font-bold mb-2">AI Note Taking</h2>
+            <p className="text-gray-600 mb-6">
+              Our AI assistant can transcribe and summarize your conversations, organizing key points and action items.
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {aiNoteFeatures.map((feature) => (
+                <div key={feature.id} className="flex items-start gap-3">
+                  <div className="bg-white p-2 rounded-full shadow-sm">
+                    {feature.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{feature.title}</h3>
+                    <p className="text-sm text-gray-600">{feature.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="flex justify-center">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                Create AI Notes Today
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
         
         <Tabs defaultValue="discussions" className="w-full">
           <TabsList className="w-full mb-6 border-b overflow-x-auto flex justify-start">
