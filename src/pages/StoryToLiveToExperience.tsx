@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEditableContent } from "@/contexts/EditableContentContext";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { Button } from "@/components/ui/button";
@@ -874,7 +873,6 @@ const StoryToLiveToExperience = () => {
                         </div>
                       ))}
                     </div>
-                    {/* Please DO NOT add "Add New Branch" button here !!!! */}
                   </CardContent>
                 </Card>
               )}
@@ -895,4 +893,3 @@ const StoryToLiveToExperience = () => {
 };
 
 export default StoryToLiveToExperience;
-
