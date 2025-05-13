@@ -1,7 +1,7 @@
 
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Heart, BookOpen, Bookmark, Clock, Fire, Zap } from "lucide-react";
+import { Heart, BookOpen, Bookmark, Clock, Flame, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
@@ -103,7 +103,7 @@ const Index = () => {
             <Card className="mb-8 overflow-hidden hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20">
                 <CardTitle className="flex items-center">
-                  <Fire className="mr-2 text-amber-600" />
+                  <Flame className="mr-2 text-amber-600" />
                   <EditableText id="mostPopularStories">
                     Most popular
                   </EditableText>
