@@ -414,7 +414,7 @@ yes, baby
           <div className="mb-4">
             <div className="flex items-center mb-2">
               <span className="text-blue-500 text-sm hover:underline cursor-pointer">revisions</span>
-              <div className="flex">
+              <div className="flex items-left">
                 <button onClick={() => toggleSection('revisions')}>
                   {revisionsOpen ? <EyeOff size={16} /> : <LayoutTemplate size={16} />}
                 </button>
