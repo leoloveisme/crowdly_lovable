@@ -182,7 +182,7 @@ const Lounge = () => {
       icon: <Mic className="h-10 w-10 text-purple-500" />,
       description: "Record and share your audio conversations for future reference or for those who couldn't attend.",
       primaryAction: "Start Audio Recording",
-      secondaryAction: "View Saved Recordings",
+      secondaryAction: "Listen To Saved Recordings",
       color: "bg-purple-100",
       buttonClass: "bg-purple-600 hover:bg-purple-700"
     },
