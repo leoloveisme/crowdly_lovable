@@ -233,19 +233,6 @@ const Lounge = () => {
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <div className="flex items-center">
-              <Globe className="h-4 w-4 mr-2" />
-              <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder={getText("languageSelector")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="es">Español</SelectItem>
-                  <SelectItem value="fr">Français</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             <span className="text-gray-600">
               <EditableText id="lounge-welcome">
                 {getText("welcomeText")}{user ? ` ${user.email?.split('@')[0] || ''}` : ''}
