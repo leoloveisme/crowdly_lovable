@@ -44,6 +44,7 @@ const App = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/sitemap" element={<Sitemap />} />
                 <Route path="/about-us" element={<AboutUs />} />
+                <Route path="/lounge" element={<Lounge />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

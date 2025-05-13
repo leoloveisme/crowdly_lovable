@@ -146,7 +146,7 @@ const Sitemap = () => {
                 </EditableText>
             </div>
             <div className="space-y-2">
-             <Link href="https://web.de" target="_blank" rel="noopener noreferrer" className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
+             <Link to="/lounge"  className="block p-2 hover:bg-gray-100 rounded-md transition-colors"
                 onClick={() => setShowPopover(false)}
               >
                 <EditableText id="lounge">
