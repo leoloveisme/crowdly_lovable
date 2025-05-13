@@ -12,11 +12,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import EditableText from "@/components/EditableText";
 import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
-import { MessageSquare, Users, Calendar, Coffee, BookOpen, Video, Mic, Image } from "lucide-react";
+import { 
+  MessageSquare, 
+  Users, 
+  Calendar, 
+  Coffee, 
+  BookOpen, 
+  Video, 
+  Mic, 
+  Image,
+  Globe 
+} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Lounge = () => {
   const { user } = useAuth();
   const [activeSection, setActiveSection] = React.useState<string>("discussions");
+  const [language, setLanguage] = React.useState<string>("en");
   
   // Sample data for discussions, events, etc.
   const discussions = [
@@ -101,23 +113,75 @@ const Lounge = () => {
   const toggleSection = (section: string) => {
     setActiveSection(section === activeSection ? "" : section);
   };
+
+  // Language labels
+  const languageLabels: Record<string, Record<string, string>> = {
+    en: {
+      welcomeText: "Welcome",
+      loungeTitle: "The Creators' Lounge",
+      loungeDescription: "A relaxed space for creators to connect, share ideas, participate in events, and access valuable resources.",
+      discussionsTab: "Discussions",
+      eventsTab: "Events",
+      resourcesTab: "Resources",
+      creatorsTab: "Creators",
+      languageSelector: "Language"
+    },
+    es: {
+      welcomeText: "Bienvenido",
+      loungeTitle: "El Salón de los Creadores",
+      loungeDescription: "Un espacio relajado para que los creadores se conecten, compartan ideas, participen en eventos y accedan a recursos valiosos.",
+      discussionsTab: "Discusiones",
+      eventsTab: "Eventos",
+      resourcesTab: "Recursos",
+      creatorsTab: "Creadores",
+      languageSelector: "Idioma"
+    },
+    fr: {
+      welcomeText: "Bienvenue",
+      loungeTitle: "Le Salon des Créateurs",
+      loungeDescription: "Un espace détendu pour que les créateurs se connectent, partagent des idées, participent à des événements et accèdent à des ressources précieuses.",
+      discussionsTab: "Discussions",
+      eventsTab: "Événements",
+      resourcesTab: "Ressources",
+      creatorsTab: "Créateurs",
+      languageSelector: "Langue"
+    }
+  };
+
+  // Get text based on selected language
+  const getText = (key: string): string => {
+    return languageLabels[language]?.[key] || languageLabels["en"][key];
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
       
       <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
           <div className="flex items-center">
             <Coffee className="h-6 w-6 mr-2" />
             <h1 className="text-2xl font-bold">
-              <EditableText id="lounge-title">The Creators' Lounge</EditableText>
+              <EditableText id="lounge-title">{getText("loungeTitle")}</EditableText>
             </h1>
           </div>
-          <div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center">
+              <Globe className="h-4 w-4 mr-2" />
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder={getText("languageSelector")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <span className="text-gray-600">
               <EditableText id="lounge-welcome">
-                Welcome{user ? ` ${user.email?.split('@')[0] || ''}` : ''}
+                {getText("welcomeText")}{user ? ` ${user.email?.split('@')[0] || ''}` : ''}
               </EditableText>
             </span>
           </div>
@@ -125,7 +189,7 @@ const Lounge = () => {
         
         <p className="text-gray-600 mb-8">
           <EditableText id="lounge-description">
-            A relaxed space for creators to connect, share ideas, participate in events, and access valuable resources.
+            {getText("loungeDescription")}
           </EditableText>
         </p>
         
@@ -134,28 +198,28 @@ const Lounge = () => {
             <ResponsiveTabsTrigger 
               value="discussions"
               icon={<MessageSquare className="h-4 w-4" />}
-              text={<EditableText id="discussions-tab">Discussions</EditableText>}
+              text={<EditableText id="discussions-tab">{getText("discussionsTab")}</EditableText>}
               active={activeSection === 'discussions' || activeSection === ''}
               onClick={() => toggleSection('discussions')}
             />
             <ResponsiveTabsTrigger 
               value="events"
               icon={<Calendar className="h-4 w-4" />} 
-              text={<EditableText id="events-tab">Events</EditableText>}
+              text={<EditableText id="events-tab">{getText("eventsTab")}</EditableText>}
               active={activeSection === 'events'}
               onClick={() => toggleSection('events')}
             />
             <ResponsiveTabsTrigger 
               value="resources"
               icon={<BookOpen className="h-4 w-4" />} 
-              text={<EditableText id="resources-tab">Resources</EditableText>}
+              text={<EditableText id="resources-tab">{getText("resourcesTab")}</EditableText>}
               active={activeSection === 'resources'}
               onClick={() => toggleSection('resources')}
             />
             <ResponsiveTabsTrigger 
               value="creators"
               icon={<Users className="h-4 w-4" />} 
-              text={<EditableText id="creators-tab">Creators</EditableText>}
+              text={<EditableText id="creators-tab">{getText("creatorsTab")}</EditableText>}
               active={activeSection === 'creators'}
               onClick={() => toggleSection('creators')}
             />
