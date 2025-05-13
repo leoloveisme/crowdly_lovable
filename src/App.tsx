@@ -15,6 +15,7 @@ import StoryforConsumers from "./pages/StoryforConsumers";
 import StoryToLiveToExperience from "./pages/StoryToLiveToExperience";
 import Profile from "./pages/Profile";
 import Sitemap from "./pages/Sitemap";
+import Lounge from "./pages/Lounge";
 import AboutUs from "./pages/AboutUs";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
