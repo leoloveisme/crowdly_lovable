@@ -1,11 +1,12 @@
 
 import React, { useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Heart, BookOpen, Bookmark, Clock, Fire, Zap } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
-import { useAuth } from "@/contexts/AuthContext";
 import EditableText from "@/components/EditableText";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const { user, hasRole, roles } = useAuth();
@@ -24,105 +25,186 @@ const Index = () => {
   const isAdmin = user && hasRole('platform_admin');
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/90">
       <CrowdlyHeader />
       
-      <div className="flex-grow flex items-center justify-center bg-gray-50">
-        <div className="text-center px-4">
+      <main className="flex-grow">
+        <div className="container mx-auto px-4 py-8">
+          {/* Admin Message */}
           {isAdmin && (
-            <h2 className="text-4xl font-bold mb-2 text-red-600">
-              <EditableText id="admin-message">
-                You are logged in as platform admin
-              </EditableText>
-            </h2>
+            <Card className="mb-8 border-2 border-red-500 bg-red-50 dark:bg-red-900/20">
+              <CardContent className="pt-6">
+                <h2 className="text-3xl font-bold mb-2 text-red-600 dark:text-red-400 animate-fade-in">
+                  <EditableText id="admin-message">
+                    You are logged in as platform admin
+                  </EditableText>
+                </h2>
+              </CardContent>
+            </Card>
           )}
 
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="main-subtitle">
-              Favorites
-            </EditableText>
-          </p>
+          {/* Favorites Section */}
+          <section className="mb-12">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-4 relative inline-block">
+                <Heart className="inline-block mr-2 text-pink-500" size={24} />
+                <EditableText id="main-subtitle">
+                  Favorites
+                </EditableText>
+                <span className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-transparent"></span>
+              </h2>
+              <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 transition-all hover:shadow-lg">
+                <p className="text-gray-600 dark:text-gray-300">
+                  <EditableText id="favoriteStoriesDescriptionText">
+                    Here will be your favorite stories, which you've added to your favorites. 
+                    On this page they're only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
+                  </EditableText>
+                </p>
+              </div>
+            </div>
+          </section>
 
-          <div className="space-y-4">
-            <p className="mb-2">
-              <EditableText id="favoriteStoriesDescriptionText">
-                Here will be your favorite stories, which you've added to your favorites. 
-                On this page they're only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
-              </EditableText>
-            </p>           
-          </div>
+          {/* Stories to Live/Experience Section */}
+          <section className="mb-12">
+            <div className="relative">
+              <div className="flex items-center mb-6">
+                <BookOpen className="mr-3 text-indigo-500" size={28} />
+                <h1 className="text-3xl font-bold">
+                  <EditableText id="StoriesToLiveToExperience">
+                    Story(-ies) to live / to experience
+                  </EditableText>
+                </h1>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-transparent to-transparent -z-10 rounded-xl"></div>
+            </div>
 
+            {/* Newest Stories */}
+            <Card className="mb-8 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20">
+                <CardTitle className="flex items-center">
+                  <Clock className="mr-2 text-cyan-600" />
+                  <EditableText id="newestStories">
+                    Newest
+                  </EditableText>
+                </CardTitle>
+                <CardDescription>Recently added stories</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 bg-white dark:bg-gray-800">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Placeholder for newest stories */}
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                </div>
+              </CardContent>
+            </Card>
 
-      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow items-center justify-center">
-        <div className="flex items-center justify-center justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">
-            <EditableText id="StoriesToLiveToExperience">Story(-ies) to live / to experience</EditableText> 
-          </h1>
+            {/* Most Popular Stories */}
+            <Card className="mb-8 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20">
+                <CardTitle className="flex items-center">
+                  <Fire className="mr-2 text-amber-600" />
+                  <EditableText id="mostPopularStories">
+                    Most popular
+                  </EditableText>
+                </CardTitle>
+                <CardDescription>Trending stories loved by our community</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 bg-white dark:bg-gray-800">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Placeholder for popular stories */}
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Most Active Stories */}
+            <Card className="mb-12 overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+                <CardTitle className="flex items-center">
+                  <Zap className="mr-2 text-green-600" />
+                  <EditableText id="mostActiveStories">
+                    Most active
+                  </EditableText>
+                </CardTitle>
+                <CardDescription>Stories with ongoing activity and updates</CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 bg-white dark:bg-gray-800">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Placeholder for active stories */}
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Living/Experiencing Stories Section */}
+          <section className="mb-12">
+            <div className="relative">
+              <div className="flex items-center mb-6">
+                <Bookmark className="mr-3 text-purple-500" size={28} />
+                <h1 className="text-3xl font-bold">
+                  <EditableText id="LivingTheStories">
+                    Living / Experiencing the story(-ies)
+                  </EditableText>
+                </h1>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-transparent -z-10 rounded-xl"></div>
+            </div>
+
+            <Card className="mb-8 bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-6">
+                <p className="text-gray-600 dark:text-gray-300">
+                  <EditableText id="LivingTheStoriesDescriptionText">
+                    Here will be your stories which you are currently living / experiencing, which you've added. 
+                    This section is only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
+                  </EditableText>
+                </p>
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Placeholder for current stories */}
+                  <div className="h-24 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Current story</div>
+                  <div className="h-24 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Current story</div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Lived/Experienced Stories Section */}
+          <section>
+            <div className="relative">
+              <div className="flex items-center mb-6">
+                <BookOpen className="mr-3 text-teal-500" size={28} />
+                <h1 className="text-3xl font-bold">
+                  <EditableText id="LivedThoseStories">
+                    Lived / Experienced those story(-ies)
+                  </EditableText>
+                </h1>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 via-transparent to-transparent -z-10 rounded-xl"></div>
+            </div>
+
+            <Card className="bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <CardContent className="p-6">
+                <p className="text-gray-600 dark:text-gray-300">
+                  <EditableText id="LivedThoseStoriesDescriptionText">
+                    Here will be your stories which you already have lived / experienced. 
+                    This section is only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
+                  </EditableText>
+                </p>
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Placeholder for past stories */}
+                  <div className="h-24 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Past story</div>
+                  <div className="h-24 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Past story</div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
         </div>
-     </div>
-
-
-
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="newestStories">
-              Newest
-            </EditableText>
-          </p>
-
-
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="mostPopularStories">
-              Most popular
-            </EditableText>
-          </p>
-
-
-          <p className="text-xl text-gray-600 mb-8">
-            <EditableText id="mostActiveStories">
-              Most active
-            </EditableText>
-          </p>
-
-
-
-      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow items-center justify-center">
-        <div className="flex items-center justify-center justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">
-            <EditableText id="LivingTheStories">Living / Experiencing the story(-ies)</EditableText> 
-          </h1>
-        </div>
-     </div>
-
-          <div className="space-y-4">
-            <p className="mb-2">
-              <EditableText id="LivingTheStoriesDescriptionText">
-                Here will be your stories which you are currently living / experiencing, which you've added. 
-This section is only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
-              </EditableText>
-            </p>           
-          </div>
-
-
-      <div className="container mx-auto px-4 pt-8 pb-16 flex-grow items-center justify-center">
-        <div className="flex items-center justify-center justify-between items-start mb-8">
-          <h1 className="text-3xl font-bold">
-            <EditableText id="LivedThoseStories">Lived / Experienced those story(-ies)</EditableText> 
-          </h1>
-        </div>
-     </div>
-
-          <div className="space-y-4">
-            <p className="mb-2">
-              <EditableText id="LivedThoseStoriesDescriptionText">
-                Here will be your stories which you already have lived / experienced. 
-This section is only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
-              </EditableText>
-            </p>           
-          </div>
-
-
-        </div>
-      </div>
+      </main>
       
       <CrowdlyFooter />
     </div>
