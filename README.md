@@ -1,4 +1,8 @@
-# Welcome to your Lovable project
+# Welcome to Crowdly
+
+Crowd created entertainment entertainemnt platform - where YOUR eintertainment is
+
+Currently the project is in the development and in it's very baby shoes. The idea behind the project is quite mature, however the realisation isn't, because however good Lovable is, it unfortunately isn't good enough to make it run as intended by the founder, without the need to spend a fortune on making it true.  
 
 ## Project info
 
