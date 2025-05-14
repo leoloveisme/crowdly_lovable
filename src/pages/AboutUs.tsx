@@ -55,9 +55,15 @@ const AboutUs = () => {
           <div className="space-y-4">
             <p className="mb-2">
               <EditableText id="feedback-message">
-                We value your feedback and ideas! Feel free to contribute to this open sourced project on Github under https://github.com/leoloveisme/crowdly_lovable
+                We value your feedback and ideas!
+              </EditableText>
+            </p>      
+            <p className="mb-2">
+              <EditableText id="feedback-message">
+                Feel free to contribute to this open sourced project on Github under https://github.com/leoloveisme/crowdly_lovable
               </EditableText>
             </p>           
+     
           </div>
        </div>
       </div>
