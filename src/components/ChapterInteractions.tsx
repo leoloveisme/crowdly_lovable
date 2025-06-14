@@ -58,13 +58,14 @@ const ChapterInteractions: React.FC<ChapterInteractionsProps> = ({ chapterId }) 
       toast({ title: "Login required", description: "Please log in to rate chapters" });
       return;
     }
+    // FIX: onConflict must be a string, not string[]
     const { error } = await supabase.from("chapter_likes").upsert(
       {
         chapter_id: chapterId,
         user_id: user.id,
         is_like: like,
       },
-      { onConflict: ["chapter_id", "user_id"] }
+      { onConflict: "chapter_id,user_id" } // THIS IS THE FIX
     );
     if (error) {
       toast({ title: "Error", description: "Could not update like", variant: "destructive" });
