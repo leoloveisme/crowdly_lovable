@@ -9,6 +9,102 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      chapter_comments: {
+        Row: {
+          chapter_id: string
+          content: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          content: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_comments_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["chapter_id"]
+          },
+        ]
+      }
+      chapter_contributors: {
+        Row: {
+          added_by: string | null
+          chapter_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          chapter_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          added_by?: string | null
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_contributors_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["chapter_id"]
+          },
+        ]
+      }
+      chapter_likes: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          id: string
+          is_like: boolean
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          id?: string
+          is_like: boolean
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          is_like?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_likes_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["chapter_id"]
+          },
+        ]
+      }
       editable_content: {
         Row: {
           content: string
@@ -89,6 +185,44 @@ export type Database = {
           visibility?: Database["public"]["Enums"]["visibility_type"]
         }
         Relationships: []
+      }
+      paragraph_branches: {
+        Row: {
+          branch_text: string
+          chapter_id: string
+          created_at: string
+          id: string
+          parent_paragraph_index: number
+          parent_paragraph_text: string
+          user_id: string
+        }
+        Insert: {
+          branch_text: string
+          chapter_id: string
+          created_at?: string
+          id?: string
+          parent_paragraph_index: number
+          parent_paragraph_text: string
+          user_id: string
+        }
+        Update: {
+          branch_text?: string
+          chapter_id?: string
+          created_at?: string
+          id?: string
+          parent_paragraph_index?: number
+          parent_paragraph_text?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paragraph_branches_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["chapter_id"]
+          },
+        ]
       }
       profiles: {
         Row: {

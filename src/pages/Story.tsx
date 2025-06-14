@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +6,7 @@ import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import EditableText from "@/components/EditableText";
 import ChapterEditor from "@/components/ChapterEditor";
+import ChapterInteractions from "@/components/ChapterInteractions";
 import { useToast } from "@/hooks/use-toast";
 
 const Story = () => {
@@ -199,12 +199,25 @@ const Story = () => {
         </div>
 
         {/* CHAPTERS CRUD */}
-        <ChapterEditor
-          chapters={chapters}
-          onCreate={handleCreateChapter}
-          onUpdate={handleUpdateChapter}
-          onDelete={handleDeleteChapter}
-        />
+        <div className="space-y-6">
+          <ChapterEditor
+            chapters={chapters}
+            onCreate={handleCreateChapter}
+            onUpdate={handleUpdateChapter}
+            onDelete={handleDeleteChapter}
+          />
+          {chapters.map((chapter) => (
+            <div key={chapter.chapter_id} className="mt-8">
+              <div className="font-bold text-lg mb-2">{chapter.chapter_title}</div>
+              {chapter.paragraphs.map((para: string, idx: number) => (
+                <div key={idx} className="ml-1 my-1 text-gray-800">
+                  {para}
+                </div>
+              ))}
+              <ChapterInteractions chapterId={chapter.chapter_id} />
+            </div>
+          ))}
+        </div>
       </main>
       <CrowdlyFooter />
     </div>
@@ -212,4 +225,3 @@ const Story = () => {
 };
 
 export default Story;
-
