@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, BookOpen, Bookmark, Clock, Flame, Zap } from "lucide-react";
@@ -14,6 +13,7 @@ interface NewestStory {
   chapter_title: string;
   created_at: string;
   story_title: string;
+  story_title_id: string;
 }
 
 const Index = () => {
@@ -45,21 +45,22 @@ const Index = () => {
           chapter_id,
           chapter_title,
           created_at,
+          story_title_id,
           story_title:story_title_id ( title )
         `)
         .order("created_at", { ascending: false })
-        .limit(6); // Show up to 6 stories
+        .limit(6);
 
       if (error) {
         console.error("Error fetching newest stories", error);
         setNewestStories([]);
       } else if (data) {
-        // data: {chapter_id, chapter_title, created_at, story_title: { title }}
         setNewestStories(
           data.map((item: any) => ({
             chapter_id: item.chapter_id,
             chapter_title: item.chapter_title,
             created_at: item.created_at,
+            story_title_id: item.story_title_id,
             story_title: item.story_title?.title || "Untitled Story",
           }))
         );
@@ -145,7 +146,7 @@ const Index = () => {
                     {newestStories.map((story) => (
                       <Link
                         key={story.chapter_id}
-                        to={`/story/${story.chapter_id}`}
+                        to={`/story/${story.story_title_id}`}
                         className="block rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition p-4 shadow cursor-pointer border border-blue-100 dark:border-blue-900/20"
                         title={story.story_title}
                       >
@@ -272,4 +273,3 @@ const Index = () => {
 };
 
 export default Index;
-
