@@ -121,6 +121,9 @@ const NewStoryTemplate = () => {
   const [columnChecked, setColumnChecked] = useState<number[]>([]);
   const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [savingTitle, setSavingTitle] = useState(false);
 
   const toggleSection = (section: string) => {
     switch(section) {
@@ -307,8 +310,11 @@ const NewStoryTemplate = () => {
     setChapters(updated || []);
   };
 
-  // CRUD: Update Chapter
-  const handleUpdateChapter = async (chapter_id: string, patch: { chapter_title?: string; paragraphs?: string[] }) => {
+  // CRUD: Update Chapter (fix type: return void instead of boolean)
+  const handleUpdateChapter = async (
+    chapter_id: string,
+    patch: { chapter_title?: string; paragraphs?: string[] }
+  ): Promise<void> => {
     const { error } = await supabase
       .from("stories")
       .update(patch)
@@ -319,7 +325,7 @@ const NewStoryTemplate = () => {
         description: error.message,
         variant: "destructive",
       });
-      return false;
+      return;
     }
     toast({ title: "Chapter updated!" });
     // reload
@@ -329,7 +335,6 @@ const NewStoryTemplate = () => {
       .eq("story_title_id", storyTitleId)
       .order("created_at", { ascending: true });
     setChapters(updated || []);
-    return true;
   };
 
   // CRUD: Delete Chapter
@@ -356,6 +361,28 @@ const NewStoryTemplate = () => {
     setChapters(updated || []);
   };
 
+  const handleUpdateStoryTitle = async (updatedTitle: string) => {
+    if (!storyTitleId || !updatedTitle.trim()) return;
+    setSavingTitle(true);
+    const { error } = await supabase
+      .from("story_title")
+      .update({ title: updatedTitle })
+      .eq("story_title_id", storyTitleId);
+    setSavingTitle(false);
+    if (error) {
+      toast({
+        title: "Failed to update title",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+    setMainTitle(updatedTitle);
+    toast({ title: "Title updated!" });
+    // Redirect to new story id page (just an example; if story_id changes as result)
+    navigate(`/story/${storyTitleId}`, { replace: true });
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center h-32">Loading story...</div>;
   }
@@ -370,7 +397,53 @@ const NewStoryTemplate = () => {
           <div className="text-center relative">
             <div className="flex justify-center items-center gap-4">
               <h1 className="text-3xl font-bold inline-flex items-center">
-                <EditableText id="story-title">{mainTitle}</EditableText>
+                {editingTitle ? (
+                  <form
+                    onSubmit={e => {
+                      e.preventDefault();
+                      handleUpdateStoryTitle(newTitle);
+                      setEditingTitle(false);
+                    }}
+                    className="flex gap-2 items-center"
+                  >
+                    <input
+                      value={newTitle}
+                      onChange={e => setNewTitle(e.target.value)}
+                      className="border px-2 py-1 rounded"
+                      disabled={savingTitle}
+                    />
+                    <button
+                      type="submit"
+                      className="bg-blue-500 text-white px-2 py-1 rounded"
+                      disabled={savingTitle}
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingTitle(false);
+                        setNewTitle(mainTitle);
+                      }}
+                      className="text-gray-500 hover:text-gray-700 px-2 py-1"
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                ) : (
+                  <>
+                    <EditableText id="story-title">{mainTitle}</EditableText>
+                    <button
+                      className="ml-2 text-blue-500 underline text-sm"
+                      onClick={() => {
+                        setEditingTitle(true);
+                        setNewTitle(mainTitle);
+                      }}
+                    >
+                      Edit
+                    </button>
+                  </>
+                )}
               </h1>
               <div className="flex gap-2">
                 <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
