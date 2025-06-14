@@ -111,6 +111,69 @@ export type Database = {
         }
         Relationships: []
       }
+      story_attributes: {
+        Row: {
+          created_at: string
+          id: string
+          most_active: string | null
+          most_popular: string | null
+          new: string
+          story_contributors: string | null
+          story_creator: string
+          story_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          most_active?: string | null
+          most_popular?: string | null
+          new: string
+          story_contributors?: string | null
+          story_creator: string
+          story_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          most_active?: string | null
+          most_popular?: string | null
+          new?: string
+          story_contributors?: string | null
+          story_creator?: string
+          story_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
