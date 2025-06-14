@@ -147,6 +147,27 @@ export type Database = {
         }
         Relationships: []
       }
+      story_title: {
+        Row: {
+          created_at: string
+          story_title_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          story_title_id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          story_title_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
