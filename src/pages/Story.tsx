@@ -1,50 +1,130 @@
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import EditableText from "@/components/EditableText";
+import ChapterEditor from "@/components/ChapterEditor";
+import { useToast } from "@/hooks/use-toast";
 
 const Story = () => {
   const { story_id } = useParams();
-  const [story, setStory] = useState<{ title: string } | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [story, setStory] = useState<{ story_title_id: string; title: string } | null>(null);
   const [chapters, setChapters] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleInput, setTitleInput] = useState("");
+  const [savingTitle, setSavingTitle] = useState(false);
+
+  // Fetch story and chapters
+  const fetchStoryAndChapters = async () => {
+    setLoading(true);
+    // Fetch story title
+    const { data: titleRow, error: titleError } = await supabase
+      .from("story_title")
+      .select("*")
+      .eq("story_title_id", story_id)
+      .maybeSingle();
+    if (titleError || !titleRow) {
+      setStory(null);
+      setLoading(false);
+      return;
+    }
+    setStory(titleRow);
+
+    // Fetch chapters
+    const { data: chaptersData, error: chaptersError } = await supabase
+      .from("stories")
+      .select()
+      .eq("story_title_id", story_id)
+      .order("created_at", { ascending: true });
+    if (!chaptersError && chaptersData) {
+      setChapters(chaptersData);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchStory = async () => {
-      setLoading(true);
-      // Fetch story title
-      const { data: titleRow, error: titleError } = await supabase
-        .from("story_title")
-        .select()
-        .eq("story_title_id", story_id)
-        .maybeSingle();
-      if (titleError || !titleRow) {
-        setStory(null);
-        setLoading(false);
-        return;
-      }
-      setStory(titleRow);
-
-      // Fetch chapters
-      const { data: chaptersData, error: chaptersError } = await supabase
-        .from("stories")
-        .select()
-        .eq("story_title_id", story_id)
-        .order("created_at", { ascending: true });
-      if (!chaptersError && chaptersData) {
-        setChapters(chaptersData);
-      }
-      setLoading(false);
-    };
-
     if (story_id) {
-      fetchStory();
+      fetchStoryAndChapters();
     }
+    // eslint-disable-next-line
   }, [story_id]);
+
+  // Title Editing Handlers
+  const handleStartEditTitle = () => {
+    setTitleInput(story?.title || "");
+    setIsEditingTitle(true);
+  };
+  const handleCancelEditTitle = () => {
+    setIsEditingTitle(false);
+    setTitleInput(story?.title || "");
+  };
+  const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitleInput(e.target.value);
+  };
+  const handleSaveTitle = async () => {
+    if (!titleInput.trim() || !story_id) return;
+    setSavingTitle(true);
+    const { error } = await supabase
+      .from("story_title")
+      .update({ title: titleInput.trim() })
+      .eq("story_title_id", story_id);
+    setSavingTitle(false);
+    if (error) {
+      toast({ title: "Error", description: "Could not update title", variant: "destructive" });
+    } else {
+      toast({ title: "Story Title updated", description: "The title has been changed." });
+      setIsEditingTitle(false);
+      fetchStoryAndChapters();
+    }
+  };
+
+  // CRUD Handlers for chapters
+  // CREATE
+  const handleCreateChapter = async ({ chapter_title, paragraphs }: { chapter_title: string; paragraphs: string[] }) => {
+    if (!story_id) return;
+    const { error } = await supabase.from("stories").insert([
+      {
+        chapter_title,
+        paragraphs,
+        story_title_id: story_id,
+      },
+    ]);
+    if (error) {
+      toast({ title: "Error", description: "Failed to add chapter", variant: "destructive" });
+    } else {
+      toast({ title: "Chapter Created", description: `Added chapter "${chapter_title}".` });
+      fetchStoryAndChapters();
+    }
+  };
+  // UPDATE
+  const handleUpdateChapter = async (
+    chapter_id: string,
+    patch: { chapter_title?: string; paragraphs?: string[] }
+  ) => {
+    const { error } = await supabase.from("stories").update(patch).eq("chapter_id", chapter_id);
+    if (error) {
+      toast({ title: "Error", description: "Failed to update chapter", variant: "destructive" });
+    } else {
+      toast({ title: "Chapter Updated", description: "Saved changes." });
+      fetchStoryAndChapters();
+    }
+  };
+  // DELETE
+  const handleDeleteChapter = async (chapter_id: string) => {
+    const { error } = await supabase.from("stories").delete().eq("chapter_id", chapter_id);
+    if (error) {
+      toast({ title: "Error", description: "Could not delete chapter", variant: "destructive" });
+    } else {
+      toast({ title: "Deleted", description: "Chapter removed" });
+      fetchStoryAndChapters();
+    }
+  };
 
   if (loading) {
     return (
@@ -78,33 +158,53 @@ const Story = () => {
     <div className="flex flex-col min-h-screen">
       <CrowdlyHeader />
       <main className="flex-grow container mx-auto px-4 py-8 max-w-3xl">
-        <h1 className="text-3xl font-bold mb-6">
-          <EditableText id="story-page-title">{story.title}</EditableText>
-        </h1>
-        <div>
-          {chapters.length === 0 ? (
-            <p className="text-gray-500">No chapters yet.</p>
+        {/* TITLE CRUD */}
+        <div className="flex items-center mb-8 gap-1">
+          {isEditingTitle ? (
+            <div className="flex gap-2 items-center w-full max-w-xl">
+              <input
+                type="text"
+                value={titleInput}
+                className="border rounded px-3 py-2 text-2xl font-bold flex-1"
+                onChange={handleChangeTitle}
+                disabled={savingTitle}
+              />
+              <button
+                onClick={handleSaveTitle}
+                disabled={savingTitle}
+                className="px-2 py-1 rounded bg-blue-500 text-white text-xs font-semibold hover:bg-blue-700 transition"
+              >
+                {savingTitle ? "Saving..." : "Save"}
+              </button>
+              <button
+                onClick={handleCancelEditTitle}
+                className="px-2 py-1 rounded bg-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
           ) : (
-            chapters.map((ch, idx) => (
-              <div key={ch.chapter_id} className="mb-8 border-b pb-4">
-                <h2 className="text-xl font-semibold mb-2">
-                  <EditableText id={`chapter-title-${ch.chapter_id}`}>{ch.chapter_title}</EditableText>
-                </h2>
-                {Array.isArray(ch.paragraphs) && ch.paragraphs.length > 0 ? (
-                  <div className="space-y-2">
-                    {ch.paragraphs.map((para: string, pidx: number) => (
-                      <p key={pidx} className="text-base">
-                        <EditableText id={`chapter-${ch.chapter_id}-para-${pidx}`}>{para}</EditableText>
-                      </p>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-gray-400 italic">No paragraphs.</p>
-                )}
-              </div>
-            ))
+            <>
+              <h1 className="text-3xl font-bold" style={{ wordBreak: "break-word" }}>
+                <EditableText id="story-page-title">{story.title}</EditableText>
+              </h1>
+              <button
+                onClick={handleStartEditTitle}
+                className="ml-3 px-2 py-1 rounded border text-xs hover:bg-blue-50 border-blue-300"
+              >
+                Edit
+              </button>
+            </>
           )}
         </div>
+
+        {/* CHAPTERS CRUD */}
+        <ChapterEditor
+          chapters={chapters}
+          onCreate={handleCreateChapter}
+          onUpdate={handleUpdateChapter}
+          onDelete={handleDeleteChapter}
+        />
       </main>
       <CrowdlyFooter />
     </div>
@@ -112,3 +212,4 @@ const Story = () => {
 };
 
 export default Story;
+
