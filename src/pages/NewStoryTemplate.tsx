@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -91,7 +92,23 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 
+const STORY_TITLE_MAIN = "Story of my life";
+
 const NewStoryTemplate = () => {
+  const [storyTitleId, setStoryTitleId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [chapters, setChapters] = useState<any[]>([]);
+  const [chaptersLoading, setChaptersLoading] = useState(false);
+  const [addChapterMode, setAddChapterMode] = useState(false);
+  const [newChapterTitle, setNewChapterTitle] = useState("");
+  const [newChapterParagraphs, setNewChapterParagraphs] = useState<string[]>([]);
+  const [mainTitle, setMainTitle] = useState(STORY_TITLE_MAIN);
+  const [subtitle, setSubtitle] = useState("");
+  const [intro, setIntro] = useState("");
+  const [comments, setComments] = useState<string[]>([]);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const [visibilityOpen, setVisibilityOpen] = useState(false);
   const [contributorsOpen, setContributorsOpen] = useState(true);
   const [revisionsOpen, setRevisionsOpen] = useState(true);
@@ -103,8 +120,6 @@ const NewStoryTemplate = () => {
   const [columnChecked, setColumnChecked] = useState<number[]>([]);
   const [activeLayoutOption, setActiveLayoutOption] = useState<number | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { toast } = useToast();
-const navigate = useNavigate();
 
   const toggleSection = (section: string) => {
     switch(section) {
@@ -146,7 +161,6 @@ const navigate = useNavigate();
       if (prev.includes(revisionId)) {
         return prev.filter(id => id !== revisionId);
       } else {
-        // Limit to 4 selections
         if (prev.length >= 4) {
           return [...prev.slice(1), revisionId];
         }
@@ -182,7 +196,6 @@ const navigate = useNavigate();
     });
   };
 
-
   const handleEyeClick = (section: string) => {
     toast({
       title: "Preview mode activated",
@@ -190,24 +203,6 @@ const navigate = useNavigate();
       duration: 3000,
     });
   };
-
-
-
-//const handleEyeClick = (path: string) => {
-
-// navigate(path); // give path as "/path-to-wherever"
-
-//};
-
-
-/*
-
-multi line comment
-yes, baby
-
-*/
-  
-
 
   const handleLayoutOptionClick = (layoutIndex: number) => {
     setActiveLayoutOption(layoutIndex);
@@ -218,17 +213,163 @@ yes, baby
     });
   };
 
+  // Load or create the story title on mount
+  useEffect(() => {
+    const fetchOrCreateStoryTitle = async () => {
+      setLoading(true);
+      let { data: storyRow, error } = await supabase
+        .from("story_title")
+        .select()
+        .eq("title", STORY_TITLE_MAIN)
+        .maybeSingle();
+      if (error) {
+        toast({
+          title: "DB Error",
+          description: error.message,
+          variant: "destructive",
+        });
+        setLoading(false);
+        return;
+      }
+      if (!storyRow) {
+        const { data: inserted, error: insertErr } = await supabase
+          .from("story_title")
+          .insert({ title: STORY_TITLE_MAIN })
+          .select()
+          .maybeSingle();
+        if (insertErr) {
+          toast({
+            title: "Failed to create story",
+            description: insertErr.message,
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        storyRow = inserted;
+      }
+      setStoryTitleId(storyRow.story_title_id);
+      setMainTitle(storyRow.title);
+      setLoading(false);
+    };
+    fetchOrCreateStoryTitle();
+  }, []);
+
+  // Load all chapters for this story_title_id
+  useEffect(() => {
+    const fetchChapters = async () => {
+      if (!storyTitleId) return;
+      setChaptersLoading(true);
+      const { data, error } = await supabase
+        .from("stories")
+        .select()
+        .eq("story_title_id", storyTitleId)
+        .order("created_at", { ascending: true });
+      if (error) {
+        toast({
+          title: "Failed to fetch chapters",
+          description: error.message,
+          variant: "destructive",
+        });
+        setChaptersLoading(false);
+        return;
+      }
+      setChapters(data || []);
+      setChaptersLoading(false);
+    };
+    fetchChapters();
+  }, [storyTitleId]);
+
+  // Add chapter handler
+  const handleAddChapter = () => {
+    setAddChapterMode(true);
+    setNewChapterTitle("");
+    setNewChapterParagraphs([""]);
+  };
+  // Save new chapter to the database
+  const handleSaveChapter = async () => {
+    if (!storyTitleId) return;
+    const { error } = await supabase.from("stories").insert({
+      story_title_id: storyTitleId,
+      chapter_title: newChapterTitle,
+      paragraphs: newChapterParagraphs,
+    });
+    if (error) {
+      toast({
+        title: "Failed to add chapter",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+    setAddChapterMode(false);
+    setNewChapterTitle("");
+    setNewChapterParagraphs([""]);
+    // Re-load chapters
+    const { data } = await supabase
+      .from("stories")
+      .select()
+      .eq("story_title_id", storyTitleId)
+      .order("created_at", { ascending: true });
+    setChapters(data || []);
+    toast({
+      title: "Chapter added",
+      description: "Your chapter was added successfully!",
+    });
+  };
+
+  // Update paragraph for adding new chapter
+  const setParagraph = (idx: number, value: string) => {
+    setNewChapterParagraphs(pars =>
+      pars.map((p, i) => (i === idx ? value : p))
+    );
+  };
+
+  // Add new paragraph input when adding chapter
+  const handleAddParagraphInput = () => {
+    setNewChapterParagraphs((pars) => [...pars, ""]);
+  };
+
+  // This is a placeholder for updating a chapter (extend as needed)
+  const handleUpdateChapter = async (chapterId: string, fields: Partial<any>) => {
+    const { error } = await supabase
+      .from("stories")
+      .update(fields)
+      .eq("chapter_id", chapterId);
+    if (error) {
+      toast({
+        title: "Failed to update chapter",
+        description: error.message,
+        variant: "destructive",
+      });
+      return false;
+    }
+    // Re-load chapters
+    const { data } = await supabase
+      .from("stories")
+      .select()
+      .eq("story_title_id", storyTitleId)
+      .order("created_at", { ascending: true });
+    setChapters(data || []);
+    toast({ title: "Saved!", description: "Chapter updated." });
+    return true;
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-32">Loading story...</div>;
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
       
       <div className="flex-grow container mx-auto px-4 py-8 max-w-3xl">
         <div className="space-y-8">
-          {/* Story Title */}
+          {/* Story Title Section with EditableText */}
           <div className="text-center relative">
             <div className="flex justify-center items-center gap-4">
               <h1 className="text-3xl font-bold inline-flex items-center">
-                <EditableText id="story-title">Sample story</EditableText>
+                <EditableText id="story-title">{mainTitle}</EditableText>
               </h1>
               <div className="flex gap-2">
                 <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
@@ -330,12 +471,9 @@ yes, baby
               </div>
             </div>
             <h2 className="text-xl">
-              <EditableText id="story-subtitle">of your life</EditableText>
+              <EditableText id="story-subtitle">{subtitle || "Subtitle..."}</EditableText>
             </h2>
           </div>
-
-
-
 
           {/* Intro Section */}
           <div className="border-b pb-4">
@@ -612,12 +750,67 @@ yes, baby
             )}
           </div>           
 
-           {/* begin of my addition */}
-
-
-          
-
-            {/*  end of my addition */}
+          {/* Chapters Section - Load from DB now */}
+          <div className="mb-4 flex flex-col lg:flex-row gap-6">
+            <div className="w-full max-w-[300px] p-4 border rounded bg-white shadow-sm">
+              <div className="font-bold mb-2 text-blue-700">Chapters</div>
+              {chaptersLoading ? (
+                <div>Loading chapters...</div>
+              ) : (
+                <>
+                  {chapters.map((chap, idx) => (
+                    <div key={chap.chapter_id} className="mb-4 border-b last:border-0 pb-2">
+                      <div className="font-semibold">
+                        <EditableText
+                          id={`chapter-title-${chap.chapter_id}`}
+                        >
+                          {chap.chapter_title}
+                        </EditableText>
+                      </div>
+                      {chap.paragraphs &&
+                        chap.paragraphs.map((para: string, pi: number) => (
+                          <div key={pi} className="ml-2 text-sm text-gray-800">
+                            <EditableText id={`chapter-${chap.chapter_id}-para-${pi}`}>{para}</EditableText>
+                          </div>
+                        ))}
+                    </div>
+                  ))}
+                  {addChapterMode ? (
+                    <div className="border mt-2 rounded p-2 bg-gray-50">
+                      <input
+                        type="text"
+                        className="mb-2 border w-full rounded px-2 py-1"
+                        placeholder="Chapter Title"
+                        value={newChapterTitle}
+                        onChange={e => setNewChapterTitle(e.target.value)}
+                      />
+                      {newChapterParagraphs.map((p, i) => (
+                        <input
+                          key={i}
+                          type="text"
+                          className="mb-2 border w-full rounded px-2 py-1"
+                          placeholder={`Paragraph ${i + 1}`}
+                          value={p}
+                          onChange={e => setParagraph(i, e.target.value)}
+                        />
+                      ))}
+                      <Button size="sm" variant="secondary" onClick={handleAddParagraphInput}>
+                        + Add Paragraph
+                      </Button>
+                      <div className="mt-2 flex gap-2">
+                        <Button size="sm" onClick={handleSaveChapter}>Save</Button>
+                        <Button size="sm" variant="ghost" onClick={() => setAddChapterMode(false)}>Cancel</Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button variant="outline" className="w-full mt-2" onClick={handleAddChapter}>
+                      + Add Chapter
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
 
           {/* Branches Section */}
           <div className="mb-4">
@@ -629,7 +822,6 @@ yes, baby
                 </button>
               </div>
             </div>
-            {/* This below is actually the text from the Intro chapter and it has to be NOT toggle-able  */} 
             {branchesOpen && (
               <div className="bg-white rounded-md shadow-sm border p-4">
                 <div className="text-sm">
@@ -641,10 +833,6 @@ yes, baby
             )}
           </div>
 
-{/* Text from Intro Chapter has to be below here */}
-          
-
-
           <div className="border-t pt-4">
             <div className="flex justify-between items-center">
               <div>
@@ -654,8 +842,6 @@ yes, baby
               </div>
             </div>
           </div>
-
-          
 
           {/* Comments Section */}
           <div className="mb-4">
