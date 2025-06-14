@@ -111,6 +111,41 @@ export type Database = {
         }
         Relationships: []
       }
+      stories: {
+        Row: {
+          chapter_id: string
+          chapter_title: string
+          created_at: string
+          paragraphs: string[]
+          story_title_id: string
+          updated_at: string
+        }
+        Insert: {
+          chapter_id?: string
+          chapter_title: string
+          created_at?: string
+          paragraphs?: string[]
+          story_title_id: string
+          updated_at?: string
+        }
+        Update: {
+          chapter_id?: string
+          chapter_title?: string
+          created_at?: string
+          paragraphs?: string[]
+          story_title_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stories_story_title_id_fkey"
+            columns: ["story_title_id"]
+            isOneToOne: false
+            referencedRelation: "story_title"
+            referencedColumns: ["story_title_id"]
+          },
+        ]
+      }
       story_attributes: {
         Row: {
           created_at: string
