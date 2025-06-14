@@ -91,6 +91,7 @@ import CrowdlyFooter from "@/components/CrowdlyFooter";
 import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
+import ChapterEditor from "@/components/ChapterEditor";
 
 const STORY_TITLE_MAIN = "Story of my life";
 
@@ -255,7 +256,7 @@ const NewStoryTemplate = () => {
     fetchOrCreateStoryTitle();
   }, []);
 
-  // Load all chapters for this story_title_id
+  // CRUD: Load All Chapters
   useEffect(() => {
     const fetchChapters = async () => {
       if (!storyTitleId) return;
@@ -280,19 +281,13 @@ const NewStoryTemplate = () => {
     fetchChapters();
   }, [storyTitleId]);
 
-  // Add chapter handler
-  const handleAddChapter = () => {
-    setAddChapterMode(true);
-    setNewChapterTitle("");
-    setNewChapterParagraphs([""]);
-  };
-  // Save new chapter to the database
-  const handleSaveChapter = async () => {
+  // CRUD: Add Chapter
+  const handleCreateChapter = async (data: { chapter_title: string; paragraphs: string[] }) => {
     if (!storyTitleId) return;
     const { error } = await supabase.from("stories").insert({
       story_title_id: storyTitleId,
-      chapter_title: newChapterTitle,
-      paragraphs: newChapterParagraphs,
+      chapter_title: data.chapter_title,
+      paragraphs: data.paragraphs,
     });
     if (error) {
       toast({
@@ -302,40 +297,22 @@ const NewStoryTemplate = () => {
       });
       return;
     }
-    setAddChapterMode(false);
-    setNewChapterTitle("");
-    setNewChapterParagraphs([""]);
-    // Re-load chapters
-    const { data } = await supabase
+    toast({ title: "Chapter added!" });
+    // reload
+    const { data: updated } = await supabase
       .from("stories")
       .select()
       .eq("story_title_id", storyTitleId)
       .order("created_at", { ascending: true });
-    setChapters(data || []);
-    toast({
-      title: "Chapter added",
-      description: "Your chapter was added successfully!",
-    });
+    setChapters(updated || []);
   };
 
-  // Update paragraph for adding new chapter
-  const setParagraph = (idx: number, value: string) => {
-    setNewChapterParagraphs(pars =>
-      pars.map((p, i) => (i === idx ? value : p))
-    );
-  };
-
-  // Add new paragraph input when adding chapter
-  const handleAddParagraphInput = () => {
-    setNewChapterParagraphs((pars) => [...pars, ""]);
-  };
-
-  // This is a placeholder for updating a chapter (extend as needed)
-  const handleUpdateChapter = async (chapterId: string, fields: Partial<any>) => {
+  // CRUD: Update Chapter
+  const handleUpdateChapter = async (chapter_id: string, patch: { chapter_title?: string; paragraphs?: string[] }) => {
     const { error } = await supabase
       .from("stories")
-      .update(fields)
-      .eq("chapter_id", chapterId);
+      .update(patch)
+      .eq("chapter_id", chapter_id);
     if (error) {
       toast({
         title: "Failed to update chapter",
@@ -344,15 +321,39 @@ const NewStoryTemplate = () => {
       });
       return false;
     }
-    // Re-load chapters
-    const { data } = await supabase
+    toast({ title: "Chapter updated!" });
+    // reload
+    const { data: updated } = await supabase
       .from("stories")
       .select()
       .eq("story_title_id", storyTitleId)
       .order("created_at", { ascending: true });
-    setChapters(data || []);
-    toast({ title: "Saved!", description: "Chapter updated." });
+    setChapters(updated || []);
     return true;
+  };
+
+  // CRUD: Delete Chapter
+  const handleDeleteChapter = async (chapter_id: string) => {
+    const { error } = await supabase
+      .from("stories")
+      .delete()
+      .eq("chapter_id", chapter_id);
+    if (error) {
+      toast({
+        title: "Failed to delete chapter",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({ title: "Chapter deleted!" });
+    // reload
+    const { data: updated } = await supabase
+      .from("stories")
+      .select()
+      .eq("story_title_id", storyTitleId)
+      .order("created_at", { ascending: true });
+    setChapters(updated || []);
   };
 
   if (loading) {
@@ -750,66 +751,18 @@ const NewStoryTemplate = () => {
             )}
           </div>           
 
-          {/* Chapters Section - Load from DB now */}
+          {/* Chapters Section - modularized for CRUD */}
           <div className="mb-4 flex flex-col lg:flex-row gap-6">
-            <div className="w-full max-w-[300px] p-4 border rounded bg-white shadow-sm">
-              <div className="font-bold mb-2 text-blue-700">Chapters</div>
-              {chaptersLoading ? (
-                <div>Loading chapters...</div>
-              ) : (
-                <>
-                  {chapters.map((chap, idx) => (
-                    <div key={chap.chapter_id} className="mb-4 border-b last:border-0 pb-2">
-                      <div className="font-semibold">
-                        <EditableText
-                          id={`chapter-title-${chap.chapter_id}`}
-                        >
-                          {chap.chapter_title}
-                        </EditableText>
-                      </div>
-                      {chap.paragraphs &&
-                        chap.paragraphs.map((para: string, pi: number) => (
-                          <div key={pi} className="ml-2 text-sm text-gray-800">
-                            <EditableText id={`chapter-${chap.chapter_id}-para-${pi}`}>{para}</EditableText>
-                          </div>
-                        ))}
-                    </div>
-                  ))}
-                  {addChapterMode ? (
-                    <div className="border mt-2 rounded p-2 bg-gray-50">
-                      <input
-                        type="text"
-                        className="mb-2 border w-full rounded px-2 py-1"
-                        placeholder="Chapter Title"
-                        value={newChapterTitle}
-                        onChange={e => setNewChapterTitle(e.target.value)}
-                      />
-                      {newChapterParagraphs.map((p, i) => (
-                        <input
-                          key={i}
-                          type="text"
-                          className="mb-2 border w-full rounded px-2 py-1"
-                          placeholder={`Paragraph ${i + 1}`}
-                          value={p}
-                          onChange={e => setParagraph(i, e.target.value)}
-                        />
-                      ))}
-                      <Button size="sm" variant="secondary" onClick={handleAddParagraphInput}>
-                        + Add Paragraph
-                      </Button>
-                      <div className="mt-2 flex gap-2">
-                        <Button size="sm" onClick={handleSaveChapter}>Save</Button>
-                        <Button size="sm" variant="ghost" onClick={() => setAddChapterMode(false)}>Cancel</Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <Button variant="outline" className="w-full mt-2" onClick={handleAddChapter}>
-                      + Add Chapter
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
+            {chaptersLoading ? (
+              <div>Loading chapters...</div>
+            ) : (
+              <ChapterEditor
+                chapters={chapters}
+                onCreate={handleCreateChapter}
+                onUpdate={handleUpdateChapter}
+                onDelete={handleDeleteChapter}
+              />
+            )}
           </div>
 
           {/* Branches Section */}
