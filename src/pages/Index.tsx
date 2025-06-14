@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, BookOpen, Bookmark, Clock, Flame, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,10 +7,18 @@ import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import EditableText from "@/components/EditableText";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+
+interface NewestStory {
+  chapter_id: string;
+  chapter_title: string;
+  created_at: string;
+  story_title: string;
+}
 
 const Index = () => {
   const { user, hasRole, roles } = useAuth();
-  
+
   // Debug logging
   useEffect(() => {
     if (user) {
@@ -21,13 +29,51 @@ const Index = () => {
       console.log("No user is logged in");
     }
   }, [user, roles, hasRole]);
-  
+
   const isAdmin = user && hasRole('platform_admin');
+
+  // State for newest stories
+  const [newestStories, setNewestStories] = useState<NewestStory[]>([]);
+  const [loadingStories, setLoadingStories] = useState(true);
+
+  useEffect(() => {
+    const fetchNewestStories = async () => {
+      setLoadingStories(true);
+      const { data, error } = await supabase
+        .from("stories")
+        .select(`
+          chapter_id,
+          chapter_title,
+          created_at,
+          story_title:story_title_id ( title )
+        `)
+        .order("created_at", { ascending: false })
+        .limit(6); // Show up to 6 stories
+
+      if (error) {
+        console.error("Error fetching newest stories", error);
+        setNewestStories([]);
+      } else if (data) {
+        // data: {chapter_id, chapter_title, created_at, story_title: { title }}
+        setNewestStories(
+          data.map((item: any) => ({
+            chapter_id: item.chapter_id,
+            chapter_title: item.chapter_title,
+            created_at: item.created_at,
+            story_title: item.story_title?.title || "Untitled Story",
+          }))
+        );
+      }
+      setLoadingStories(false);
+    };
+
+    fetchNewestStories();
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-background to-background/90">
       <CrowdlyHeader />
-      
+
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-8">
           {/* Admin Message */}
@@ -90,12 +136,26 @@ const Index = () => {
                 <CardDescription>Recently added stories</CardDescription>
               </CardHeader>
               <CardContent className="p-6 bg-white dark:bg-gray-800">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {/* Placeholder for newest stories */}
-                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
-                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
-                  <div className="h-32 rounded-md bg-slate-100 dark:bg-slate-700 flex items-center justify-center">Story preview</div>
-                </div>
+                {loadingStories ? (
+                  <div className="text-center text-gray-400 py-8">Loading...</div>
+                ) : newestStories.length === 0 ? (
+                  <div className="text-center text-gray-400 py-8">No stories found</div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {newestStories.map((story) => (
+                      <Link
+                        key={story.chapter_id}
+                        to={`/story/${story.chapter_id}`}
+                        className="block rounded-md bg-slate-100 dark:bg-slate-700 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition p-4 shadow cursor-pointer border border-blue-100 dark:border-blue-900/20"
+                        title={story.story_title}
+                      >
+                        <div className="font-bold text-lg mb-1 truncate">{story.story_title}</div>
+                        <div className="text-sm text-gray-700 dark:text-gray-300">{story.chapter_title}</div>
+                        <div className="text-xs text-gray-400 mt-2">{new Date(story.created_at).toLocaleString()}</div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -205,10 +265,11 @@ const Index = () => {
           </section>
         </div>
       </main>
-      
+
       <CrowdlyFooter />
     </div>
   );
 };
 
 export default Index;
+
