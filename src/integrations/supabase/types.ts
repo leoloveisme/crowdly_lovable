@@ -319,18 +319,21 @@ export type Database = {
       story_title: {
         Row: {
           created_at: string
+          creator_id: string | null
           story_title_id: string
           title: string
           updated_at: string
         }
         Insert: {
           created_at?: string
+          creator_id?: string | null
           story_title_id?: string
           title: string
           updated_at?: string
         }
         Update: {
           created_at?: string
+          creator_id?: string | null
           story_title_id?: string
           title?: string
           updated_at?: string

@@ -8,22 +8,24 @@ import EditableText from "@/components/EditableText";
 import ChapterEditor from "@/components/ChapterEditor";
 import ChapterInteractions from "@/components/ChapterInteractions";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 
 const Story = () => {
   const { story_id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [story, setStory] = useState<{ story_title_id: string; title: string } | null>(null);
+  const { user, roles, hasRole } = useAuth();
+  const [story, setStory] = useState<{ story_title_id: string; title: string; creator_id?: string } | null>(null);
   const [chapters, setChapters] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleInput, setTitleInput] = useState("");
   const [savingTitle, setSavingTitle] = useState(false);
 
-  // Fetch story and chapters
+  // Fetch story and chapters, now also fetch creator_id
   const fetchStoryAndChapters = async () => {
     setLoading(true);
-    // Fetch story title
+    // Fetch story title WITH creator_id
     const { data: titleRow, error: titleError } = await supabase
       .from("story_title")
       .select("*")
@@ -54,6 +56,33 @@ const Story = () => {
     }
     // eslint-disable-next-line
   }, [story_id]);
+
+  // Permission checks
+  const canDeleteStory =
+    user &&
+    story &&
+    (
+      story.creator_id === user.id ||
+      hasRole("platform_admin") ||
+      hasRole("editor")
+    );
+
+  // DELETE Story handler
+  const handleDeleteStory = async () => {
+    if (!story) return;
+    if (!canDeleteStory) return toast({ title: "Unauthorized", description: "You are not allowed to delete this story.", variant: "destructive" });
+    if (!window.confirm("Are you sure you want to permanently delete this story? This cannot be undone.")) return;
+    const { error } = await supabase
+      .from("story_title")
+      .delete()
+      .eq("story_title_id", story.story_title_id);
+    if (error) {
+      toast({ title: "Error", description: "Could not delete story", variant: "destructive" });
+    } else {
+      toast({ title: "Story deleted", description: "The story has been removed." });
+      navigate("/");
+    }
+  };
 
   // Title Editing Handlers
   const handleStartEditTitle = () => {
@@ -126,6 +155,10 @@ const Story = () => {
     }
   };
 
+  // Only allow chapter/paragraph CRUD for logged-in users:
+  // For chapter editor: if no user, render as read-only/disabled
+  const canCRUDChapters = !!user;
+
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen">
@@ -196,16 +229,31 @@ const Story = () => {
               </button>
             </>
           )}
+          {/* Show Delete Story button only to authorized users */}
+          {canDeleteStory && (
+            <button
+              onClick={handleDeleteStory}
+              className="ml-3 px-2 py-1 rounded bg-red-500 text-white text-xs font-semibold hover:bg-red-700 transition"
+            >
+              Delete Story
+            </button>
+          )}
         </div>
 
         {/* CHAPTERS CRUD */}
         <div className="space-y-6">
-          <ChapterEditor
-            chapters={chapters}
-            onCreate={handleCreateChapter}
-            onUpdate={handleUpdateChapter}
-            onDelete={handleDeleteChapter}
-          />
+          {canCRUDChapters ? (
+            <ChapterEditor
+              chapters={chapters}
+              onCreate={handleCreateChapter}
+              onUpdate={handleUpdateChapter}
+              onDelete={handleDeleteChapter}
+            />
+          ) : (
+            <div className="my-6 p-4 rounded bg-gray-50 text-center text-gray-500">
+              Please log in to add or edit chapters.
+            </div>
+          )}
           {chapters.map((chapter) => (
             <div key={chapter.chapter_id} className="mt-8">
               <div className="font-bold text-lg mb-2">{chapter.chapter_title}</div>
