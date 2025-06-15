@@ -389,6 +389,33 @@ const StoryToLiveToExperience = () => {
     );
   };
   
+  // Add state definitions for contributors feature
+  const [storyInitiatorId, setStoryInitiatorId] = useState<string | null>(null);
+  const [contributors, setContributors] = useState<Array<{ id: string; name: string }>>([]);
+  const [contributorStats, setContributorStats] = useState<
+    Record<
+      string,
+      {
+        id: string;
+        name: string;
+        storyStats: Record<string, number>;
+        globalStats: Record<string, number>;
+      }
+    >
+  >({});
+  const [showContributorPopover, setShowContributorPopover] = useState<{
+    visible: boolean;
+    contributor: {
+      id: string;
+      name: string;
+      storyStats: Record<string, number>;
+      globalStats: Record<string, number>;
+    } | null;
+  }>({
+    visible: false,
+    contributor: null,
+  });
+
   // Fetch chapters and contributors for this story:
   useEffect(() => {
     async function fetchContributorsAndStats() {
