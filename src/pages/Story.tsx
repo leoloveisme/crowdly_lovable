@@ -10,6 +10,7 @@ import ChapterInteractions from "@/components/ChapterInteractions";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import ParagraphBranchPopover from "@/components/ParagraphBranchPopover";
+import StoryContentTypeSelector from "@/components/StoryContentTypeSelector";
 
 // --- Placeholder modular components for each section ---
 const ContributorsSection = () => (
@@ -227,58 +228,60 @@ const Story = () => {
     <div className="flex flex-col min-h-screen">
       <CrowdlyHeader />
 
-      {/* --- TABS & NAVIGATION HEADER (UI matches your screenshots) --- */}
-      <nav className="container mx-auto max-w-3xl px-4 pt-8">
-        <div className="flex flex-row items-center gap-2 border rounded-lg bg-gray-50 overflow-x-auto">
-          <button
-            aria-label="Story"
-            onClick={() => setActiveTab("story")}
-            className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
-              activeTab === "story"
-                ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            <BookText size={18} /> Story
-          </button>
-          <button
-            aria-label="Contributors"
-            onClick={() => setActiveTab("contributors")}
-            className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
-              activeTab === "contributors"
-                ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            <Users size={18} /> Contributors
-          </button>
-          <button
-            aria-label="Revisions"
-            onClick={() => setActiveTab("revisions")}
-            className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
-              activeTab === "revisions"
-                ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            <Clock size={18} /> Revisions
-          </button>
-          <button
-            aria-label="Branches"
-            onClick={() => setActiveTab("branches")}
-            className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
-              activeTab === "branches"
-                ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
-                : "text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            <GitBranch size={18} /> Branches
-          </button>
-        </div>
-      </nav>
-
+      {/* --- STORY CONTENT TYPE SELECTOR --- */}
       <main className="flex-grow container mx-auto px-4 py-8 max-w-3xl">
-        {/* --- Only render the tab section the user chose --- */}
+        <StoryContentTypeSelector chapters={chapters} />
+        {/* --- TABS & NAVIGATION HEADER --- */}
+        <nav className="container mx-auto max-w-3xl px-4 pt-8">
+          <div className="flex flex-row items-center gap-2 border rounded-lg bg-gray-50 overflow-x-auto">
+            <button
+              aria-label="Story"
+              onClick={() => setActiveTab("story")}
+              className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
+                activeTab === "story"
+                  ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <BookText size={18} /> Story
+            </button>
+            <button
+              aria-label="Contributors"
+              onClick={() => setActiveTab("contributors")}
+              className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
+                activeTab === "contributors"
+                  ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <Users size={18} /> Contributors
+            </button>
+            <button
+              aria-label="Revisions"
+              onClick={() => setActiveTab("revisions")}
+              className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
+                activeTab === "revisions"
+                  ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <Clock size={18} /> Revisions
+            </button>
+            <button
+              aria-label="Branches"
+              onClick={() => setActiveTab("branches")}
+              className={`flex items-center px-3 py-2 rounded transition font-medium text-sm gap-2 ${
+                activeTab === "branches"
+                  ? "bg-white border border-blue-300 text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <GitBranch size={18} /> Branches
+            </button>
+          </div>
+        </nav>
+
+        {/* Only render the tab section the user chose */}
         {activeTab === "story" && (
           <div>
             {/* --- keep all existing story editing, chapter, popover, etc. --- */}
