@@ -371,20 +371,71 @@ export type Database = {
       }
       profiles: {
         Row: {
+          about: string | null
+          bio: string | null
+          birthday: string | null
           created_at: string
+          first_name: string | null
           id: string
+          interests: string[] | null
+          languages: string[] | null
+          last_name: string | null
+          nickname: string | null
+          notify_app: boolean | null
+          notify_email: boolean | null
+          notify_phone: boolean | null
+          profile_image_url: string | null
+          social_facebook: string | null
+          social_instagram: string | null
+          social_other: string | null
+          social_snapchat: string | null
+          telephone: string | null
           updated_at: string
           username: string
         }
         Insert: {
+          about?: string | null
+          bio?: string | null
+          birthday?: string | null
           created_at?: string
+          first_name?: string | null
           id: string
+          interests?: string[] | null
+          languages?: string[] | null
+          last_name?: string | null
+          nickname?: string | null
+          notify_app?: boolean | null
+          notify_email?: boolean | null
+          notify_phone?: boolean | null
+          profile_image_url?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_other?: string | null
+          social_snapchat?: string | null
+          telephone?: string | null
           updated_at?: string
           username: string
         }
         Update: {
+          about?: string | null
+          bio?: string | null
+          birthday?: string | null
           created_at?: string
+          first_name?: string | null
           id?: string
+          interests?: string[] | null
+          languages?: string[] | null
+          last_name?: string | null
+          nickname?: string | null
+          notify_app?: boolean | null
+          notify_email?: boolean | null
+          notify_phone?: boolean | null
+          profile_image_url?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_other?: string | null
+          social_snapchat?: string | null
+          telephone?: string | null
           updated_at?: string
           username?: string
         }

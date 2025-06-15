@@ -1,5 +1,5 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -46,6 +46,11 @@ import {
   Heart,
   MessageSquare,
   Gift,
+  Smartphone,
+  Instagram,
+  Facebook,
+  Zap,
+  Languages
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -60,31 +65,45 @@ import RevisionComparison from "@/components/RevisionComparison";
 import CommunicationsSection from "@/components/CommunicationsSection";
 import StatsDisplay from "@/components/StatsDisplay";
 
+const INITIAL_PROFILE = {
+  first_name: "",
+  last_name: "",
+  nickname: "",
+  about: "",
+  bio: "",
+  interests: [],
+  profile_image_url: null,
+  birthday: "",
+  languages: [],
+  social_facebook: "",
+  social_snapchat: "",
+  social_instagram: "",
+  social_other: "",
+  telephone: "",
+  notify_phone: false,
+  notify_app: true,
+  notify_email: true,
+};
+
 const Profile = () => {
-  // Original state
-  const [first_name, setFirstName] = useState("Max");
-  const [last_name, setLastName] = useState("Riprin");
-  const [nickname, setNickname] = useState("");
-  const [about, setAbout] = useState("");
-  const [bio, setBio] = useState("");
-  const [interests, setInterests] = useState<string[]>([]);
+  const [profile, setProfile] = useState({ ...INITIAL_PROFILE });
+  const [isLoading, setIsLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  // Legacy state starts, merged for compatibility
   const [newInterest, setNewInterest] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(false); // Legacy, not mapped
   const [canBeTagged, setCanBeTagged] = useState(true);
   const [anyoneCanEdit, setAnyoneCanEdit] = useState(false);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [visibilityOption, setVisibilityOption] = useState("public");
   const [editField, setEditField] = useState<string | null>(null);
   const [tempFieldValue, setTempFieldValue] = useState("");
   const [activeTab, setActiveTab] = useState("author");
-  
-  // Add new state for settings popover
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-
-  // Add new state for preview mode
   const [previewMode, setPreviewMode] = useState(false);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   // For responsive design
   const isMobile = useIsMobile();
@@ -187,58 +206,181 @@ const Profile = () => {
     });
   };
 
-  const handleAddInterest = () => {
-    if (newInterest && !interests.includes(newInterest)) {
-      setInterests([...interests, newInterest]);
-      setNewInterest("");
+  // Authentication: get current logged-in user id (if any)
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+      setUserId(user?.id ?? null);
+    };
+    getUser();
+  }, []);
+
+  // Load or create profile for current user
+  useEffect(() => {
+    if (!userId) return;
+    let isMounted = true;
+    const fetchOrCreateProfile = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) {
+        toast({
+          title: "Failed to load profile",
+          description: error.message,
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+      if (data) {
+        setProfile({
+          ...INITIAL_PROFILE,
+          ...data,
+          interests: data.interests || [],
+          languages: data.languages || [],
+        });
+      } else {
+        // Create an empty profile
+        const { error: insertError } = await supabase
+          .from("profiles")
+          .insert([{ id: userId }]);
+        if (insertError) {
+          toast({
+            title: "Failed to create user profile",
+            description: insertError.message,
+            variant: "destructive",
+          });
+        } else {
+          setProfile({ ...INITIAL_PROFILE });
+        }
+      }
+      setIsLoading(false);
+    };
+    fetchOrCreateProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, [userId]);
+
+  // Save profile field (generic handler)
+  const saveProfileField = async (key: keyof typeof profile, value: any) => {
+    if (!userId) return;
+    setProfile((prev) => ({ ...prev, [key]: value }));
+    const updateObj: any = {};
+    updateObj[key] = value;
+    const { error } = await supabase.from("profiles").update(updateObj).eq("id", userId);
+    if (error) {
+      toast({
+        title: "Failed to update",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Saved",
+        description: `Your ${key.replace(/_/g, " ")} has been updated.`,
+        duration: 1500
+      });
     }
   };
 
+  // Interests management
+  const handleAddInterest = () => {
+    const interest = newInterest.trim();
+    if (!interest || profile.interests.includes(interest)) return;
+    const updated = [...profile.interests, interest];
+    saveProfileField("interests", updated);
+    setProfile((p) => ({ ...p, interests: updated }));
+    setNewInterest("");
+  };
   const handleRemoveInterest = (interest: string) => {
-    setInterests(interests.filter(i => i !== interest));
+    const updated = profile.interests.filter((i: string) => i !== interest);
+    saveProfileField("interests", updated);
+    setProfile((p) => ({ ...p, interests: updated }));
   };
 
+  // Avatar/image
   const handleProfileImageChange = (imageUrl: string) => {
-    setProfileImage(imageUrl);
+    saveProfileField("profile_image_url", imageUrl);
+    setProfile((p) => ({ ...p, profile_image_url: imageUrl }));
     setIsUploadDialogOpen(false);
   };
-  
-  const handleBioSave = (newBio: string) => {
-    setBio(newBio);
+
+  // Bio/about
+  const handleBioSave = (bio: string) => {
+    saveProfileField("bio", bio);
+    setProfile((p) => ({ ...p, bio }));
   };
 
-  // Functions for profile editing
+  // Editing fields (allow generic for text fields)
   const startEditing = (field: string, value: string) => {
-    if (previewMode) return; // Prevent editing in preview mode
+    if (previewMode) return;
     setEditField(field);
-    setTempFieldValue(value);
+    setTempFieldValue(value || "");
   };
-  
   const saveField = () => {
-    if (editField === 'first_name') {
-      setFirstName(tempFieldValue);
-    } else if (editField === 'last_name') {
-      setLastName(tempFieldValue);
-    } else if (editField === 'nickname') {
-      setNickname(tempFieldValue);
-    }
+    if (!editField) return;
+    saveProfileField(editField as keyof typeof profile, tempFieldValue);
     setEditField(null);
   };
-  
-  const cancelEditing = () => {
-    setEditField(null);
+  const cancelEditing = () => setEditField(null);
+
+  // Languages
+  const handleAddLanguage = (lang: string) => {
+    if (!lang || profile.languages.includes(lang)) return;
+    const updated = [...profile.languages, lang];
+    saveProfileField("languages", updated);
+    setProfile((p) => ({ ...p, languages: updated }));
+  };
+  const handleRemoveLanguage = (lang: string) => {
+    const updated = profile.languages.filter((l: string) => l !== lang);
+    saveProfileField("languages", updated);
+    setProfile((p) => ({ ...p, languages: updated }));
   };
 
-  // Filter contributions based on selected filter
-  const filteredContributions = contributions.filter(contribution => {
-    if (contributionFilter === "total") return true;
-    return contribution.status === contributionFilter;
-  });
+  // Social links
+  const handleSocialChange = (key: keyof typeof profile, value: string) => {
+    saveProfileField(key, value);
+    setProfile((p) => ({ ...p, [key]: value }));
+  };
+  // Birthday, telephone
+  const handleBirthdayChange = (date: string) => {
+    saveProfileField("birthday", date);
+    setProfile((p) => ({ ...p, birthday: date }));
+  };
+  const handleTelephoneChange = (tel: string) => {
+    saveProfileField("telephone", tel);
+    setProfile((p) => ({ ...p, telephone: tel }));
+  };
+
+  // Notifications
+  const handleNotifChange = (key: keyof typeof profile, val: boolean) => {
+    saveProfileField(key, val);
+    setProfile((p) => ({ ...p, [key]: val }));
+  };
+
+  // Only render the UI after loading
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <CrowdlyHeader />
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-gray-500">Loading profile...</p>
+        </div>
+        <CrowdlyFooter />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
-      
       <div className="container mx-auto px-4 pt-8 pb-16 flex-grow">
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-3xl font-bold">
@@ -328,8 +470,8 @@ const Profile = () => {
             <div className="flex flex-col items-center space-y-3">
               <div className="relative">
                 <Avatar className="h-32 w-32 border-2 border-gray-200">
-                  {profileImage ? (
-                    <AvatarImage src={profileImage} alt={first_name} />
+                  {profile.profile_image_url ? (
+                    <AvatarImage src={profile.profile_image_url} alt={profile.first_name || "Avatar"} />
                   ) : (
                     <AvatarFallback className="bg-purple-100 text-purple-600 text-4xl">
                       <User className="h-16 w-16" />
@@ -361,145 +503,297 @@ const Profile = () => {
               )}
             </div>
             
-            {/* Right column for profile details */}
+            {/* Right: profile details */}
             <div className="md:col-span-2 space-y-6">
-              {/* Profile fields */}
-              <div className="space-y-4">
-                {/* Name field */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm text-gray-500">
-                      <EditableText id="first-name">First name</EditableText>
-                    </Label>
-                    {!previewMode && editField === 'first_name' ? (
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
-                          <X className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
-                          <Check className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : !previewMode ? (
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => startEditing('first_name', first_name)}
-                        className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
-                      >
-                        <EditableText id="edit-button">Edit</EditableText>
-                      </Button>
-                    ) : null}
-                  </div>
+              {/* Editable fields */}
+              {/* First Name */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm text-gray-500">
+                    <EditableText id="first-name">First name</EditableText>
+                  </Label>
                   {!previewMode && editField === 'first_name' ? (
-                    <Input 
-                      value={tempFieldValue}
-                      onChange={(e) => setTempFieldValue(e.target.value)}
-                      className="mt-1"
-                      autoFocus
-                    />
-                  ) : (
-                    <div className="font-medium">{first_name}</div>
-                  )}
-                </div>
-                
-                {/* Last name field */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm text-gray-500">
-                      <EditableText id="last-name">Last name</EditableText>
-                    </Label>
-                    {!previewMode && editField === 'last_name' ? (
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
-                          <X className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
-                          <Check className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : !previewMode ? (
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => startEditing('last_name', last_name)}
-                        className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
-                      >
-                        <EditableText id="edit-button">Edit</EditableText>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
+                        <X className="h-4 w-4" />
                       </Button>
-                    ) : null}
-                  </div>
+                      <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
+                        <Check className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : !previewMode ? (
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => startEditing('first_name', profile.first_name)}
+                      className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                    >
+                      <EditableText id="edit-button">Edit</EditableText>
+                    </Button>
+                  ) : null}
+                </div>
+                {!previewMode && editField === 'first_name' ? (
+                  <Input 
+                    value={tempFieldValue}
+                    onChange={(e) => setTempFieldValue(e.target.value)}
+                    className="mt-1"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="font-medium">{profile.first_name || <span className="text-gray-400 italic">No first name set</span>}</div>
+                )}
+              </div>
+              {/* Last Name */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm text-gray-500">
+                    <EditableText id="last-name">Last name</EditableText>
+                  </Label>
                   {!previewMode && editField === 'last_name' ? (
-                    <Input 
-                      value={tempFieldValue}
-                      onChange={(e) => setTempFieldValue(e.target.value)}
-                      className="mt-1"
-                      autoFocus
-                    />
-                  ) : (
-                    <div className="font-medium text-gray-800">{last_name}</div>
-                  )}
-                </div>
-                
-                {/* Nickname field */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm text-gray-500">
-                      <EditableText id="nickname-label">Nickname</EditableText>
-                    </Label>
-                    {!previewMode && editField === 'nickname' ? (
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
-                          <X className="h-4 w-4" />
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
-                          <Check className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : !previewMode ? (
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={() => startEditing('nickname', nickname)}
-                        className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
-                      >
-                        <EditableText id="edit-button">Edit</EditableText>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
+                        <X className="h-4 w-4" />
                       </Button>
-                    ) : null}
-                  </div>
+                      <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
+                        <Check className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : !previewMode ? (
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => startEditing('last_name', profile.last_name)}
+                      className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                    >
+                      <EditableText id="edit-button">Edit</EditableText>
+                    </Button>
+                  ) : null}
+                </div>
+                {!previewMode && editField === 'last_name' ? (
+                  <Input 
+                    value={tempFieldValue}
+                    onChange={(e) => setTempFieldValue(e.target.value)}
+                    className="mt-1"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="font-medium text-gray-800">{profile.last_name || <span className="text-gray-400 italic">No last name set</span>}</div>
+                )}
+              </div>
+              {/* Nickname */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm text-gray-500">
+                    <EditableText id="nickname-label">Nickname</EditableText>
+                  </Label>
                   {!previewMode && editField === 'nickname' ? (
-                    <Input 
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="ghost" onClick={cancelEditing} className="h-6 w-6 p-0">
+                        <X className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={saveField} className="h-6 w-6 p-0 text-green-600">
+                        <Check className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : !previewMode ? (
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => startEditing('nickname', profile.nickname)}
+                      className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                    >
+                      <EditableText id="edit-button">Edit</EditableText>
+                    </Button>
+                  ) : null}
+                </div>
+                {!previewMode && editField === 'nickname' ? (
+                  <Input 
+                    value={tempFieldValue}
+                    onChange={(e) => setTempFieldValue(e.target.value)}
+                    className="mt-1"
+                    autoFocus
+                  />
+                ) : (
+                  <div className="font-medium text-gray-800">
+                    {profile.nickname ? profile.nickname : (
+                      <span className="text-gray-400 italic">
+                        <EditableText id="no-nickname-text">No nickname set</EditableText>
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+              {/* Birthday */}
+              <div className="space-y-1">
+                <Label className="text-sm text-gray-500">Birthday (optional)</Label>
+                {!previewMode && editField === "birthday" ? (
+                  <div className="flex gap-2">
+                    <Input
+                      type="date"
                       value={tempFieldValue}
-                      onChange={(e) => setTempFieldValue(e.target.value)}
-                      className="mt-1"
-                      autoFocus
+                      onChange={e => setTempFieldValue(e.target.value)}
                     />
-                  ) : (
-                    <div className="font-medium text-gray-800">
-                      {nickname ? nickname : (
-                        <span className="text-gray-400 italic">
-                          <EditableText id="no-nickname-text">No nickname set</EditableText>
-                        </span>
+                    <Button size="sm" variant="ghost" onClick={cancelEditing}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={saveField}>
+                      <Check className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : !previewMode ? (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => startEditing("birthday", profile.birthday || "")}
+                    className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                  >
+                    <EditableText id="edit-button">Edit</EditableText>
+                  </Button>
+                ) : null}
+                {!previewMode && editField === "birthday" ? null : (
+                  <div className="font-medium text-gray-800">
+                    {profile.birthday ? new Date(profile.birthday).toLocaleDateString() : <span className="text-gray-400 italic">No birthday set</span>}
+                  </div>
+                )}
+              </div>
+              {/* Telephone */}
+              <div className="space-y-1">
+                <Label className="text-sm text-gray-500">
+                  <Smartphone className="w-4 h-4 inline mb-1 mr-1" /> Telephone (optional)
+                </Label>
+                {!previewMode && editField === "telephone" ? (
+                  <div className="flex gap-2">
+                    <Input
+                      type="tel"
+                      value={tempFieldValue}
+                      onChange={e => setTempFieldValue(e.target.value)}
+                    />
+                    <Button size="sm" variant="ghost" onClick={cancelEditing}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={saveField}>
+                      <Check className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : !previewMode ? (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => startEditing("telephone", profile.telephone || "")}
+                    className="h-6 p-0 text-purple-600 hover:text-purple-800 hover:bg-transparent"
+                  >
+                    <EditableText id="edit-button">Edit</EditableText>
+                  </Button>
+                ) : null}
+                {!previewMode && editField === "telephone" ? null : (
+                  <div className="font-medium text-gray-800">
+                    {profile.telephone ? profile.telephone : <span className="text-gray-400 italic">No telephone set</span>}
+                  </div>
+                )}
+              </div>
+              {/* Languages */}
+              <div className="space-y-1">
+                <Label className="text-sm text-gray-500">
+                  <Languages className="w-4 h-4 inline mb-1 mr-1" /> Languages (optional)
+                </Label>
+                {!previewMode && (
+                  <div className="flex gap-2">
+                    <Input
+                      value={newInterest}
+                      onChange={(e) => setNewInterest(e.target.value)}
+                      placeholder="Add language"
+                      className="flex-grow"
+                      onKeyDown={e => {
+                        if (e.key === "Enter") {
+                          handleAddLanguage(newInterest);
+                          setNewInterest("");
+                        }
+                      }}
+                    />
+                    <Button
+                      onClick={() => {
+                        handleAddLanguage(newInterest);
+                        setNewInterest("");
+                      }}
+                      size="sm"
+                    >
+                      <EditableText id="add-language">Add</EditableText>
+                    </Button>
+                  </div>
+                )}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {profile.languages.map((lang, idx) => (
+                    <div key={idx} className="bg-gray-100 rounded-full px-3 py-1 flex items-center gap-1">
+                      <span>{lang}</span>
+                      {!previewMode && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-4 w-4 p-0"
+                          onClick={() => handleRemoveLanguage(lang)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
                       )}
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
-              
-              {previewMode && (
-                <div className="pt-4 border-t border-gray-200">
-                  <div className="flex items-center gap-2">
-                    {visibilityOption === "public" && <Globe className="h-4 w-4 text-purple-600" />}
-                    {visibilityOption === "private" && <User className="h-4 w-4 text-purple-600" />}
-                    {visibilityOption === "friends" && <Users className="h-4 w-4 text-purple-600" />}
-                    <span className="text-sm">
-                      {visibilityOption === "public" && "Public profile"}
-                      {visibilityOption === "private" && "Private profile"}
-                      {visibilityOption === "friends" && "Friends only profile"}
-                    </span>
-                  </div>
+              {/* Socials */}
+              <div className="space-y-1">
+                <Label className="text-sm text-gray-500">
+                  <Facebook className="w-4 h-4 inline mb-1 mr-1" /> Facebook
+                </Label>
+                <Input
+                  value={profile.social_facebook || ""}
+                  onChange={e => handleSocialChange("social_facebook", e.target.value)}
+                  placeholder="Facebook username/url"
+                  disabled={previewMode}
+                />
+                <Label className="text-sm text-gray-500">
+                  <Instagram className="w-4 h-4 inline mb-1 mr-1" /> Instagram
+                </Label>
+                <Input
+                  value={profile.social_instagram || ""}
+                  onChange={e => handleSocialChange("social_instagram", e.target.value)}
+                  placeholder="Instagram username/url"
+                  disabled={previewMode}
+                />
+                <Label className="text-sm text-gray-500">Snapchat</Label>
+                <Input
+                  value={profile.social_snapchat || ""}
+                  onChange={e => handleSocialChange("social_snapchat", e.target.value)}
+                  placeholder="Snapchat"
+                  disabled={previewMode}
+                />
+                <Label className="text-sm text-gray-500">Other Social</Label>
+                <Input
+                  value={profile.social_other || ""}
+                  onChange={e => handleSocialChange("social_other", e.target.value)}
+                  placeholder="Other social"
+                  disabled={previewMode}
+                />
+              </div>
+              {/* Notifications */}
+              <div className="space-y-1 pt-2">
+                <Label className="text-sm text-gray-500">
+                  <Zap className="w-4 h-4 inline mb-1 mr-1" /> Notifications
+                </Label>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <label className="flex items-center gap-2">
+                    <Checkbox checked={profile.notify_phone} disabled={previewMode} onCheckedChange={val => handleNotifChange("notify_phone", Boolean(val))} />
+                    Phone
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <Checkbox checked={profile.notify_app} disabled={previewMode} onCheckedChange={val => handleNotifChange("notify_app", Boolean(val))} />
+                    App
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <Checkbox checked={profile.notify_email} disabled={previewMode} onCheckedChange={val => handleNotifChange("notify_email", Boolean(val))} />
+                    Email
+                  </label>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
@@ -513,7 +807,7 @@ const Profile = () => {
 
           {/* Bio section */}
           <EditableBio 
-            initialValue={bio} 
+            initialValue={profile.bio} 
             isPreviewMode={previewMode} 
             onSave={handleBioSave}
             className="mb-8"
@@ -547,7 +841,7 @@ const Profile = () => {
           )}
           
           <div className="flex flex-wrap gap-2 mb-4">
-            {interests.map((interest, index) => (
+            {profile.interests.map((interest, index) => (
               <div key={index} className="bg-gray-100 rounded-full px-3 py-1 flex items-center gap-1">
                 <span>{interest}</span>
                 {!previewMode && (
