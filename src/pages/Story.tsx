@@ -255,14 +255,35 @@ const Story = () => {
             </div>
           )}
           {chapters.map((chapter) => (
-            <div key={chapter.chapter_id} className="mt-8">
-              <div className="font-bold text-lg mb-2">{chapter.chapter_title}</div>
-              {chapter.paragraphs.map((para: string, idx: number) => (
-                <div key={idx} className="ml-1 my-1 text-gray-800">
-                  {para}
-                </div>
-              ))}
-              <ChapterInteractions chapterId={chapter.chapter_id} />
+            <div key={chapter.chapter_id} className="mb-10">
+              <h2 className="text-xl font-bold mb-2">{chapter.chapter_title}</h2>
+              {Array.isArray(chapter.paragraphs)
+                ? chapter.paragraphs.map((paragraph, idx) => (
+                    <div key={idx} className="relative group mb-4">
+                      <div className="flex items-start gap-2">
+                        <p className="flex-1">
+                          {paragraph}
+                        </p>
+                        {/* Popover trigger button, only visible on hover for clean UI */}
+                        <ParagraphBranchPopover
+                          trigger={
+                            <button
+                              className="opacity-0 group-hover:opacity-100 transition-opacity border rounded px-2 py-1 text-xs font-medium flex items-center gap-1 bg-white hover:bg-gray-100 shadow hover:shadow-md"
+                              type="button"
+                            >
+                              <svg width="16" height="16" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path strokeWidth="2" d="M6 3v6a6 6 0 006 6h6"></path><path strokeWidth="2" d="M18 21v-6a6 6 0 00-6-6H6"></path></svg>
+                              Create Branch
+                            </button>
+                          }
+                          onCreateBranch={({ branchName, paragraphs }) => {
+                            // You can handle the branch creation here, maybe show a toast or save to DB in future
+                            alert(`Branch "${branchName || "(no name)"}" created with ${paragraphs.length} paragraph(s):\n${paragraphs.map((p, i) => `[${i + 1}]: ${p}`).join("\n")}`);
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))
+                : null}
             </div>
           ))}
         </div>
