@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
 import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
+import ParagraphBranchPopover from "@/components/ParagraphBranchPopover";
 
 const StoryforConsumers = () => {
   const { user } = useAuth();
@@ -279,6 +280,12 @@ const StoryforConsumers = () => {
     );
   };
   
+  // Modify the handleCreateBranch for demo (replace later for Supabase)
+  const onCreateParagraphBranch = ({ branchName, paragraphs }: { branchName: string, paragraphs: string[] }) => {
+    // For now, just show an alert (insert crud logic here)
+    alert(`Branch "${branchName || "(no name)"}" created with ${paragraphs.length} paragraph(s):\n${paragraphs.map((p, i) => `[${i + 1}]: ${p}`).join("\n")}`);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
@@ -475,13 +482,7 @@ const StoryforConsumers = () => {
                   <Card>
                     <CardContent className="pt-6">
                       <div className="prose max-w-none">
-                        <div className="flex justify-between items-center mb-4">
-                          <h2 className="text-xl font-semibold">
-                            <EditableText id="chapter-title">Chapter 1: The Beginning</EditableText>
-                          </h2>
-                        </div>
-                        
-                        {/* Text content with branch buttons */}
+                        {/* Paragraph 1 */}
                         <div className="mb-6">
                           <div className="group relative">
                             <p className="mb-2">
@@ -491,18 +492,24 @@ const StoryforConsumers = () => {
                                 nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
                               </EditableText>
                             </p>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleCreateBranch('paragraph1')}
-                            >
-                              <GitBranch className="h-3 w-3 mr-1" />
-                              <EditableText id="create-branch-btn">Create Branch</EditableText>
-                            </Button>
+                            <ParagraphBranchPopover
+                              trigger={
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <svg width="16" height="16" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path strokeWidth="2" d="M6 3v6a6 6 0 006 6h6"></path><path strokeWidth="2" d="M18 21v-6a6 6 0 00-6-6H6"></path></svg>
+                                    Create Branch
+                                  </span>
+                                </Button>
+                              }
+                              onCreateBranch={onCreateParagraphBranch}
+                            />
                           </div>
                         </div>
-                        
+                        {/* Paragraph 2 */}
                         <div className="mb-6">
                           <div className="group relative">
                             <p className="mb-2">
@@ -513,15 +520,49 @@ const StoryforConsumers = () => {
                                 sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
                               </EditableText>
                             </p>
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleCreateBranch('paragraph2')}
-                            >
-                              <GitBranch className="h-3 w-3 mr-1" />
-                              <EditableText id="create-branch-btn2">Create Branch</EditableText>
-                            </Button>
+                            <ParagraphBranchPopover
+                              trigger={
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <svg width="16" height="16" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path strokeWidth="2" d="M6 3v6a6 6 0 006 6h6"></path><path strokeWidth="2" d="M18 21v-6a6 6 0 00-6-6H6"></path></svg>
+                                    Create Branch
+                                  </span>
+                                </Button>
+                              }
+                              onCreateBranch={onCreateParagraphBranch}
+                            />
+                          </div>
+                        </div>
+                        {/* Paragraph 3 */}
+                        <div className="mb-6">
+                          <div className="group relative">
+                            <p className="mb-2">
+                              <EditableText id="paragraph-3">
+                                Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
+                                sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
+                                Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
+                                aliquid ex ea commodi consequatur?
+                              </EditableText>
+                            </p>
+                            <ParagraphBranchPopover
+                              trigger={
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <svg width="16" height="16" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path strokeWidth="2" d="M6 3v6a6 6 0 006 6h6"></path><path strokeWidth="2" d="M18 21v-6a6 6 0 00-6-6H6"></path></svg>
+                                    Create Branch
+                                  </span>
+                                </Button>
+                              }
+                              onCreateBranch={onCreateParagraphBranch}
+                            />
                           </div>
                         </div>
                         
@@ -710,28 +751,6 @@ const StoryforConsumers = () => {
                             <CommentsSection targetId="video1" />
                           </div>
                         )}
-                        
-                        <div className="mb-6">
-                          <div className="group relative">
-                            <p className="mb-2">
-                              <EditableText id="paragraph-3">
-                                Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
-                                sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
-                                Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
-                                aliquid ex ea commodi consequatur?
-                              </EditableText>
-                            </p>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                              onClick={() => handleCreateBranch('paragraph3')}
-                            >
-                              <GitBranch className="h-3 w-3 mr-1" />
-                              <EditableText id="create-branch-btn3">Create Branch</EditableText>
-                            </Button>
-                          </div>
-                        </div>
                         
                         {/* Add like/dislike buttons for the chapter */}
                         <div className="mt-8 pt-4 border-t flex items-center space-x-2">
