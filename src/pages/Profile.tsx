@@ -83,6 +83,7 @@ const INITIAL_PROFILE = {
   notify_phone: false,
   notify_app: true,
   notify_email: true,
+  username: ""    // <-- Add this line
 };
 
 const Profile = () => {
