@@ -104,22 +104,47 @@ const Index = () => {
                   Discover, create, and live amazing branching stories—rich in text, audio, and video—collaboratively built by the crowd, for the world. Versioned, multilingual, and unlimited.
                 </EditableText>
               </p>
-              {/* Create New Story Link - Only for logged-in users */}
-              {user && (
-                <div className="mb-4 animate-fade-in">
-                  <Link
-                    to="/new-story-template"
-                    className="inline-flex items-center px-8 py-3 text-lg font-semibold rounded-xl shadow-lg bg-gradient-to-r from-pink-500 via-indigo-400 to-blue-500 text-white hover:from-indigo-500 hover:to-pink-500 transition border-b-4 border-pink-300 hover:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-300"
-                  >
-                    <BookOpen className="mr-3" size={26} />
+              {/* Create New Story Link - Now for EVERYONE, different link depending on logged in */}
+              <div className="mb-4 animate-fade-in">
+                <Link
+                  to={user ? "/new-story-template" : "/login"}
+                  className="group inline-flex items-center px-8 py-3 text-lg font-semibold rounded-2xl shadow-none focus:outline-none relative"
+                  style={{
+                    background: "linear-gradient(to right, #ff43b0 0%, #6c63ff 100%)",
+                  }}
+                >
+                  {/* Bottom pink shadow effect */}
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 rounded-2xl"
+                    style={{
+                      boxShadow: "0 6px 0 0 #f9a8d4", // tailwind's pink-300
+                      opacity: "0.44",
+                      zIndex: 0,
+                    }}
+                  ></span>
+                  <span className="flex items-center z-10 relative text-white">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="mr-3"
+                      width="28"
+                      height="28"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <rect x="3" y="5" width="18" height="14" rx="2" stroke="white" strokeWidth="2" />
+                      <path d="M16 3v4M8 3v4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
                     <span>
                       <EditableText id="hero-create-new-story">
                         Create a New Amazing Story
                       </EditableText>
                     </span>
-                  </Link>
-                </div>
-              )}
+                  </span>
+                </Link>
+              </div>
             </div>
             {/* Hero Illustrative Side */}
             <div className="hidden md:block flex-1 relative">
