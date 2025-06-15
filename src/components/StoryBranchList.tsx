@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -30,6 +29,7 @@ const StoryBranchList: React.FC<StoryBranchListProps> = ({ storyId }) => {
   const [editBranchName, setEditBranchName] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [chapterInfo, setChapterInfo] = useState<{ chapterIds: string[], chaptersFetched: boolean }>({ chapterIds: [], chaptersFetched: false });
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -39,37 +39,48 @@ const StoryBranchList: React.FC<StoryBranchListProps> = ({ storyId }) => {
     const fetchBranches = async () => {
       setLoading(true);
       setError(null);
-      // First fetch all chapters for this story to find chapter_ids
+
+      // Fetch all chapters for this story to find chapter_ids
       const { data: chapters, error: chaptersError } = await supabase
         .from("stories")
         .select("chapter_id")
         .eq("story_title_id", storyId);
+
       if (chaptersError) {
         setError("Failed to fetch chapters for this story.");
         setBranches([]);
         setLoading(false);
+        setChapterInfo({ chapterIds: [], chaptersFetched: false });
         return;
       }
+
       const chapterIds = chapters.map((c: { chapter_id: string }) => c.chapter_id);
+      setChapterInfo({ chapterIds, chaptersFetched: true });
+      console.log("[BranchList] Fetched chapterIds:", chapterIds);
+
       if (chapterIds.length === 0) {
         setBranches([]);
         setLoading(false);
         return;
       }
-      // Then fetch all paragraph branches for those chapters
+
+      // Fetch all paragraph branches for those chapters
       const { data, error } = await supabase
         .from("paragraph_branches")
         .select("*")
         .in("chapter_id", chapterIds)
         .order("created_at", { ascending: false });
+
       if (error) {
         setError("Failed to fetch branches.");
         setBranches([]);
       } else if (data && isMounted) {
         setBranches(data);
+        console.log("[BranchList] Fetched branches:", data);
       }
       setLoading(false);
     };
+
     fetchBranches();
     return () => {
       isMounted = false;
@@ -142,8 +153,13 @@ const StoryBranchList: React.FC<StoryBranchListProps> = ({ storyId }) => {
         )}
         {loading ? (
           <div className="py-8 text-center text-gray-400 text-sm">Loading branches...</div>
+        ) : chapterInfo.chaptersFetched && chapterInfo.chapterIds.length === 0 ? (
+          <div className="py-8 text-center text-gray-500 text-sm">
+            <div>This story currently has <b>no chapters</b>.</div>
+            <div className="text-xs text-gray-400 mt-2">Add a chapter before you can see branches.</div>
+          </div>
         ) : branches.length === 0 ? (
-          <div className="py-8 text-center text-gray-400 text-sm">No branches found for this story.</div>
+          <div className="py-8 text-center text-gray-400 text-sm">No branches found for this story's chapters.</div>
         ) : (
           <div className="divide-y">
             {branches.map((branch) => (
