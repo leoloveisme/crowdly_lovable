@@ -191,8 +191,6 @@ const Story = () => {
   };
 
   // NEW: Branch creation logic
-  const { toast } = useToast();
-  const { user, roles, hasRole } = useAuth();
   const handleCreateBranchForParagraph = async ({
     branchName,
     paragraphs,
