@@ -9,6 +9,7 @@ import ChapterEditor from "@/components/ChapterEditor";
 import ChapterInteractions from "@/components/ChapterInteractions";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import ParagraphBranchPopover from "@/components/ParagraphBranchPopover";
 
 const Story = () => {
   const { story_id } = useParams();
