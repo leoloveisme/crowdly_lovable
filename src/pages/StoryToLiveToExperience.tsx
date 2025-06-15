@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -118,14 +119,15 @@ const StoryforConsumers = () => {
   // Fetch contributors and stats
   React.useEffect(() => {
     async function fetchContributorsAndStats() {
-      // Assume you have access to supabase client
+      // 1. Fetch all chapters for the current story, get all unique contributor_ids
       const { data: chapters, error: chaptersError } = await supabase
         .from("stories")
-        .select("chapter_id, contributor_id")
+        .select("contributor_id")
         .eq("story_title_id", storyTitleId);
 
       if (chaptersError) {
         console.error("Error fetching chapters:", chaptersError);
+        setContributors([]); // fallback to empty list if error
         return;
       }
 
@@ -138,22 +140,23 @@ const StoryforConsumers = () => {
         )
       );
 
-      // Also ensure initiator/creator gets included
+      // Also fetch creator; ensure initiator/creator gets included
       const { data: storyRow, error: storyTitleError } = await supabase
         .from("story_title")
         .select("creator_id")
         .eq("story_title_id", storyTitleId)
         .maybeSingle();
 
-      let allUserIds = contributorIds;
-      if (storyRow?.creator_id && !contributorIds.includes(storyRow.creator_id)) {
-        allUserIds = [...contributorIds, storyRow.creator_id];
-      }
+      // Make unique list of all user IDs who contributed or created this story
+      const allUserIds = [...new Set([
+        ...(contributorIds || []),
+        ...(storyRow?.creator_id ? [storyRow.creator_id] : [])
+      ])];
 
-      // Fetch user profiles for all user IDs
+      // Fetch user profiles for all contributor and creator IDs
       let contributorsArr: Array<{ id: string; name: string }> = [];
 
-      if (allUserIds.length) {
+      if (allUserIds.length > 0) {
         const { data: profiles, error: profilesError } = await supabase
           .from("profiles")
           .select("id, first_name, last_name, username")
@@ -176,7 +179,6 @@ const StoryforConsumers = () => {
           });
         }
       }
-
       setContributors(contributorsArr);
     }
 
