@@ -866,9 +866,11 @@ const NewStoryTemplate = () => {
                   <div>
                     <h4 className="font-medium">Chapter Content</h4>
                   </div>
-                  <ChapterEditor 
-                    value={newChapterParagraphs}
-                    onChange={setNewChapterParagraphs}
+                  <ChapterEditor
+                    chapters={chapters}
+                    onCreate={handleCreateChapter}
+                    onUpdate={handleUpdateChapter}
+                    onDelete={handleDeleteChapter}
                   />
                 </div>
               </div>
