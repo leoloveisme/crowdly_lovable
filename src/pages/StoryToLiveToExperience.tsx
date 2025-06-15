@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEditableContent } from "@/contexts/EditableContentContext";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
 import CrowdlyFooter from "@/components/CrowdlyFooter";
 import { Button } from "@/components/ui/button";
@@ -28,12 +28,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
 import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
+import ParagraphBranchPopover from "@/components/ParagraphBranchPopover";
 import ContributorStatsPopover from "@/components/ContributorStatsPopover";
+import { supabase } from "@/integrations/supabase/client";
 
-const StoryToLiveToExperience = () => {
-  const { user, roles, hasRole } = useAuth();
-  const { toast } = useToast();
+const StoryforConsumers = () => {
+  const { user } = useAuth();
   const [selectedContentTypes, setSelectedContentTypes] = useState<string[]>(["text"]);
   const [activeSection, setActiveSection] = useState<string>("story");
   
@@ -83,13 +83,18 @@ const StoryToLiveToExperience = () => {
   const [showBranchDialog, setShowBranchDialog] = useState(false);
   const [selectedParagraphForBranch, setSelectedParagraphForBranch] = useState<string | null>(null);
   
+  const [showContributorStats, setShowContributorStats] = useState<{ [userId: string]: boolean }>({});
+  const [selectedContributor, setSelectedContributor] = useState<any>(null);
+  const [storyTitleId, setStoryTitleId] = useState<string | null>(null);
+  const [contributors, setContributors] = useState<Array<{ id: string; name: string }>>([]);
+  
   const userName = user?.email?.split("@")[0] || "Guest";
   
   // Sample data for tables
   const contributorsData = [
-    { id: 1, name: "Lola Bridget", words: 5378, paragraphs: 15, chapters: 3 },
-    { id: 2, name: "James Smith", words: 4892, paragraphs: 12, chapters: 2 },
-    { id: 3, name: "Maria Garcia", words: 3256, paragraphs: 8, chapters: 1 }
+    { id: "user-1", name: "Lola Bridget", words: 5378, paragraphs: 15, chapters: 3 },
+    { id: "user-2", name: "James Smith", words: 4892, paragraphs: 12, chapters: 2 },
+    { id: "user-3", name: "Maria Garcia", words: 3256, paragraphs: 8, chapters: 1 }
   ];
   
   const revisionsData = [
@@ -104,118 +109,81 @@ const StoryToLiveToExperience = () => {
     { id: 3, title: "Character Background", author: "Maria Garcia", chapters: 3 }
   ];
   
-  // New: dynamic chapters from Supabase
-  const [chapters, setChapters] = useState<
-    Array<{ id: string; number: number; title: string; paragraphs: string[] }>
-  >([]);
-  const [activeChapterIdx, setActiveChapterIdx] = useState<number>(0);
+  const chaptersData = [
+    { id: 1, number: 1, title: "The Beginning" },
+    { id: 2, number: 2, title: "The Conflict" },
+    { id: 3, number: 3, title: "The Resolution" }
+  ];
 
-  // Add Chapter state
-  const [showAddChapter, setShowAddChapter] = useState(false);
-  const [newChapterTitle, setNewChapterTitle] = useState("");
-  const [newChapterParagraphs, setNewChapterParagraphs] = useState([""]);
+  // Fetch contributors and stats
+  React.useEffect(() => {
+    async function fetchContributorsAndStats() {
+      // Assume you have access to supabase client
+      const { data: chapters, error: chaptersError } = await supabase
+        .from("stories")
+        .select("chapter_id, contributor_id")
+        .eq("story_title_id", storyTitleId);
 
-  // Fetch chapters from Supabase
-  useEffect(() => {
-    async function fetchChapters() {
-      // Fetch all chapters for the current story title (use 'Story of my life' for now)
-      const { data: titleRow, error: titleError } = await supabase
+      if (chaptersError) {
+        console.error("Error fetching chapters:", chaptersError);
+        return;
+      }
+
+      // Get all unique contributor IDs from chapters (filter out nulls)
+      const contributorIds = Array.from(
+        new Set(
+          chapters
+            .map((c: any) => c.contributor_id)
+            .filter((cid: string | null) => !!cid)
+        )
+      );
+
+      // Also ensure initiator/creator gets included
+      const { data: storyRow, error: storyTitleError } = await supabase
         .from("story_title")
-        .select("story_title_id")
-        .eq("title", "Story of my life")
+        .select("creator_id")
+        .eq("story_title_id", storyTitleId)
         .maybeSingle();
 
-      if (!titleRow || titleError) {
-        setChapters([]);
-        return;
+      let allUserIds = contributorIds;
+      if (storyRow?.creator_id && !contributorIds.includes(storyRow.creator_id)) {
+        allUserIds = [...contributorIds, storyRow.creator_id];
       }
 
-      // Get all stories/chapters for the title
-      const { data: chaptersData, error } = await supabase
-        .from("stories")
-        .select("chapter_id, chapter_title, paragraphs")
-        .eq("story_title_id", titleRow.story_title_id);
+      // Fetch user profiles for all user IDs
+      let contributorsArr: Array<{ id: string; name: string }> = [];
 
-      if (!chaptersData || error) {
-        setChapters([]);
-        return;
+      if (allUserIds.length) {
+        const { data: profiles, error: profilesError } = await supabase
+          .from("profiles")
+          .select("id, first_name, last_name, username")
+          .in("id", allUserIds);
+
+        if (profilesError) {
+          console.error("Error fetching contributor profiles:", profilesError);
+        } else {
+          contributorsArr = allUserIds.map((id) => {
+            const p = profiles?.find((pr: any) => pr.id === id);
+            return {
+              id,
+              name:
+                (p?.first_name || p?.last_name
+                  ? `${p?.first_name || ""} ${p?.last_name || ""}`.trim()
+                  : "") ||
+                p?.username ||
+                id.slice(0, 8), // fallback to username or part of UUID
+            };
+          });
+        }
       }
 
-      setChapters(
-        chaptersData.map((c: any, i: number) => ({
-          id: c.chapter_id,
-          number: i + 1,
-          title: c.chapter_title || `Chapter ${i + 1}`,
-          paragraphs: Array.isArray(c.paragraphs) ? c.paragraphs : [""],
-        }))
-      );
+      setContributors(contributorsArr);
     }
 
-    fetchChapters();
-  }, [showAddChapter]);
-
-  // Handle switching chapters
-  const handleSelectChapter = (idx: number) => {
-    setActiveChapterIdx(idx);
-    setShowAddChapter(false);
-  };
-
-  // Handle add chapter
-  const handleAddChapterClick = () => {
-    setShowAddChapter(true);
-    setNewChapterTitle("");
-    setNewChapterParagraphs([""]);
-  };
-
-  const handleSaveChapter = async () => {
-    if (!user) {
-      toast({
-        title: "Unauthorized",
-        description: "Log in to add a chapter.",
-        variant: "destructive",
-      });
-      return;
+    if (storyTitleId) {
+      fetchContributorsAndStats();
     }
-    // Grab story_title_id for "Story of my life"
-    const { data: titleRow, error: titleError } = await supabase
-      .from("story_title")
-      .select("story_title_id")
-      .eq("title", "Story of my life")
-      .maybeSingle();
-    if (!titleRow || titleError) {
-      toast({
-        title: "Failed to find story title",
-        description: titleError?.message || "Story title not found.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Save new chapter to "stories"
-    const { error: insertError } = await supabase.from("stories").insert({
-      story_title_id: titleRow.story_title_id,
-      chapter_title: newChapterTitle,
-      paragraphs: newChapterParagraphs,
-      // chapter_id auto, creator handled by story_title
-    });
-
-    if (insertError) {
-      toast({
-        title: "Failed to add chapter",
-        description: insertError.message,
-        variant: "destructive",
-      });
-      console.error("Insert error:", insertError);
-      return;
-    } else {
-      toast({
-        title: "Chapter added",
-        description: "Chapter saved successfully!",
-      });
-    }
-
-    setShowAddChapter(false);
-  };
+  }, [storyTitleId]);
 
   // Function to handle branch creation
   const handleCreateBranch = (paragraphId: string) => {
@@ -389,168 +357,49 @@ const StoryToLiveToExperience = () => {
     );
   };
   
-  // Add state definitions for contributors feature
-  const [storyInitiatorId, setStoryInitiatorId] = useState<string | null>(null);
-  const [contributors, setContributors] = useState<Array<{ id: string; name: string }>>([]);
-  const [contributorStats, setContributorStats] = useState<
-    Record<
-      string,
-      {
-        id: string;
-        name: string;
-        storyStats: Record<string, number>;
-        globalStats: Record<string, number>;
+  // Modify the handleCreateBranch for demo (replace later for Supabase)
+  const onCreateParagraphBranch = ({ branchName, paragraphs }: { branchName: string, paragraphs: string[] }) => {
+    // For now, just show an alert (insert crud logic here)
+    alert(`Branch "${branchName || "(no name)"}" created with ${paragraphs.length} paragraph(s):\n${paragraphs.map((p, i) => `[${i + 1}]: ${p}`).join("\n")}`);
+  };
+  
+  // Function to fetch stats (placeholder, real implementation will fetch/calculate from backend)
+  const getContributorStats = (contributorId: string) => {
+    // Replace with DB aggregation as soon as available
+    // For  now, return dummy numbers.
+    return {
+      id: contributorId,
+      name: contributorsData.find(c => c.id === contributorId)?.name ?? contributorId,
+      storyStats: {
+        chapters_total: 2,
+        paragraphs_total: 8,
+        words_total: 2600,
+        chapters_approved_story: 1,
+        paragraphs_approved_story: 5,
+        words_approved_story: 1700,
+        chapters_rejected_story: 0,
+        paragraphs_rejected_story: 0,
+        words_rejected_story: 0,
+        chapters_undecided_story: 1,
+        paragraphs_undecided_story: 3,
+        words_undecided_story: 900,
+      },
+      globalStats: {
+        chapters_platform: 6,
+        paragraphs_platform: 24,
+        words_platform: 9640,
+        chapters_approved_platform: 3,
+        paragraphs_approved_platform: 12,
+        words_approved_platform: 4800,
+        chapters_rejected_platform: 1,
+        paragraphs_rejected_platform: 4,
+        words_rejected_platform: 1700,
+        chapters_undecided_platform: 2,
+        paragraphs_undecided_platform: 8,
+        words_undecided_platform: 3140,
       }
-    >
-  >({});
-  const [showContributorPopover, setShowContributorPopover] = useState<{
-    visible: boolean;
-    contributor: {
-      id: string;
-      name: string;
-      storyStats: Record<string, number>;
-      globalStats: Record<string, number>;
-    } | null;
-  }>({
-    visible: false,
-    contributor: null,
-  });
-
-  // Fetch chapters and contributors for this story:
-  useEffect(() => {
-    async function fetchContributorsAndStats() {
-      // Get the story title row by id from route slug if present
-      const url = window.location.pathname;
-      const storyIdMatch = url.match(/\/story\/([a-f0-9-]+)/);
-      let storyTitleId: string | null = null;
-      if (storyIdMatch) {
-        storyTitleId = storyIdMatch[1];
-      }
-
-      // Fetch story title, with initiator id
-      let _storyInitiatorId = null;
-      if (storyTitleId) {
-        const { data: storyTitleRow } = await supabase
-          .from("story_title")
-          .select("story_title_id, creator_id")
-          .eq("story_title_id", storyTitleId)
-          .maybeSingle();
-        setStoryInitiatorId(storyTitleRow?.creator_id || null);
-        _storyInitiatorId = storyTitleRow?.creator_id || null;
-      }
-
-      // Fetch chapters for this story
-      const { data: chaptersData } = await supabase
-        .from("stories")
-        .select("chapter_id, contributor_id, contribution_status, chapter_title, paragraphs")
-        .eq("story_title_id", storyTitleId);
-
-      if (!chaptersData) {
-        setContributors([]);
-        setContributorStats({});
-        return;
-      }
-
-      // Build contributors: map from id to stats and get distinct contributor_ids (exclude initiator)
-      const userStats: Record<string, {
-        id: string, name: string, storyStats: Record<string, number>, globalStats: Record<string, number>
-      }> = {};
-      const contributorIds = Array.from(
-        new Set(
-          chaptersData
-            .filter(
-              chapter =>
-                chapter.contributor_id &&
-                chapter.contributor_id !== _storyInitiatorId
-            )
-            .map(ch => ch.contributor_id)
-        )
-      );
-      if (!contributorIds.length) {
-        setContributors([]);
-        setContributorStats({});
-        return;
-      }
-
-      // Get contributor names from profile (minimal for now)
-      const { data: usersData } = await supabase
-        .from("profiles")
-        .select("id, first_name, last_name")
-        .in("id", contributorIds);
-
-      // Compute stats per user (story-specific)
-      contributorIds.forEach(cId => {
-        const userName =
-          (
-            usersData?.find((u: any) => u.id === cId)?.first_name ||
-            ""
-          ) +
-          " " +
-          (
-            usersData?.find((u: any) => u.id === cId)?.last_name ||
-            ""
-          );
-        // Chapters by user in story
-        const chaptersByUser = chaptersData.filter(ch => ch.contributor_id === cId);
-        const paragraphs = chaptersByUser.reduce((acc, ch) => acc + (Array.isArray(ch.paragraphs) ? ch.paragraphs.length : 0), 0);
-        const words = chaptersByUser.reduce(
-          (acc, c) =>
-            acc +
-            (Array.isArray(c.paragraphs)
-              ? c.paragraphs.reduce((w, p) => w + (typeof p === "string" ? p.split(/\s+/).length : 0), 0)
-              : 0),
-          0
-        );
-        // By approval status
-        const countByStatus = (status: string) => chaptersByUser.filter(ch => ch.contribution_status === status).length;
-        const paraByStatus = (status: string) =>
-          chaptersByUser
-            .filter(ch => ch.contribution_status === status)
-            .reduce((acc, ch) => acc + (Array.isArray(ch.paragraphs) ? ch.paragraphs.length : 0), 0);
-        const wordByStatus = (status: string) =>
-          chaptersByUser
-            .filter(ch => ch.contribution_status === status)
-            .reduce(
-              (acc, c) =>
-                acc +
-                (Array.isArray(c.paragraphs)
-                  ? c.paragraphs.reduce((w, p) => w + (typeof p === "string" ? p.split(/\s+/).length : 0), 0)
-                  : 0),
-              0
-            );
-
-        userStats[cId] = {
-          id: cId,
-          name: userName.trim() || "(unknown)",
-          storyStats: {
-            chapters_total: chaptersByUser.length,
-            paragraphs_total: paragraphs,
-            words_total: words,
-            chapters_approved_story: countByStatus("approved"),
-            paragraphs_approved_story: paraByStatus("approved"),
-            words_approved_story: wordByStatus("approved"),
-            chapters_rejected_story: countByStatus("rejected"),
-            paragraphs_rejected_story: paraByStatus("rejected"),
-            words_rejected_story: wordByStatus("rejected"),
-            chapters_undecided_story: countByStatus("undecided"),
-            paragraphs_undecided_story: paraByStatus("undecided"),
-            words_undecided_story: wordByStatus("undecided"),
-          },
-          globalStats: {}, // We'll fill global platform stats in a later step.
-        };
-      });
-
-      setContributors(
-        contributorIds.map(id => ({
-          id,
-          name: userStats[id].name,
-        }))
-      );
-      setContributorStats(userStats);
-    }
-
-    fetchContributorsAndStats();
-  }, [showAddChapter]);
+    };
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -564,46 +413,6 @@ const StoryToLiveToExperience = () => {
             <h1 className="text-2xl font-bold">
               <EditableText id="story-title">Story of my life</EditableText>
             </h1>
-
-                  {/* New Settings/Read/Help buttons */}
-                  <div className="flex items-center space-x-1">
-                    {/* Settings Dropdown */}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56">
-                        <DropdownMenuItem className="flex items-center">
-                          <Copy className="mr-2 h-4 w-4" />
-                          <EditableText id="clone-menu-item">Clone</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Plus className="mr-2 h-4 w-4" />
-                          <EditableText id="add-chapter-item">Add chapter</EditableText>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center">
-                          <Copy className="mr-2 h-4 w-4" />
-                          <EditableText id="export-menu-item">Export</EditableText>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                    
-                    {/* Read Button */}
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    
-                    {/* Help Button */}
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </div>
-
-
-
-
           </div>
           <div>
             <span className="text-gray-600">
@@ -663,107 +472,93 @@ const StoryToLiveToExperience = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Sidebar - Chapter Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow border p-4">
-              <div className="pb-2">
-                <h2 className="text-lg font-bold flex items-center mb-2">
-                  <Book className="h-5 w-5 mr-2" />
-                  Chapters
-                </h2>
-                {chapters.map((chapter, i) => (
-                  <div
-                    key={chapter.id}
-                    className={`flex justify-between items-center p-2 rounded cursor-pointer ${
-                      i === activeChapterIdx
-                        ? "bg-blue-50 border border-blue-400"
-                        : "hover:bg-gray-100"
-                    }`}
-                    onClick={() => handleSelectChapter(i)}
-                  >
-                    <div className="flex items-center">
-                      <span className="text-sm font-medium mr-2">{chapter.number}.</span>
-                      <span className="text-sm">{chapter.title}</span>
-                    </div>
-                    <div className="flex space-x-1">
-                      <Button variant="ghost" size="icon" className="h-6 w-6">
-                        <Settings className="h-3 w-3" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-6 w-6">
-                        <Share2 className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                {/* Add Chapter Button */}
-                {user && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-4 w-full"
-                    onClick={handleAddChapterClick}
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    Add Chapter
-                  </Button>
-                )}
-                {!user && (
-                  <div className="mt-4 text-gray-400 text-xs text-center">
-                    Log in to add new chapters.
-                  </div>
-                )}
-                {showAddChapter && user && (
-                  <div className="mt-4 space-y-2">
-                    <Input
-                      placeholder="Chapter title"
-                      value={newChapterTitle}
-                      onChange={(e) => setNewChapterTitle(e.target.value)}
-                    />
-                    {newChapterParagraphs.map((para, idx) => (
-                      <Input
-                        key={idx}
-                        placeholder={`Paragraph ${idx + 1}`}
-                        value={para}
-                        onChange={(e) => {
-                          const updated = [...newChapterParagraphs];
-                          updated[idx] = e.target.value;
-                          setNewChapterParagraphs(updated);
-                        }}
-                      />
-                    ))}
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      onClick={() =>
-                        setNewChapterParagraphs((prev) => [...prev, ""])
-                      }
-                    >
-                      + Add Paragraph
+            <Card>
+              <CardHeader className="pb-2">
+                <div className="flex justify-between items-center">
+                  <CardTitle>
+                    <EditableText id="chapters-title">Chapters</EditableText>
+                  </CardTitle>
+                  
+                  {/* New Settings/Read/Help buttons */}
+                  <div className="flex items-center space-x-1">
+                    {/* Settings Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Settings className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuItem className="flex items-center">
+                          <Copy className="mr-2 h-4 w-4" />
+                          <EditableText id="clone-menu-item">Clone</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Volume className="mr-2 h-4 w-4" />
+                          <EditableText id="generate-audio-menu-item">Generate Audio</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Mic className="mr-2 h-4 w-4" />
+                          <EditableText id="record-audio-menu-item">Record Audio</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Video className="mr-2 h-4 w-4" />
+                          <EditableText id="record-video-menu-item">Record Video</EditableText>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="flex items-center">
+                          <Video className="mr-2 h-4 w-4" />
+                          <EditableText id="generate-video-menu-item">Generate Video</EditableText>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                    
+                    {/* Read Button */}
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Eye className="h-4 w-4" />
                     </Button>
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        size="sm"
-                        onClick={handleSaveChapter}
-                        disabled={!newChapterTitle.trim()}
-                      >
-                        Save
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setShowAddChapter(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
+                    
+                    {/* Help Button */}
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {chaptersData.map((chapter) => (
+                    <div 
+                      key={chapter.id} 
+                      className="flex justify-between items-center p-2 hover:bg-gray-100 rounded cursor-pointer"
+                    >
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium mr-2">{chapter.number}.</span>
+                        <span className="text-sm">{chapter.title}</span>
+                      </div>
+                      <div className="flex space-x-1">
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                          <Settings className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6">
+                          <Share2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <Button variant="outline" size="sm" className="mt-4 w-full">
+                  <Plus className="h-4 w-4 mr-1" />
+                  <EditableText id="add-chapter-btn">Add Chapter</EditableText>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
           
           {/* Main Content Area */}
           <div className="lg:col-span-3">
           
-            {/* Responsive Tabs for Story/Contributors/Revisions/Branches */}
+            {/* Replace the old tabs with new responsive tabs */}
             <Tabs defaultValue="story" className="w-full">
               <TabsList className="w-full mb-6 border-b overflow-x-auto flex justify-start">
                 <ResponsiveTabsTrigger 
@@ -797,235 +592,304 @@ const StoryToLiveToExperience = () => {
               </TabsList>
               
               {/* Story Content */}
-              {(activeSection === "story" || activeSection === "") && (
+              {activeSection === 'story' || activeSection === '' ? (
                 <div className="space-y-6">
-                  {/* Only show text content if selected */}
-                  {selectedContentTypes.includes("text") && chapters[activeChapterIdx] && (
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="prose max-w-none">
-                          <h2 className="text-xl font-semibold mb-4">
-                            <EditableText id={`chapter-title-${chapters[activeChapterIdx].id}`}>
-                              {chapters[activeChapterIdx].title}
-                            </EditableText>
-                          </h2>
-                          {chapters[activeChapterIdx].paragraphs &&
-                            chapters[activeChapterIdx].paragraphs.map(
-                              (paragraph: string, idx: number) => (
-                                <div key={idx} className="mb-4">
-                                  <EditableText id={`paragraph-${chapters[activeChapterIdx].id}-${idx}`}>
-                                    {paragraph}
-                                  </EditableText>
-                                </div>
-                              )
-                            )}
-                          {/* Like/dislike and comments just for "text" (chapter) */}
-                          <div className="mt-8 pt-4 border-t flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleChapterLike(chapters[activeChapterIdx].id)} 
-                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                            >
-                              <ThumbsUp className="h-5 w-5 mr-1" />
-                              <span>{chapterLikes[chapters[activeChapterIdx].id] || 0}</span>
-                            </button>
-                            <button 
-                              onClick={() => handleChapterDislike(chapters[activeChapterIdx].id)} 
-                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                            >
-                              <ThumbsDown className="h-5 w-5 mr-1" />
-                              <span>{chapterDislikes[chapters[activeChapterIdx].id] || 0}</span>
-                            </button>
-                          </div>
-                          <CommentsSection targetId={chapters[activeChapterIdx].id} />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Only show Images/Cartoon/Presentation player if selected */}
-                  {selectedContentTypes.includes("images") && (
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div>
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium flex items-center">
-                              <Image className="h-5 w-5 mr-2" />
-                              <EditableText id="presentation-title">Presentation / Cartoon</EditableText>
-                            </h3>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm">
-                                <ZoomIn className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Share2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="bg-gray-200 h-64 flex flex-col items-center justify-center rounded">
-                            <div className="h-48 w-48 bg-gray-300 rounded flex items-center justify-center mb-4">
-                              <Play className="h-12 w-12 text-gray-500" />
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Button variant="outline" size="sm">
-                                <EditableText id="prev-image">Previous</EditableText>
-                              </Button>
-                              <span className="text-sm">1 / 5</span>
-                              <Button variant="outline" size="sm">
-                                <EditableText id="next-image">Next</EditableText>
-                              </Button>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-500 mt-2">
-                            <EditableText id="image-caption">Slide caption: Describe what is shown in the presentation slide.</EditableText>
-                          </p>
-                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleImageLike("presentation1")} 
-                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                            >
-                              <ThumbsUp className="h-5 w-5 mr-1" />
-                              <span>{imageLikes.presentation1 || 0}</span>
-                            </button>
-                            <button 
-                              onClick={() => handleImageDislike("presentation1")} 
-                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                            >
-                              <ThumbsDown className="h-5 w-5 mr-1" />
-                              <span>{imageDislikes.presentation1 || 0}</span>
-                            </button>
-                          </div>
-                          <CommentsSection targetId="presentation1" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Only show Audio player if selected */}
-                  {selectedContentTypes.includes("audio") && (
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div>
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium flex items-center">
-                              <AudioLines className="h-5 w-5 mr-2" />
-                              <EditableText id="audio-title">Audio Player</EditableText>
-                            </h3>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm">
-                                <Share2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="bg-gray-100 p-4 rounded">
-                            <div className="flex items-center space-x-2 mb-3">
-                              <Button variant="outline" size="icon" className="h-10 w-10 rounded-full flex items-center justify-center">
-                                <Play className="h-6 w-6" />
-                              </Button>
-                              <div className="w-full">
-                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
-                                  <div className="bg-primary h-full w-1/3 rounded-full"></div>
-                                </div>
-                                <div className="flex justify-between mt-1 text-xs text-gray-500">
-                                  <span>1:23</span>
-                                  <span>3:45</span>
-                                </div>
-                              </div>
-                              <Button variant="ghost" size="sm">
-                                <Volume className="h-5 w-5" />
-                              </Button>
-                            </div>
-                            <p className="text-sm text-gray-500 italic">
-                              <EditableText id="audio-description">Audio description: Narrative of Chapter 1, read by the author.</EditableText>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="prose max-w-none">
+                        {/* Paragraph 1 */}
+                        <div className="mb-6">
+                          <div className="group relative">
+                            <p className="mb-2">
+                              <EditableText id="paragraph-1">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam varius, nunc vel tincidunt tincidunt, 
+                                nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi. Nullam varius, nunc vel tincidunt tincidunt, 
+                                nisl nunc aliquam nisi, vel aliquam nisl nunc vel nisi.
+                              </EditableText>
                             </p>
+                            <ParagraphBranchPopover
+                              trigger={
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <svg width="16" height="16" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path strokeWidth="2" d="M6 3v6a6 6 0 006 6h6"></path><path strokeWidth="2" d="M18 21v-6a6 6 0 00-6-6H6"></path></svg>
+                                    Create Branch
+                                  </span>
+                                </Button>
+                              }
+                              onCreateBranch={onCreateParagraphBranch}
+                            />
                           </div>
-                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleAudioLike("audio1")} 
-                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                            >
-                              <ThumbsUp className="h-5 w-5 mr-1" />
-                              <span>{audioLikes.audio1 || 0}</span>
-                            </button>
-                            <button 
-                              onClick={() => handleAudioDislike("audio1")} 
-                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                            >
-                              <ThumbsDown className="h-5 w-5 mr-1" />
-                              <span>{audioDislikes.audio1 || 0}</span>
-                            </button>
-                          </div>
-                          <CommentsSection targetId="audio1" />
                         </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Only show Video player if selected */}
-                  {selectedContentTypes.includes("video") && (
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div>
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium flex items-center">
-                              <Video className="h-5 w-5 mr-2" />
-                              <EditableText id="video-title">Video Player</EditableText>
-                            </h3>
-                            <div className="flex space-x-2">
-                              <Button variant="ghost" size="sm">
-                                <ZoomIn className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Share2 className="h-4 w-4" />
-                              </Button>
-                            </div>
+                        {/* Paragraph 2 */}
+                        <div className="mb-6">
+                          <div className="group relative">
+                            <p className="mb-2">
+                              <EditableText id="paragraph-2">
+                                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, 
+                                totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae 
+                                dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, 
+                                sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                              </EditableText>
+                            </p>
+                            <ParagraphBranchPopover
+                              trigger={
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <svg width="16" height="16" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path strokeWidth="2" d="M6 3v6a6 6 0 006 6h6"></path><path strokeWidth="2" d="M18 21v-6a6 6 0 00-6-6H6"></path></svg>
+                                    Create Branch
+                                  </span>
+                                </Button>
+                              }
+                              onCreateBranch={onCreateParagraphBranch}
+                            />
                           </div>
-                          <div className="bg-gray-800 h-72 rounded flex flex-col items-center justify-center">
-                            <Play className="h-16 w-16 text-white opacity-70 hover:opacity-100 cursor-pointer" />
-                            <div className="absolute bottom-4 w-11/12 opacity-0 hover:opacity-100 transition-opacity">
-                              <div className="bg-gray-900 bg-opacity-70 p-2 rounded">
-                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
-                                  <div className="bg-primary h-full w-1/4 rounded-full"></div>
-                                </div>
-                                <div className="flex justify-between items-center mt-1">
-                                  <div className="flex items-center space-x-2">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
-                                      <Play className="h-4 w-4" />
-                                    </Button>
-                                    <span className="text-xs text-gray-200">0:35 / 2:18</span>
+                        </div>
+                        {/* Paragraph 3 */}
+                        <div className="mb-6">
+                          <div className="group relative">
+                            <p className="mb-2">
+                              <EditableText id="paragraph-3">
+                                Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, 
+                                sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. 
+                                Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut 
+                                aliquid ex ea commodi consequatur?
+                              </EditableText>
+                            </p>
+                            <ParagraphBranchPopover
+                              trigger={
+                                <Button 
+                                  variant="outline"
+                                  size="sm"
+                                  className="absolute right-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <span className="flex items-center gap-1">
+                                    <svg width="16" height="16" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path strokeWidth="2" d="M6 3v6a6 6 0 006 6h6"></path><path strokeWidth="2" d="M18 21v-6a6 6 0 00-6-6H6"></path></svg>
+                                    Create Branch
+                                  </span>
+                                </Button>
+                              }
+                              onCreateBranch={onCreateParagraphBranch}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Image Player Container */}
+                        {selectedContentTypes.includes('images') && (
+                          <div className="my-8 border p-4 rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="text-lg font-medium flex items-center">
+                                <Image className="h-5 w-5 mr-2" />
+                                <EditableText id="presentation-title">Presentation / Cartoon</EditableText>
+                              </h3>
+                              <div className="flex space-x-2">
+                                <Button variant="ghost" size="sm">
+                                  <ZoomIn className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm">
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="bg-gray-200 h-64 flex flex-col items-center justify-center rounded">
+                              <div className="h-48 w-48 bg-gray-300 rounded flex items-center justify-center mb-4">
+                                <Play className="h-12 w-12 text-gray-500" />
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button variant="outline" size="sm">
+                                  <EditableText id="prev-image">Previous</EditableText>
+                                </Button>
+                                <span className="text-sm">1 / 5</span>
+                                <Button variant="outline" size="sm">
+                                  <EditableText id="next-image">Next</EditableText>
+                                </Button>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-500 mt-2">
+                              <EditableText id="image-caption">Slide caption: Describe what is shown in the presentation slide.</EditableText>
+                            </p>
+                            
+                            {/* Add like/dislike buttons to the image container */}
+                            <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                              <button 
+                                onClick={() => handleImageLike('presentation1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                              >
+                                <ThumbsUp className="h-5 w-5 mr-1" />
+                                <span>{imageLikes.presentation1 || 0}</span>
+                              </button>
+                              <button 
+                                onClick={() => handleImageDislike('presentation1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                              >
+                                <ThumbsDown className="h-5 w-5 mr-1" />
+                                <span>{imageDislikes.presentation1 || 0}</span>
+                              </button>
+                            </div>
+                            
+                            {/* Add Comments section for presentation */}
+                            <CommentsSection targetId="presentation1" />
+                          </div>
+                        )}
+                        
+                        {/* Audio Player Container */}
+                        {selectedContentTypes.includes('audio') && (
+                          <div className="my-8 border p-4 rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="text-lg font-medium flex items-center">
+                                <AudioLines className="h-5 w-5 mr-2" />
+                                <EditableText id="audio-title">Audio Player</EditableText>
+                              </h3>
+                              <div className="flex space-x-2">
+                                <Button variant="ghost" size="sm">
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="bg-gray-100 p-4 rounded">
+                              <div className="flex items-center space-x-2 mb-3">
+                                <Button variant="outline" size="icon" className="h-10 w-10 rounded-full flex items-center justify-center">
+                                  <Play className="h-6 w-6" />
+                                </Button>
+                                <div className="w-full">
+                                  <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                    <div className="bg-primary h-full w-1/3 rounded-full"></div>
                                   </div>
-                                  <div className="flex items-center">
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
-                                      <Volume className="h-4 w-4" />
-                                    </Button>
+                                  <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                    <span>1:23</span>
+                                    <span>3:45</span>
+                                  </div>
+                                </div>
+                                <Button variant="ghost" size="sm">
+                                  <Volume className="h-5 w-5" />
+                                </Button>
+                              </div>
+                              <p className="text-sm text-gray-500 italic">
+                                <EditableText id="audio-description">Audio description: Narrative of Chapter 1, read by the author.</EditableText>
+                              </p>
+                            </div>
+                            
+                            {/* Add like/dislike buttons to the audio container */}
+                            <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                              <button 
+                                onClick={() => handleAudioLike('audio1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                              >
+                                <ThumbsUp className="h-5 w-5 mr-1" />
+                                <span>{audioLikes.audio1 || 0}</span>
+                              </button>
+                              <button 
+                                onClick={() => handleAudioDislike('audio1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                              >
+                                <ThumbsDown className="h-5 w-5 mr-1" />
+                                <span>{audioDislikes.audio1 || 0}</span>
+                              </button>
+                            </div>
+                            
+                            {/* Add Comments section for audio */}
+                            <CommentsSection targetId="audio1" />
+                          </div>
+                        )}
+                        
+                        {/* Video Player Container */}
+                        {selectedContentTypes.includes('video') && (
+                          <div className="my-8 border p-4 rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <h3 className="text-lg font-medium flex items-center">
+                                <Video className="h-5 w-5 mr-2" />
+                                <EditableText id="video-title">Video Player</EditableText>
+                              </h3>
+                              <div className="flex space-x-2">
+                                <Button variant="ghost" size="sm">
+                                  <ZoomIn className="h-4 w-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm">
+                                  <Share2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="bg-gray-800 h-72 rounded flex flex-col items-center justify-center">
+                              <Play className="h-16 w-16 text-white opacity-70 hover:opacity-100 cursor-pointer" />
+                              
+                              <div className="absolute bottom-4 w-11/12 opacity-0 hover:opacity-100 transition-opacity">
+                                <div className="bg-gray-900 bg-opacity-70 p-2 rounded">
+                                  <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                    <div className="bg-primary h-full w-1/4 rounded-full"></div>
+                                  </div>
+                                  <div className="flex justify-between items-center mt-1">
+                                    <div className="flex items-center space-x-2">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                        <Play className="h-4 w-4" />
+                                      </Button>
+                                      <span className="text-xs text-gray-200">0:35 / 2:18</span>
+                                    </div>
+                                    <div className="flex items-center">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                        <Volume className="h-4 w-4" />
+                                      </Button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
+                            <p className="text-sm text-gray-500 mt-2">
+                              <EditableText id="video-caption">Video caption: Visual interpretation of Chapter 1 - The Beginning.</EditableText>
+                            </p>
+                            
+                            {/* Add like/dislike buttons to the video container */}
+                            <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                              <button 
+                                onClick={() => handleVideoLike('video1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                              >
+                                <ThumbsUp className="h-5 w-5 mr-1" />
+                                <span>{videoLikes.video1 || 0}</span>
+                              </button>
+                              <button 
+                                onClick={() => handleVideoDislike('video1')} 
+                                className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                              >
+                                <ThumbsDown className="h-5 w-5 mr-1" />
+                                <span>{videoDislikes.video1 || 0}</span>
+                              </button>
+                            </div>
+                            
+                            {/* Add Comments section for video */}
+                            <CommentsSection targetId="video1" />
                           </div>
-                          <p className="text-sm text-gray-500 mt-2">
-                            <EditableText id="video-caption">Video caption: Visual interpretation of Chapter 1 - The Beginning.</EditableText>
-                          </p>
-                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
-                            <button 
-                              onClick={() => handleVideoLike("video1")} 
-                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                            >
-                              <ThumbsUp className="h-5 w-5 mr-1" />
-                              <span>{videoLikes.video1 || 0}</span>
-                            </button>
-                            <button 
-                              onClick={() => handleVideoDislike("video1")} 
-                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                            >
-                              <ThumbsDown className="h-5 w-5 mr-1" />
-                              <span>{videoDislikes.video1 || 0}</span>
-                            </button>
-                          </div>
-                          <CommentsSection targetId="video1" />
+                        )}
+                        
+                        {/* Add like/dislike buttons for the chapter */}
+                        <div className="mt-8 pt-4 border-t flex items-center space-x-2">
+                          <button 
+                            onClick={() => handleChapterLike('chapter1')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                          >
+                            <ThumbsUp className="h-5 w-5 mr-1" />
+                            <span>{chapterLikes.chapter1 || 0}</span>
+                          </button>
+                          <button 
+                            onClick={() => handleChapterDislike('chapter1')} 
+                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                          >
+                            <ThumbsDown className="h-5 w-5 mr-1" />
+                            <span>{chapterDislikes.chapter1 || 0}</span>
+                          </button>
                         </div>
-                      </CardContent>
-                    </Card>
-                  )}
+                        
+                        {/* Add Comments section for chapter */}
+                        <CommentsSection targetId="chapter1" />
+                      </div>
+                    </CardContent>
+                  </Card>
                   
                   {/* Dialog for creating a new branch */}
                   <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
@@ -1054,7 +918,7 @@ const StoryToLiveToExperience = () => {
                     </DialogContent>
                   </Dialog>
                 </div>
-              )}
+              ) : null}
               
               {/* Contributors Content */}
               {activeSection === 'contributors' && (
@@ -1065,28 +929,6 @@ const StoryToLiveToExperience = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {contributors.length === 0 ? (
-                      <div className="text-gray-500 italic text-center">
-                        No contributors yet except the initiator.
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {contributors.map(c => (
-                          <div key={c.id}>
-                            <button
-                              className="text-blue-700 underline font-medium hover:text-blue-900"
-                              onClick={() =>
-                                setShowContributorPopover({ visible: true, contributor: contributorStats[c.id] })
-                              }
-                            >
-                              {c.name}
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Old table for static/fake contributors, now hidden
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -1105,9 +947,42 @@ const StoryToLiveToExperience = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {contributorsData.map((contributor) => (
+                        {contributors.length > 0 ? contributors.map((contributor) => (
                           <TableRow key={contributor.id}>
-                            <TableCell className="font-medium">{contributor.name}</TableCell>
+                            <TableCell className="font-medium">
+                              <button
+                                className="text-blue-800 underline hover:text-blue-600"
+                                onClick={() => {
+                                  setSelectedContributor(getContributorStats(contributor.id));
+                                  setShowContributorStats(prev => ({
+                                    ...prev,
+                                    [contributor.id]: true
+                                  }));
+                                }}
+                              >
+                                {contributor.name}
+                              </button>
+                            </TableCell>
+                            <TableCell>0</TableCell>
+                            <TableCell>0</TableCell>
+                            <TableCell>0</TableCell>
+                          </TableRow>
+                        )) : contributorsData.map((contributor) => (
+                          <TableRow key={contributor.id}>
+                            <TableCell className="font-medium">
+                              <button
+                                className="text-blue-800 underline hover:text-blue-600"
+                                onClick={() => {
+                                  setSelectedContributor(getContributorStats(contributor.id));
+                                  setShowContributorStats(prev => ({
+                                    ...prev,
+                                    [contributor.id]: true
+                                  }));
+                                }}
+                              >
+                                {contributor.name}
+                              </button>
+                            </TableCell>
                             <TableCell>{contributor.words}</TableCell>
                             <TableCell>{contributor.paragraphs}</TableCell>
                             <TableCell>{contributor.chapters}</TableCell>
@@ -1115,14 +990,6 @@ const StoryToLiveToExperience = () => {
                         ))}
                       </TableBody>
                     </Table>
-                    */}
-
-                    {showContributorPopover.visible && showContributorPopover.contributor && (
-                      <ContributorStatsPopover
-                        contributor={showContributorPopover.contributor}
-                        onClose={() => setShowContributorPopover({ visible: false, contributor: null })}
-                      />
-                    )}
                   </CardContent>
                 </Card>
               )}
@@ -1176,10 +1043,24 @@ const StoryToLiveToExperience = () => {
                         </div>
                       ))}
                     </div>
+                    {/* Please DO NOT add "Add New Branch" button here !!!! */}
                   </CardContent>
                 </Card>
               )}
             </Tabs>
+            {/* Contributor stats popover */}
+            {selectedContributor && showContributorStats[selectedContributor.id] && (
+              <ContributorStatsPopover
+                contributor={selectedContributor}
+                onClose={() => {
+                  setShowContributorStats(prev => ({
+                    ...prev,
+                    [selectedContributor.id]: false
+                  }));
+                  setSelectedContributor(null);
+                }}
+              />
+            )}
           </div>
         </div>
       </main>
@@ -1187,11 +1068,10 @@ const StoryToLiveToExperience = () => {
       <Button variant="outline" size="sm" className="mt-4 w-full">
         <EditableText id="add-chapter-btn">Next Chapter</EditableText>
       </Button>
-
       
       <CrowdlyFooter />
     </div>
   );
 };
 
-export default StoryToLiveToExperience;
+export default StoryforConsumers;
