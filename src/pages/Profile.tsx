@@ -89,9 +89,11 @@ const Profile = () => {
   const [profile, setProfile] = useState({ ...INITIAL_PROFILE });
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   // Legacy state starts, merged for compatibility
   const [newInterest, setNewInterest] = useState("");
+  const [newLanguage, setNewLanguage] = useState(""); // Separate state for new language
   const [isPrivate, setIsPrivate] = useState(false); // Legacy, not mapped
   const [canBeTagged, setCanBeTagged] = useState(true);
   const [anyoneCanEdit, setAnyoneCanEdit] = useState(false);
@@ -103,18 +105,17 @@ const Profile = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
   const { toast } = useToast();
+
+  // Responsive design
   const isMobile = useIsMobile();
-  
-  // For responsive design
-  const isMobile = useIsMobile();
-  
+
   // For the revision history
   const revisions = [
     { id: 1, text: "Text 1", time: "11:28" },
     { id: 2, text: "Text 2", time: "12:15" },
     { id: 3, text: "Text 3", time: "14:30" },
   ];
-  
+
   // Add contribution filter state
   const [contributionFilter, setContributionFilter] = useState("total");
 
@@ -191,6 +192,12 @@ const Profile = () => {
     }
   ];
 
+  // Filter for contributions (for StatsDisplay)
+  const filteredContributions = contributions.filter(contribution => {
+    if (contributionFilter === "total") return true;
+    return contribution.status === contributionFilter;
+  });
+
   // Toggle preview mode function
   const togglePreviewMode = () => {
     const newPreviewMode = !previewMode;
@@ -214,13 +221,14 @@ const Profile = () => {
         error,
       } = await supabase.auth.getUser();
       setUserId(user?.id ?? null);
+      setUserEmail(user?.email ?? null);
     };
     getUser();
   }, []);
 
   // Load or create profile for current user
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !userEmail) return;
     let isMounted = true;
     const fetchOrCreateProfile = async () => {
       setIsLoading(true);
@@ -246,10 +254,10 @@ const Profile = () => {
           languages: data.languages || [],
         });
       } else {
-        // Create an empty profile
+        // Create an empty profile (must provide required username)
         const { error: insertError } = await supabase
           .from("profiles")
-          .insert([{ id: userId }]);
+          .insert([{ id: userId, username: userEmail }]);
         if (insertError) {
           toast({
             title: "Failed to create user profile",
@@ -257,7 +265,7 @@ const Profile = () => {
             variant: "destructive",
           });
         } else {
-          setProfile({ ...INITIAL_PROFILE });
+          setProfile({ ...INITIAL_PROFILE, username: userEmail });
         }
       }
       setIsLoading(false);
@@ -266,7 +274,7 @@ const Profile = () => {
     return () => {
       isMounted = false;
     };
-  }, [userId]);
+  }, [userId, userEmail]);
 
   // Save profile field (generic handler)
   const saveProfileField = async (key: keyof typeof profile, value: any) => {
@@ -337,6 +345,7 @@ const Profile = () => {
     const updated = [...profile.languages, lang];
     saveProfileField("languages", updated);
     setProfile((p) => ({ ...p, languages: updated }));
+    setNewLanguage("");
   };
   const handleRemoveLanguage = (lang: string) => {
     const updated = profile.languages.filter((l: string) => l !== lang);
@@ -699,21 +708,21 @@ const Profile = () => {
                 {!previewMode && (
                   <div className="flex gap-2">
                     <Input
-                      value={newInterest}
-                      onChange={(e) => setNewInterest(e.target.value)}
+                      value={newLanguage}
+                      onChange={(e) => setNewLanguage(e.target.value)}
                       placeholder="Add language"
                       className="flex-grow"
                       onKeyDown={e => {
                         if (e.key === "Enter") {
-                          handleAddLanguage(newInterest);
-                          setNewInterest("");
+                          handleAddLanguage(newLanguage);
+                          setNewLanguage("");
                         }
                       }}
                     />
                     <Button
                       onClick={() => {
-                        handleAddLanguage(newInterest);
-                        setNewInterest("");
+                        handleAddLanguage(newLanguage);
+                        setNewLanguage("");
                       }}
                       size="sm"
                     >
