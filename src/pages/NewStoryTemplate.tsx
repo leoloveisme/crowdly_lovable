@@ -407,26 +407,58 @@ const NewStoryTemplate = () => {
 
   // CRUD: Update Story Title
   const handleUpdateStoryTitle = async (updatedTitle: string) => {
-    if (!storyTitleId || !updatedTitle.trim()) return;
+    if (!storyTitleId || !updatedTitle.trim()) {
+      toast({
+        title: "No title entered",
+        description: "Please provide a non-empty title.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSavingTitle(true);
     const prevTitle = mainTitle;
-    const { error } = await supabase
+    console.log("Attempting to update title:", updatedTitle, "for storyTitleId:", storyTitleId);
+
+    // Use select to return the updated row, so we confirm the update
+    const { data: updatedRows, error } = await supabase
       .from("story_title")
       .update({ title: updatedTitle })
-      .eq("story_title_id", storyTitleId);
+      .eq("story_title_id", storyTitleId)
+      .select()
+      .maybeSingle();
+
     setSavingTitle(false);
+
     if (error) {
       toast({
         title: "Failed to update title",
         description: error.message,
         variant: "destructive",
       });
+      console.error("Supabase update error:", error);
       return;
     }
-    // Immediately reflect the update in UI (for snappy UX)
-    setMainTitle(updatedTitle);
+
+    // If no row is returned, then nothing was updated
+    if (!updatedRows) {
+      toast({
+        title: "Update failed",
+        description: "No matching story found to update! (Check if this story exists.)",
+        variant: "destructive",
+      });
+      console.warn(
+        "Supabase update ran but returned no matching story. Title:",
+        updatedTitle,
+        "storyTitleId:",
+        storyTitleId
+      );
+      return;
+    }
+
+    // Success case: row updated
+    setMainTitle(updatedRows.title);
     setEditingTitle(false);
-    setNewTitle(updatedTitle);
+    setNewTitle(updatedRows.title);
     toast({ title: "Title updated!" });
 
     // Insert new story_title_revision as before
@@ -443,7 +475,7 @@ const NewStoryTemplate = () => {
     await supabase.from("story_title_revisions").insert({
       story_title_id: storyTitleId,
       prev_title: prevTitle,
-      new_title: updatedTitle,
+      new_title: updatedRows.title,
       created_by: null, // set to user.id if available
       revision_number: nextRevision,
       revision_reason: "Manual update",
@@ -451,7 +483,7 @@ const NewStoryTemplate = () => {
     });
     fetchStoryTitleRevisions(storyTitleId);
 
-    // SAFETY: re-fetch the latest story (to prevent stale mainTitle from any effect)
+    // Re-fetch in case something changed in the DB between update and revision insert
     fetchStoryTitleById(storyTitleId);
   };
 
