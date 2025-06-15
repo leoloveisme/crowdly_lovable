@@ -246,7 +246,7 @@ const NewStoryTemplate = () => {
     }
   };
 
-  // New: create a new story, set as selected
+  // New: create a new story, set as selected & navigate
   const handleCreateNewStory = async (title: string) => {
     if (!user) return;
     // Insert new story_title
@@ -275,10 +275,12 @@ const NewStoryTemplate = () => {
     });
     // reload story list
     await fetchAllUserStories();
-    // Select the new story
+    // Select and redirect to the new story page
     setStoryTitleId(inserted.story_title_id);
     setMainTitle(inserted.title);
     fetchStoryTitleRevisions(inserted.story_title_id);
+    // New: Redirect to new story page
+    navigate(`/story/${inserted.story_title_id}`);
   };
 
   // On mount or when user changes, fetch all stories and default to first story
