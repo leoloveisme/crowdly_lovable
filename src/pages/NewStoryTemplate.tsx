@@ -421,11 +421,17 @@ const NewStoryTemplate = () => {
     setSavingTitle(true);
 
     const prevTitle = mainTitle;
+    // Debugging: log IDs and context to console
+    console.log("Attempting to update story_title", { storyTitleId, updatedTitle, prevTitle, user });
+
     // Update title in database
-    const { error: updateErr } = await supabase
+    const { data: updateData, error: updateErr } = await supabase
       .from("story_title")
       .update({ title: updatedTitle })
-      .eq("story_title_id", storyTitleId);
+      .eq("story_title_id", storyTitleId)
+      .select();
+
+    setSavingTitle(false);
 
     if (updateErr) {
       toast({
@@ -433,32 +439,26 @@ const NewStoryTemplate = () => {
         description: updateErr.message,
         variant: "destructive",
       });
-      setSavingTitle(false);
       return;
     }
 
-    // Now fetch the updated row to update UI
-    const { data: updatedRow, error: fetchError } = await supabase
-      .from("story_title")
-      .select()
-      .eq("story_title_id", storyTitleId)
-      .maybeSingle();
-
-    setSavingTitle(false);
-
-    if (fetchError || !updatedRow || !updatedRow.title) {
+    // If no rows were actually updated:
+    if (!updateData || updateData.length === 0) {
       toast({
-        title: "Failed to fetch updated title",
-        description: fetchError?.message || "Could not retrieve the updated title.",
+        title: "No story title row was updated.",
+        description:
+          "Possible reasons: (1) Row does not exist, (2) You are not the creator, (3) Row's creator_id does not match your user id. Please check Supabase table.",
         variant: "destructive",
       });
+      // Extra debug log
+      console.log("No rows updated in story_title. Data:", updateData);
       return;
     }
 
     // Success: update UI 
-    setMainTitle(updatedRow.title);
+    setMainTitle(updateData[0].title);
     setEditingTitle(false);
-    setNewTitle(updatedRow.title);
+    setNewTitle(updateData[0].title);
 
     toast({ title: "Title updated!" });
 
@@ -476,8 +476,8 @@ const NewStoryTemplate = () => {
     await supabase.from("story_title_revisions").insert({
       story_title_id: storyTitleId,
       prev_title: prevTitle,
-      new_title: updatedRow.title,
-      created_by: null, // set to user.id if available
+      new_title: updateData[0].title,
+      created_by: user?.id ?? null, // set to user.id if available
       revision_number: nextRevision,
       revision_reason: "Manual update",
       language: "en"
