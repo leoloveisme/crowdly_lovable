@@ -441,1257 +441,532 @@ const NewStoryTemplate = () => {
   }
 
   return (
-    
-      
+    <>
+      <div className="flex flex-col min-h-screen">
+        <header>
+          <CrowdlyHeader />
+        </header>
         
-          
-            
-              
-                <CrowdlyHeader />
-              
-            
-          
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                <Button variant="ghost" size="icon">
-                                  <Settings className="h-5 w-5" onClick={() => handleSettingsClick('story')} />
-                                </Button>
-                              
-                            
-                            
-                              
-                                <Button variant="ghost" size="icon">
-                                  <Eye className="h-5 w-5" onClick={() => handleEyeClick('story')} />
-                                </Button>
-                              
-                            
-                            
-                              
-                                <Dialog>
-                                  
-                                    <HelpCircle className="h-5 w-5" />
-                                  
-                                  
-                                    
-                                      How to use this template
-                                    
-                                    
-                                      This template is designed to help you create a new story.
-                                    
-                                  
-                                </Dialog>
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
+        <main className="flex-1 p-4">
+          <div className="container mx-auto">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex space-x-2">
+                <Button variant="ghost" size="icon">
+                  <Settings className="h-5 w-5" onClick={() => handleSettingsClick('story')} />
+                </Button>
+                <Button variant="ghost" size="icon">
+                  <Eye className="h-5 w-5" onClick={() => handleEyeClick('story')} />
+                </Button>
+                <Dialog>
+                  <DialogTrigger>
+                    <HelpCircle className="h-5 w-5" />
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>How to use this template</DialogTitle>
+                    </DialogHeader>
+                    <p>This template is designed to help you create a new story.</p>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </div>
 
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                
-                                  {editingTitle ? (
-                                    
-                                      
-                                        <Input
-                                          type="text"
-                                          value={newTitle}
-                                          onChange={(e) => setNewTitle(e.target.value)}
-                                          onBlur={() => {
-                                            setEditingTitle(false);
-                                            setNewTitle(mainTitle);
-                                          }}
-                                          onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                              handleUpdateStoryTitle(newTitle);
-                                              setEditingTitle(false);
-                                            } else if (e.key === 'Escape') {
-                                              setEditingTitle(false);
-                                              setNewTitle(mainTitle);
-                                            }
-                                          }}
-                                          placeholder="Enter new title"
-                                        />
-                                      
-                                      
-                                        
-                                          {savingTitle ? "Saving..." : "Save"}
-                                        
-                                      
-                                    
-                                  ) : (
-                                    
-                                      
-                                        {mainTitle}
-                                      
-                                      
-                                        
-                                          
-                                            
-                                              <Edit className="h-4 w-4 mr-2" />
-                                            
-                                          
-                                        
-                                      
-                                    
-                                  )}
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      
-                                        
-                                          
-                                            
-                                              
-                                                Visibility
-                                              
-                                              
-                                                Control who can see your story
-                                              
-                                            
-                                          
-                                          
-                                            
-                                              
-                                                Contributors
-                                              
-                                              
-                                                Manage who can contribute to your story
-                                              
-                                            
-                                          
-                                          
-                                            
-                                              
-                                                Revisions
-                                              
-                                              
-                                                View and compare previous versions of your story
-                                              
-                                            
-                                          
-                                          
-                                            
-                                              
-                                                Layout Options
-                                              
-                                              
-                                                Customize the layout of your story
-                                              
-                                            
-                                          
-                                          
-                                            
-                                              
-                                                Branches
-                                              
-                                              
-                                                Create and manage different versions of your story
-                                              
-                                            
-                                          
-                                        
-                                      
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+          <div className="container mx-auto mb-8">
+            <Card className="mb-6">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div className="flex-1">
+                    {editingTitle ? (
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="text"
+                          value={newTitle}
+                          onChange={(e) => setNewTitle(e.target.value)}
+                          onBlur={() => {
+                            setEditingTitle(false);
+                            setNewTitle(mainTitle);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleUpdateStoryTitle(newTitle);
+                              setEditingTitle(false);
+                            } else if (e.key === 'Escape') {
+                              setEditingTitle(false);
+                              setNewTitle(mainTitle);
+                            }
+                          }}
+                          placeholder="Enter new title"
+                        />
+                        <Button onClick={() => handleUpdateStoryTitle(newTitle)}>
+                          {savingTitle ? "Saving..." : "Save"}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <CardTitle>{mainTitle}</CardTitle>
+                        <Button variant="ghost" size="sm" onClick={() => {
+                          setEditingTitle(true);
+                          setNewTitle(mainTitle);
+                        }}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline">Settings</Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">Visibility</h4>
+                            <p className="text-sm text-muted-foreground">Control who can see your story</p>
+                          </div>
+                          <Button variant="ghost" size="sm" onClick={() => toggleSection('visibility')}>
+                            {visibilityOpen ? <ChevronDown /> : <ChevronDown />}
+                          </Button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">Contributors</h4>
+                            <p className="text-sm text-muted-foreground">Manage who can contribute to your story</p>
+                          </div>
+                          <Button variant="ghost" size="sm" onClick={() => toggleSection('contributors')}>
+                            {contributorsOpen ? <ChevronDown /> : <ChevronDown />}
+                          </Button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">Revisions</h4>
+                            <p className="text-sm text-muted-foreground">View and compare previous versions of your story</p>
+                          </div>
+                          <Button variant="ghost" size="sm" onClick={() => toggleSection('revisions')}>
+                            {revisionsOpen ? <ChevronDown /> : <ChevronDown />}
+                          </Button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">Layout Options</h4>
+                            <p className="text-sm text-muted-foreground">Customize the layout of your story</p>
+                          </div>
+                          <Button variant="ghost" size="sm" onClick={() => toggleSection('layoutOptions')}>
+                            {layoutOptionsOpen ? <ChevronDown /> : <ChevronDown />}
+                          </Button>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">Branches</h4>
+                            <p className="text-sm text-muted-foreground">Create and manage different versions of your story</p>
+                          </div>
+                          <Button variant="ghost" size="sm" onClick={() => toggleSection('branches')}>
+                            {branchesOpen ? <ChevronDown /> : <ChevronDown />}
+                          </Button>
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </CardHeader>
+            </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Visibility
-                              
-                            
-                            
-                              
-                                Control who can see your story
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+            <Card className="mb-6">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Visibility</CardTitle>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Control who can see your story
+                </p>
+              </CardHeader>
+            </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Contributors
-                              
-                            
-                            
-                              
-                                Manage who can contribute to your story
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+            <Card className="mb-6">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Contributors</CardTitle>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Manage who can contribute to your story
+                </p>
+              </CardHeader>
+            </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Revisions
-                              
-                            
-                            
-                              
-                                View and compare previous versions of your story
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+            <Card className="mb-6">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Revisions</CardTitle>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  View and compare previous versions of your story
+                </p>
+              </CardHeader>
+            </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Layout Options
-                              
-                            
-                            
-                              
-                                Customize the layout of your story
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+            <Card className="mb-6">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Layout Options</CardTitle>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Customize the layout of your story
+                </p>
+              </CardHeader>
+            </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Branches
-                              
-                            
-                            
-                              
-                                Create and manage different versions of your story
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
+            <Card className="mb-6">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>Branches</CardTitle>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Create and manage different versions of your story
+                </p>
+              </CardHeader>
+            </Card>
+          </div>
+        </main>
 
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Visibility
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Public
-                                    
-                                    
-                                      Anyone can view this story
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Private
-                                    
-                                    
-                                      Only invited contributors can view this story
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+        <div className="container mx-auto mb-8">
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Visibility</CardTitle>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Public</h4>
+                    <p className="text-sm text-muted-foreground">Anyone can view this story</p>
+                  </div>
+                  <Switch checked={isPublished} onCheckedChange={togglePublishStatus} />
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Private</h4>
+                    <p className="text-sm text-muted-foreground">Only invited contributors can view this story</p>
+                  </div>
+                  <Switch checked={!isPublished} onCheckedChange={() => togglePublishStatus()} />
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Contributors
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Add Contributor
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Contributor List
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Contributors</CardTitle>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Add Contributor</h4>
+                  </div>
+                  <Input placeholder="Search for a user" className="max-w-sm" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Contributor List</h4>
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>User</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* Contributors would be mapped here */}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Revisions
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Compare Revisions
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Revision History
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Revisions</CardTitle>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Compare Revisions</h4>
+                  </div>
+                  <Button onClick={toggleCompare}>Compare Selected</Button>
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Revision History</h4>
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Revision</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Author</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {storyTitleRevisions.map((revision) => (
+                        <TableRow key={revision.id}>
+                          <TableCell>{revision.revision_number}</TableCell>
+                          <TableCell>{new Date(revision.created_at).toLocaleString()}</TableCell>
+                          <TableCell>Author</TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">View</Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Layout Options
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Select Layout
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Layout Preview
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Layout Options</CardTitle>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Select Layout</h4>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button 
+                      variant={activeLayoutOption === 0 ? "default" : "outline"}
+                      onClick={() => handleLayoutOptionClick(0)}
+                    >
+                      <LayoutList className="h-5 w-5" />
+                    </Button>
+                    <Button 
+                      variant={activeLayoutOption === 1 ? "default" : "outline"}
+                      onClick={() => handleLayoutOptionClick(1)}
+                    >
+                      <Columns2 className="h-5 w-5" />
+                    </Button>
+                    <Button 
+                      variant={activeLayoutOption === 2 ? "default" : "outline"}
+                      onClick={() => handleLayoutOptionClick(2)}
+                    >
+                      <Columns3 className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Layout Preview</h4>
+                  </div>
+                  <div className="border rounded p-4 w-full h-40 flex items-center justify-center">
+                    {activeLayoutOption !== null ? (
+                      <p>Preview of Layout {activeLayoutOption + 1}</p>
+                    ) : (
+                      <p>Select a layout to preview</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Branches
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Create Branch
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Branch List
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-      
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Create Branch</CardTitle>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Branch Name</h4>
+                  </div>
+                  <Input placeholder="Enter branch name" className="max-w-sm" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Create</h4>
+                  </div>
+                  <Button>Create Branch</Button>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
 
-      
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Public
-                              
-                            
-                            
-                              
-                                Anyone can view this story
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Branch List</CardTitle>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Name</h4>
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Created At</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {/* Branches would be mapped here */}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+        </div>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Private
-                              
-                            
-                            
-                              
-                                Only invited contributors can view this story
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
+        <div className="container mx-auto mb-8">
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Chapters</CardTitle>
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Chapter Title</h4>
+                  </div>
+                  <Input 
+                    placeholder="Enter chapter title" 
+                    value={newChapterTitle}
+                    onChange={(e) => setNewChapterTitle(e.target.value)}
+                    className="max-w-sm" 
+                  />
+                </div>
+              </div>
+              <div className="mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium">Chapter Content</h4>
+                  </div>
+                  <ChapterEditor 
+                    paragraphs={newChapterParagraphs}
+                    onChange={setNewChapterParagraphs}
+                  />
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
 
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Add Contributor
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Search for a user
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Invite
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Add Chapter</CardTitle>
+                </div>
+                <Button 
+                  onClick={() => {
+                    if (newChapterTitle.trim()) {
+                      handleCreateChapter({
+                        chapter_title: newChapterTitle,
+                        paragraphs: newChapterParagraphs.length ? newChapterParagraphs : [""]
+                      });
+                      setNewChapterTitle("");
+                      setNewChapterParagraphs([""]);
+                    } else {
+                      toast({
+                        title: "Chapter title required",
+                        description: "Please enter a title for your chapter",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
+                  Add Chapter
+                </Button>
+              </div>
+            </CardHeader>
+          </Card>
 
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Contributor List
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      User
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Role
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Actions
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
+          <Card className="mb-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Chapter List</CardTitle>
+                </div>
+              </div>
+              <CardContent>
+                {chaptersLoading ? (
+                  <div className="flex justify-center items-center h-32">Loading chapters...</div>
+                ) : chapters.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No chapters yet. Add your first chapter above.
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {chapters.map((chapter) => (
+                      <Card key={chapter.chapter_id}>
+                        <CardHeader>
+                          <div className="flex justify-between items-center">
+                            <CardTitle>{chapter.chapter_title}</CardTitle>
+                            <div className="flex space-x-2">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => {
+                                  // Edit chapter logic
+                                }}
+                              >
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                size="sm"
+                                onClick={() => handleDeleteChapter(chapter.chapter_id)}
+                              >
+                                <X className="h-4 w-4 mr-2" />
+                                Delete
+                              </Button>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          {chapter.paragraphs && chapter.paragraphs.map((paragraph: string, idx: number) => (
+                            <p key={idx} className="mb-4">{paragraph}</p>
+                          ))}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </CardHeader>
+          </Card>
+        </div>
 
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Compare Revisions
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Select Revisions
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Compare
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Revision History
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Revision
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Date
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Author
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Actions
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Select Layout
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Layout 1
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Layout 2
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Layout 3
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Layout Preview
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Preview
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Create Branch
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Branch Name
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Create
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                Branch List
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Name
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Created At
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Actions
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-      
-
-      
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                
-                                  
-                                    
-                                      Chapter Title
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Chapter Content
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                
-                                  
-                                    
-                                      Add Chapter
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                
-                                  
-                                    
-                                      Chapter List
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-      
-
-      
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                
-                                  
-                                    
-                                      Chapter Title
-                                    
-                                  
-                                
-                              
-                            
-                            
-                              
-                                
-                                  
-                                    
-                                      Chapter Content
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                
-                                  
-                                    
-                                      Add Chapter
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-
-        
-          
-            
-              
-                
-                  
-                    
-                      
-                        
-                          
-                            
-                              
-                                
-                                  
-                                    
-                                      Chapter List
-                                    
-                                  
-                                
-                              
-                            
-                          
-                        
-                      
-                    
-                  
-                
-              
-            
-          
-        
-      
-    
+        <footer>
+          <CrowdlyFooter />
+        </footer>
+      </div>
+    </>
   );
 };
 
