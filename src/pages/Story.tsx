@@ -53,6 +53,11 @@ const Story = () => {
   // UI tab state
   const [activeTab, setActiveTab] = useState<"story" | "contributors" | "revisions" | "branches">("story");
 
+  // --- Add missing state hooks for title editing ---
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleInput, setTitleInput] = useState("");
+  const [savingTitle, setSavingTitle] = useState(false);
+
   // Fetch story and chapters, now also fetch creator_id
   const fetchStoryAndChapters = async () => {
     setLoading(true);
