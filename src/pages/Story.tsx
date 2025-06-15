@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import ParagraphBranchPopover from "@/components/ParagraphBranchPopover";
 import StoryContentTypeSelector from "@/components/StoryContentTypeSelector";
+import StoryBranchList from "@/components/StoryBranchList";
 
 // --- Placeholder modular components for each section ---
 const ContributorsSection = () => (
@@ -32,13 +33,10 @@ const RevisionsSection = () => (
     </div>
   </div>
 );
-const BranchesSection = () => (
+const BranchesSection = ({ storyId }: { storyId: string }) => (
   <div className="p-6">
     <h2 className="text-2xl font-semibold mb-4">Story Branches</h2>
-    {/* Placeholder for branches CRUD */}
-    <div className="bg-white border rounded p-6 shadow-sm">
-      <div className="text-gray-400 text-sm">Branches logic and overview will go here.</div>
-    </div>
+    <StoryBranchList storyId={storyId} />
   </div>
 );
 
@@ -385,7 +383,7 @@ const Story = () => {
         )}
         {activeTab === "contributors" && <ContributorsSection />}
         {activeTab === "revisions" && <RevisionsSection />}
-        {activeTab === "branches" && <BranchesSection />}
+        {activeTab === "branches" && <BranchesSection storyId={story.story_title_id} />}
       </main>
       <CrowdlyFooter />
     </div>
