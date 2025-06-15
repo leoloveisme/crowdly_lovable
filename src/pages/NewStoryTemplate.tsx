@@ -92,6 +92,8 @@ import ProfilePictureUpload from "@/components/ProfilePictureUpload";
 import { useToast } from "@/hooks/use-toast";
 import EditableText from "@/components/EditableText";
 import ChapterEditor from "@/components/ChapterEditor";
+import LayoutOptionButtons from "@/components/LayoutOptionButtons";
+import RevisionCheckboxCell from "@/components/RevisionCheckboxCell";
 
 const STORY_TITLE_MAIN = "Story of my life";
 
@@ -704,7 +706,9 @@ const NewStoryTemplate = () => {
                   <div>
                     <h4 className="font-medium">Compare Revisions</h4>
                   </div>
-                  <Button onClick={toggleCompare}>Compare Selected</Button>
+                  <Button onClick={toggleCompare} disabled={selectedRevisions.length === 0}>
+                    Compare Selected
+                  </Button>
                 </div>
               </div>
               <div className="mt-4">
@@ -718,6 +722,7 @@ const NewStoryTemplate = () => {
                         <TableHead>Revision</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Author</TableHead>
+                        <TableHead>Compare</TableHead>
                         <TableHead>Actions</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -727,6 +732,13 @@ const NewStoryTemplate = () => {
                           <TableCell>{revision.revision_number}</TableCell>
                           <TableCell>{new Date(revision.created_at).toLocaleString()}</TableCell>
                           <TableCell>Author</TableCell>
+                          <TableCell>
+                            <RevisionCheckboxCell
+                              revisionId={revision.id}
+                              selectedRevisions={selectedRevisions}
+                              setSelectedRevisions={setSelectedRevisions}
+                            />
+                          </TableCell>
                           <TableCell>
                             <Button variant="ghost" size="sm">View</Button>
                           </TableCell>
@@ -744,32 +756,15 @@ const NewStoryTemplate = () => {
               <div className="flex justify-between items-center">
                 <CardTitle>Layout Options</CardTitle>
               </div>
-              <div className="mt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">Select Layout</h4>
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button 
-                      variant={activeLayoutOption === 0 ? "default" : "outline"}
-                      onClick={() => handleLayoutOptionClick(0)}
-                    >
-                      <LayoutList className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                      variant={activeLayoutOption === 1 ? "default" : "outline"}
-                      onClick={() => handleLayoutOptionClick(1)}
-                    >
-                      <Columns2 className="h-5 w-5" />
-                    </Button>
-                    <Button 
-                      variant={activeLayoutOption === 2 ? "default" : "outline"}
-                      onClick={() => handleLayoutOptionClick(2)}
-                    >
-                      <Columns3 className="h-5 w-5" />
-                    </Button>
-                  </div>
+              <div className="mt-4 flex flex-wrap justify-between items-center w-full">
+                <div>
+                  <h4 className="font-medium">Select Layout</h4>
                 </div>
+                <LayoutOptionButtons
+                  active={activeLayoutOption}
+                  onSelect={handleLayoutOptionClick}
+                  className="flex-shrink-0"
+                />
               </div>
               <div className="mt-4">
                 <div className="flex items-center justify-between">
