@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import ChapterInteractions from "@/components/ChapterInteractions";
-import { Audio, Video, Image } from "lucide-react";
+import { FileAudio, Video, Image } from "lucide-react";
 
 /**
  * Modular UI for selecting which content type(s) to show per story:
@@ -53,7 +53,7 @@ const StoryContentTypeSelector: React.FC<{ chapters: any[] }> = ({ chapters }) =
             onChange={() => handleTypeToggle("audio")}
             className="accent-blue-500"
           />
-          <Audio size={16} className="text-blue-300" />
+          <FileAudio size={16} className="text-blue-300" />
           <span>Audio</span>
         </label>
         <label className="flex items-center gap-2 mx-2 text-sm cursor-pointer">
@@ -140,3 +140,4 @@ const StoryContentTypeSelector: React.FC<{ chapters: any[] }> = ({ chapters }) =
 };
 
 export default StoryContentTypeSelector;
+
