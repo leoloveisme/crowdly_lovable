@@ -416,62 +416,47 @@ const NewStoryTemplate = () => {
       return;
     }
     setSavingTitle(true);
-    const prevTitle = mainTitle;
-    console.log("[handleUpdateStoryTitle] Attempting update:", updatedTitle, "for storyTitleId:", storyTitleId);
 
-    // Perform update
-    const { error } = await supabase
+    const prevTitle = mainTitle;
+    // Update title in database
+    const { error: updateErr } = await supabase
       .from("story_title")
       .update({ title: updatedTitle })
       .eq("story_title_id", storyTitleId);
 
-    setSavingTitle(false);
-
-    if (error) {
+    if (updateErr) {
       toast({
         title: "Failed to update title",
-        description: error.message,
+        description: updateErr.message,
         variant: "destructive",
       });
-      console.error("[handleUpdateStoryTitle] Supabase update error:", error);
+      setSavingTitle(false);
       return;
     }
 
-    // Now, fetch the updated row for display
+    // Now fetch the updated row to update UI
     const { data: updatedRow, error: fetchError } = await supabase
       .from("story_title")
-      .select("title")
+      .select()
       .eq("story_title_id", storyTitleId)
       .maybeSingle();
 
-    if (fetchError) {
+    setSavingTitle(false);
+
+    if (fetchError || !updatedRow || !updatedRow.title) {
       toast({
-        title: "Error fetching updated title",
-        description: fetchError.message,
+        title: "Failed to fetch updated title",
+        description: fetchError?.message || "Could not retrieve the updated title.",
         variant: "destructive",
       });
-      console.error("[handleUpdateStoryTitle] Fetch error:", fetchError);
       return;
     }
 
-    if (!updatedRow) {
-      toast({
-        title: "Update failed",
-        description: "No matching story found to update! (Check if this story exists.)",
-        variant: "destructive",
-      });
-      console.warn(
-        "[handleUpdateStoryTitle] No matching story found. Title:",
-        updatedTitle,
-        "storyTitleId:",
-        storyTitleId
-      );
-      return;
-    }
-
+    // Success: update UI 
     setMainTitle(updatedRow.title);
     setEditingTitle(false);
     setNewTitle(updatedRow.title);
+
     toast({ title: "Title updated!" });
 
     // Insert a new revision for the story_title
@@ -495,8 +480,6 @@ const NewStoryTemplate = () => {
       language: "en"
     });
     fetchStoryTitleRevisions(storyTitleId);
-
-    // Re-fetch in case something changed in the DB between update and revision insert
     fetchStoryTitleById(storyTitleId);
   };
 

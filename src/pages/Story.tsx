@@ -137,19 +137,15 @@ const Story = () => {
     const prevTitle = story?.title ?? null;
     const newTitle = titleInput.trim();
 
-    console.log("[Story.tsx handleSaveTitle] Attempting update:", newTitle, "for story_id:", story_id);
-
-    // Perform update
-    const { error } = await supabase
+    // Update title in database
+    const { error: updateErr } = await supabase
       .from("story_title")
       .update({ title: newTitle })
       .eq("story_title_id", story_id);
 
-    setSavingTitle(false);
-
-    if (error) {
+    if (updateErr) {
       toast({ title: "Error", description: "Could not update title", variant: "destructive" });
-      console.error("[Story.tsx handleSaveTitle] Supabase update error:", error);
+      setSavingTitle(false);
       return;
     }
 
@@ -160,15 +156,10 @@ const Story = () => {
       .eq("story_title_id", story_id)
       .maybeSingle();
 
-    if (fetchError) {
-      toast({ title: "Error fetching updated story", description: fetchError.message, variant: "destructive" });
-      console.error("[Story.tsx handleSaveTitle] Fetch error:", fetchError);
-      return;
-    }
+    setSavingTitle(false);
 
-    if (!updatedRow) {
-      toast({ title: "Update failed", description: "No matching story found to update!", variant: "destructive" });
-      console.warn("[Story.tsx handleSaveTitle] No matching story. newTitle:", newTitle, "story_id:", story_id);
+    if (fetchError || !updatedRow) {
+      toast({ title: "Error fetching updated story", description: fetchError?.message || "Could not retrieve updated story.", variant: "destructive" });
       return;
     }
 
