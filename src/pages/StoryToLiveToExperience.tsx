@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEditableContent } from "@/contexts/EditableContentContext";
 import CrowdlyHeader from "@/components/CrowdlyHeader";
@@ -115,6 +114,14 @@ const StoryforConsumers = () => {
     { id: 2, number: 2, title: "The Conflict" },
     { id: 3, number: 3, title: "The Resolution" }
   ];
+
+  // -- NEW CODE: Get storyId from route params and set it as storyTitleId
+  const { storyId } = useParams<{ storyId?: string }>();
+  React.useEffect(() => {
+    if (storyId) {
+      setStoryTitleId(storyId);
+    }
+  }, [storyId]);
 
   // Fetch contributors and stats
   React.useEffect(() => {
