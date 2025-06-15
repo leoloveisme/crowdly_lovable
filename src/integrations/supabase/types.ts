@@ -192,6 +192,8 @@ export type Database = {
           chapter_id: string
           created_at: string
           id: string
+          language: string
+          metadata: Json | null
           parent_paragraph_index: number
           parent_paragraph_text: string
           user_id: string
@@ -201,6 +203,8 @@ export type Database = {
           chapter_id: string
           created_at?: string
           id?: string
+          language?: string
+          metadata?: Json | null
           parent_paragraph_index: number
           parent_paragraph_text: string
           user_id: string
@@ -210,6 +214,8 @@ export type Database = {
           chapter_id?: string
           created_at?: string
           id?: string
+          language?: string
+          metadata?: Json | null
           parent_paragraph_index?: number
           parent_paragraph_text?: string
           user_id?: string

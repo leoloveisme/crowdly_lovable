@@ -7,6 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Pencil, Plus, Trash2, Save, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
+/**
+ * Adds support for language and metadata inputs.
+ * - language: dropdown for a few languages.
+ * - metadata: free-form JSON textarea (optional).
+ */
+
 type BranchParagraph = {
   id: string;
   text: string;
@@ -14,8 +20,22 @@ type BranchParagraph = {
 
 type Props = {
   trigger: React.ReactNode;
-  onCreateBranch: (data: { branchName: string; paragraphs: string[] }) => void;
+  // Now returns language + metadata as well
+  onCreateBranch: (data: { branchName: string; paragraphs: string[]; language: string; metadata: any }) => void;
 };
+
+const languageLabels: { [key: string]: string } = {
+  en: "English",
+  fr: "Français",
+  es: "Español",
+  de: "Deutsch",
+  zh: "中文",
+  ar: "العربية",
+  ru: "Русский",
+  hi: "हिन्दी",
+};
+
+const languages = Object.keys(languageLabels);
 
 const ParagraphBranchPopover: React.FC<Props> = ({ trigger, onCreateBranch }) => {
   const [open, setOpen] = useState(false);
@@ -25,6 +45,9 @@ const ParagraphBranchPopover: React.FC<Props> = ({ trigger, onCreateBranch }) =>
   ]);
   const [editingParagraphId, setEditingParagraphId] = useState<string | null>(null);
   const [newText, setNewText] = useState("");
+  const [language, setLanguage] = useState("en");
+  const [metadataText, setMetadataText] = useState("");
+  const [metadataError, setMetadataError] = useState("");
 
   // Add a new paragraph
   const handleAddParagraph = () => {
@@ -55,10 +78,23 @@ const ParagraphBranchPopover: React.FC<Props> = ({ trigger, onCreateBranch }) =>
   const handleCreate = () => {
     // Don’t allow empty paragraphs
     if (paragraphs.some((p) => !p.text.trim())) return;
-    onCreateBranch({ branchName, paragraphs: paragraphs.map((p) => p.text) });
+    let parsedMetadata: any = null;
+    if (metadataText.trim()) {
+      try {
+        parsedMetadata = JSON.parse(metadataText);
+        setMetadataError("");
+      } catch (e) {
+        setMetadataError("Invalid JSON.");
+        return;
+      }
+    }
+    onCreateBranch({ branchName, paragraphs: paragraphs.map((p) => p.text), language, metadata: parsedMetadata });
     setOpen(false);
     setBranchName("");
     setParagraphs([{ id: Math.random().toString(), text: "" }]);
+    setLanguage("en");
+    setMetadataText("");
+    setMetadataError("");
   };
 
   return (
@@ -66,7 +102,7 @@ const ParagraphBranchPopover: React.FC<Props> = ({ trigger, onCreateBranch }) =>
       <PopoverTrigger asChild>
         {trigger}
       </PopoverTrigger>
-      <PopoverContent side="right" align="end" className="max-w-lg w-96">
+      <PopoverContent side="right" align="end" className="max-w-lg w-96 z-[50] bg-white">
         <div className="mb-2">
           <Label htmlFor="branch-name" className="mb-1 font-semibold block">
             Branch Name (optional)
@@ -127,9 +163,35 @@ const ParagraphBranchPopover: React.FC<Props> = ({ trigger, onCreateBranch }) =>
             Add Paragraph
           </Button>
         </div>
+        {/* Language selection */}
+        <div className="mt-5">
+          <Label htmlFor="lang-select" className="mb-1 font-semibold block">Language</Label>
+          <select
+            id="lang-select"
+            value={language}
+            onChange={e => setLanguage(e.target.value)}
+            className="w-full border rounded px-2 py-1 bg-white text-gray-700"
+          >
+            {languages.map(code => (
+              <option key={code} value={code}>{languageLabels[code]}</option>
+            ))}
+          </select>
+        </div>
+        {/* Metadata input */}
+        <div className="mt-5">
+          <Label htmlFor="branch-metadata" className="mb-1 font-semibold block">Metadata (optional, JSON)</Label>
+          <Textarea
+            id="branch-metadata"
+            value={metadataText}
+            placeholder='{"example": 42}'
+            onChange={e => setMetadataText(e.target.value)}
+            className="min-h-[45px]"
+          />
+          {metadataError && <div className="text-red-500 text-xs mt-1">{metadataError}</div>}
+        </div>
         <div className="flex justify-end space-x-2 mt-6">
           <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleCreate} disabled={paragraphs.some((p) => !p.text.trim())}>
+          <Button onClick={handleCreate} disabled={paragraphs.some((p) => !p.text.trim()) || !!metadataError}>
             Create Branch
           </Button>
         </div>
@@ -139,3 +201,4 @@ const ParagraphBranchPopover: React.FC<Props> = ({ trigger, onCreateBranch }) =>
 };
 
 export default ParagraphBranchPopover;
+

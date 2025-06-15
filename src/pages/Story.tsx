@@ -190,6 +190,70 @@ const Story = () => {
     }
   };
 
+  // NEW: Branch creation logic
+  const { toast } = useToast();
+  const { user, roles, hasRole } = useAuth();
+  const handleCreateBranchForParagraph = async ({
+    branchName,
+    paragraphs,
+    language,
+    metadata,
+    chapterId,
+    paragraphIndex,
+    paragraphText,
+  }: {
+    branchName: string;
+    paragraphs: string[];
+    language: string;
+    metadata: any;
+    chapterId: string;
+    paragraphIndex: number;
+    paragraphText: string;
+  }) => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "You must be logged in to create a branch.",
+        variant: "destructive",
+      });
+      return;
+    }
+    // Compose branch_text as joined array (could be improved later)
+    const branch_text = paragraphs.join("\n\n");
+    // parent_paragraph_text: use provided or empty
+    try {
+      const { error } = await supabase.from("paragraph_branches").insert({
+        chapter_id: chapterId,
+        parent_paragraph_index: paragraphIndex,
+        parent_paragraph_text: branchName || paragraphText || "",
+        branch_text,
+        user_id: user.id,
+        language,
+        metadata: metadata ?? null,
+      });
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to create branch. " + (error.message || ""),
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Branch created",
+          description: "Your branch has been saved.",
+        });
+        // Optionally, refresh the branch list (if you want it to show up immediately)
+        // If you want to refresh, trigger the fetch/logic used for branch reload.
+      }
+    } catch (e) {
+      toast({
+        title: "Error",
+        description: "Something went wrong creating the branch.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Only allow chapter/paragraph CRUD for logged-in users:
   // For chapter editor: if no user, render as read-only/disabled
   const canCRUDChapters = !!user;
@@ -353,10 +417,7 @@ const Story = () => {
                     ? chapter.paragraphs.map((paragraph, idx) => (
                         <div key={idx} className="relative group mb-4">
                           <div className="flex items-start gap-2">
-                            <p className="flex-1">
-                              {paragraph}
-                            </p>
-                            {/* Popover trigger button, only visible on hover for clean UI */}
+                            <p className="flex-1">{paragraph}</p>
                             <ParagraphBranchPopover
                               trigger={
                                 <button
@@ -367,10 +428,18 @@ const Story = () => {
                                   Create Branch
                                 </button>
                               }
-                              onCreateBranch={({ branchName, paragraphs }) => {
-                                // You can handle the branch creation here, maybe show a toast or save to DB in future
-                                alert(`Branch "${branchName || "(no name)"}" created with ${paragraphs.length} paragraph(s):\n${paragraphs.map((p, i) => `[${i + 1}]: ${p}`).join("\n")}`);
-                              }}
+                              // Supply chapter/paragraph info to onCreateBranch for DB
+                              onCreateBranch={({ branchName, paragraphs, language, metadata }) =>
+                                handleCreateBranchForParagraph({
+                                  branchName,
+                                  paragraphs,
+                                  language,
+                                  metadata,
+                                  chapterId: chapter.chapter_id,
+                                  paragraphIndex: idx,
+                                  paragraphText: paragraph,
+                                })
+                              }
                             />
                           </div>
                         </div>
