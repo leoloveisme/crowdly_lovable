@@ -137,21 +137,51 @@ const Story = () => {
     const prevTitle = story?.title ?? null;
     const newTitle = titleInput.trim();
 
+    console.log("[Story.tsx handleSaveTitle] Attempting update:", newTitle, "for story_id:", story_id);
+
+    // Perform update
     const { error } = await supabase
       .from("story_title")
       .update({ title: newTitle })
       .eq("story_title_id", story_id);
 
     setSavingTitle(false);
+
     if (error) {
       toast({ title: "Error", description: "Could not update title", variant: "destructive" });
-    } else {
-      toast({ title: "Story Title updated", description: "The title has been changed." });
-      setIsEditingTitle(false);
-      fetchStoryAndChapters();
-      // Insert revision
-      await insertStoryTitleRevision(story_id, prevTitle, newTitle, user.id);
+      console.error("[Story.tsx handleSaveTitle] Supabase update error:", error);
+      return;
     }
+
+    // Fetch updated story row to update UI state
+    const { data: updatedRow, error: fetchError } = await supabase
+      .from("story_title")
+      .select("*")
+      .eq("story_title_id", story_id)
+      .maybeSingle();
+
+    if (fetchError) {
+      toast({ title: "Error fetching updated story", description: fetchError.message, variant: "destructive" });
+      console.error("[Story.tsx handleSaveTitle] Fetch error:", fetchError);
+      return;
+    }
+
+    if (!updatedRow) {
+      toast({ title: "Update failed", description: "No matching story found to update!", variant: "destructive" });
+      console.warn("[Story.tsx handleSaveTitle] No matching story. newTitle:", newTitle, "story_id:", story_id);
+      return;
+    }
+
+    setStory(updatedRow);
+    setIsEditingTitle(false);
+
+    toast({ title: "Story Title updated", description: "The title has been changed." });
+
+    // Insert revision
+    await insertStoryTitleRevision(story_id, prevTitle, newTitle, user?.id ?? null);
+
+    // Optionally refetch chapters if you want (already in fetchStoryAndChapters)
+    fetchStoryAndChapters();
   };
 
   // CRUD Handlers for chapters
