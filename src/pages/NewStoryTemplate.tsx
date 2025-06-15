@@ -236,10 +236,23 @@ const NewStoryTemplate = () => {
   useEffect(() => {
     const fetchOrCreateStoryTitle = async () => {
       setLoading(true);
+
+      // ENSURE user is always present when creating a story
+      if (!user) {
+        toast({
+          title: "Not logged in",
+          description: "You must be logged in to create a new story.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+
       let { data: storyRow, error } = await supabase
         .from("story_title")
         .select()
         .eq("title", STORY_TITLE_MAIN)
+        .eq("creator_id", user.id) // Only find story belonging to this user
         .maybeSingle();
       if (error) {
         toast({
@@ -251,8 +264,8 @@ const NewStoryTemplate = () => {
         return;
       }
       if (!storyRow) {
-        // Insert new story title and insert initial revision right after
-        const creator_id = user?.id ?? null;
+        // Insert new story title *with creator_id always set*
+        const creator_id = user.id;
         const { data: inserted, error: insertErr } = await supabase
           .from("story_title")
           .insert({ title: STORY_TITLE_MAIN, creator_id })
@@ -273,7 +286,7 @@ const NewStoryTemplate = () => {
           story_title_id: storyRow.story_title_id,
           prev_title: null,
           new_title: storyRow.title,
-          created_by: creator_id, // set to user.id if available
+          created_by: creator_id,
           revision_number: 1,
           revision_reason: "Initial creation",
           language: "en"
