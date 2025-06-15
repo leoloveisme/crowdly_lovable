@@ -111,6 +111,20 @@ const Index = () => {
             </div>
           </section>
 
+          {/* Create New Story Link - Only for logged-in users */}
+          {user && (
+            <div className="flex justify-center mb-10">
+              <Link
+                to="/new-story-template"
+                className="inline-flex items-center px-6 py-3 text-lg font-semibold rounded shadow-lg bg-gradient-to-r from-pink-500 via-indigo-400 to-blue-500 text-white hover:from-indigo-500 hover:to-pink-500 transition
+                border-b-4 border-pink-300 hover:border-indigo-500 focus:outline-none focus:ring focus:ring-indigo-300"
+              >
+                <BookOpen className="mr-2" size={22} />
+                <span>Create a new amazing story</span>
+              </Link>
+            </div>
+          )}
+
           {/* Stories to Live/Experience Section */}
           <section className="mb-12">
             <div className="relative">
