@@ -270,6 +270,32 @@ const Index = () => {
             </Card>
           </section>
 
+          {/* Branches Section */}
+          <div className="my-12 flex items-center gap-2">
+            <span className="flex-grow h-0.5 bg-gradient-to-r from-orange-400/60 to-sky-300/10 rounded"></span>
+            <span className="text-lg text-orange-700 dark:text-orange-100 font-semibold shrink-0 animate-fade-in">
+              Branches
+            </span>
+            <span className="flex-grow h-0.5 bg-gradient-to-l from-orange-400/60 to-sky-300/10 rounded"></span>
+          </div>
+          <section className="mb-16">
+            <div className="max-w-2xl mx-auto">
+              {/* Branches list and CRUD actions */}
+              {/*
+                Renders actual paragraph branches in DB.
+                Branch creation is handled on paragraph edit elsewhere in app.
+                */}
+              <React.Suspense fallback={<div>Loading branches...</div>}>
+                {/* Dynamically import to avoid main bundle bloat */}
+                {typeof window !== "undefined" &&
+                  (() => {
+                    const BranchList = require("@/components/BranchList").default;
+                    return <BranchList />;
+                  })()}
+              </React.Suspense>
+            </div>
+          </section>
+
           {/* Living/Experiencing Stories Section */}
           <div className="my-12 flex items-center gap-2">
             <span className="flex-grow h-0.5 bg-gradient-to-r from-purple-400/60 to-sky-300/10 rounded"></span>
@@ -281,7 +307,6 @@ const Index = () => {
             </span>
             <span className="flex-grow h-0.5 bg-gradient-to-l from-purple-400/60 to-sky-300/10 rounded"></span>
           </div>
-
           <section className="mb-16">
             <Card className="bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-shadow duration-300 animate-fade-in">
               <CardContent className="p-6">
