@@ -217,7 +217,7 @@ const NewStoryTemplate = () => {
       duration: 3000,
     });
   };
-
+  
   // Fetch story title revisions
   const fetchStoryTitleRevisions = async (storyTitleId: string) => {
     const { data, error } = await supabase
@@ -867,7 +867,7 @@ const NewStoryTemplate = () => {
                     <h4 className="font-medium">Chapter Content</h4>
                   </div>
                   <ChapterEditor 
-                    paragraphs={newChapterParagraphs}
+                    value={newChapterParagraphs}
                     onChange={setNewChapterParagraphs}
                   />
                 </div>
