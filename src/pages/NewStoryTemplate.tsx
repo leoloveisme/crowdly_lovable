@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
@@ -263,6 +264,7 @@ const NewStoryTemplate = () => {
       });
       return;
     }
+
     // Insert initial revision for the new story
     await supabase.from("story_title_revisions").insert({
       story_title_id: inserted.story_title_id,
@@ -273,13 +275,32 @@ const NewStoryTemplate = () => {
       revision_reason: "Initial creation",
       language: "en"
     });
+
+    // NEW: Insert initial template chapter so it appears in Newest section
+    const defaultChapterTitle = "Intro";
+    const defaultParagraphs = ["This is the beginning!"];
+
+    const { error: chapterErr } = await supabase.from("stories").insert({
+      story_title_id: inserted.story_title_id,
+      chapter_title: defaultChapterTitle,
+      paragraphs: defaultParagraphs
+    });
+
+    if (chapterErr) {
+      toast({
+        title: "Failed to add the first chapter",
+        description: chapterErr.message,
+        variant: "destructive"
+      });
+      // Still proceed to select/navigate etc, so user can fix manually
+    }
+
     // reload story list
     await fetchAllUserStories();
     // Select and redirect to the new story page
     setStoryTitleId(inserted.story_title_id);
     setMainTitle(inserted.title);
     fetchStoryTitleRevisions(inserted.story_title_id);
-    // New: Redirect to new story page
     navigate(`/story/${inserted.story_title_id}`);
   };
 
