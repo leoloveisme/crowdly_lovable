@@ -94,6 +94,7 @@ import EditableText from "@/components/EditableText";
 import ChapterEditor from "@/components/ChapterEditor";
 import LayoutOptionButtons from "@/components/LayoutOptionButtons";
 import RevisionCheckboxCell from "@/components/RevisionCheckboxCell";
+import { useAuth } from "@/contexts/AuthContext";
 
 const STORY_TITLE_MAIN = "Story of my life";
 
@@ -111,6 +112,7 @@ const NewStoryTemplate = () => {
   const [comments, setComments] = useState<string[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [visibilityOpen, setVisibilityOpen] = useState(false);
   const [contributorsOpen, setContributorsOpen] = useState(true);
@@ -250,9 +252,10 @@ const NewStoryTemplate = () => {
       }
       if (!storyRow) {
         // Insert new story title and insert initial revision right after
+        const creator_id = user?.id ?? null;
         const { data: inserted, error: insertErr } = await supabase
           .from("story_title")
-          .insert({ title: STORY_TITLE_MAIN })
+          .insert({ title: STORY_TITLE_MAIN, creator_id })
           .select()
           .maybeSingle();
         if (insertErr) {
@@ -270,7 +273,7 @@ const NewStoryTemplate = () => {
           story_title_id: storyRow.story_title_id,
           prev_title: null,
           new_title: storyRow.title,
-          created_by: null, // set to user.id if available
+          created_by: creator_id, // set to user.id if available
           revision_number: 1,
           revision_reason: "Initial creation",
           language: "en"
@@ -284,7 +287,7 @@ const NewStoryTemplate = () => {
       }
     };
     fetchOrCreateStoryTitle();
-  }, []);
+  }, [user]);
 
   // On storyTitleId change, fetch revisions
   useEffect(() => {
