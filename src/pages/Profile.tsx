@@ -784,26 +784,6 @@ const Profile = () => {
                   disabled={previewMode}
                 />
               </div>
-              {/* Notifications */}
-              <div className="space-y-1 pt-2">
-                <Label className="text-sm text-gray-500">
-                  <Zap className="w-4 h-4 inline mb-1 mr-1" /> Notifications
-                </Label>
-                <div className="flex items-center gap-4 flex-wrap">
-                  <label className="flex items-center gap-2">
-                    <Checkbox checked={profile.notify_phone} disabled={previewMode} onCheckedChange={val => handleNotifChange("notify_phone", Boolean(val))} />
-                    Phone
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <Checkbox checked={profile.notify_app} disabled={previewMode} onCheckedChange={val => handleNotifChange("notify_app", Boolean(val))} />
-                    App
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <Checkbox checked={profile.notify_email} disabled={previewMode} onCheckedChange={val => handleNotifChange("notify_email", Boolean(val))} />
-                    Email
-                  </label>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -902,8 +882,40 @@ const Profile = () => {
             <EditableText id="notifications">
               Notifications
             </EditableText>
-          </h1>          
-
+          </h1>
+          <div className="mb-6">
+            {/* MOVED: Notification checkboxes inline & styled horizontally */}
+            <Label className="text-sm text-gray-500 flex items-center gap-2 mb-3">
+              <Zap className="w-4 h-4 inline mb-1 mr-1" />
+              Notifications
+            </Label>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  checked={profile.notify_phone}
+                  disabled={previewMode}
+                  onCheckedChange={val => handleNotifChange("notify_phone", Boolean(val))}
+                />
+                Phone
+              </label>
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  checked={profile.notify_app}
+                  disabled={previewMode}
+                  onCheckedChange={val => handleNotifChange("notify_app", Boolean(val))}
+                />
+                App
+              </label>
+              <label className="flex items-center gap-2">
+                <Checkbox
+                  checked={profile.notify_email}
+                  disabled={previewMode}
+                  onCheckedChange={val => handleNotifChange("notify_email", Boolean(val))}
+                />
+                Email
+              </label>
+            </div>
+          </div>
           <div className="space-y-4">
             <p className="mb-2">
               <EditableText id="notifications_messages_placeholder">
