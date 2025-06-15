@@ -410,9 +410,12 @@ const NewStoryTemplate = () => {
       });
       return;
     }
-    setMainTitle(updatedTitle);
+    setMainTitle(updatedTitle); // update the UI
+    setEditingTitle(false);     // close the editor
+    setNewTitle(updatedTitle);  // reset the new title input
     toast({ title: "Title updated!" });
-    // Fetch current max revision_number
+
+    // Fetch and insert a story_title_revision as before
     let nextRevision = 1;
     const { data: prevRevs } = await supabase
       .from("story_title_revisions")
@@ -423,7 +426,6 @@ const NewStoryTemplate = () => {
     if (prevRevs && prevRevs.length > 0) {
       nextRevision = prevRevs[0].revision_number + 1;
     }
-    // Insert new revision record
     await supabase.from("story_title_revisions").insert({
       story_title_id: storyTitleId,
       prev_title: prevTitle,
@@ -434,8 +436,6 @@ const NewStoryTemplate = () => {
       language: "en"
     });
     fetchStoryTitleRevisions(storyTitleId);
-    // Optionally, redirect or update navigation
-    navigate(`/story/${storyTitleId}`, { replace: true });
   };
 
   if (loading) {
