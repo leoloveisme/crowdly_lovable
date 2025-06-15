@@ -291,6 +291,18 @@ const NewStoryTemplate = () => {
     if (storyTitleId) fetchStoryTitleRevisions(storyTitleId);
   }, [storyTitleId]);
 
+  // Helper: fetch story title by ID and update mainTitle state
+  const fetchStoryTitleById = async (id: string) => {
+    const { data: titleRow, error } = await supabase
+      .from("story_title")
+      .select()
+      .eq("story_title_id", id)
+      .maybeSingle();
+    if (!error && titleRow && titleRow.title) {
+      setMainTitle(titleRow.title);
+    }
+  };
+
   // CRUD: Load All Chapters
   useEffect(() => {
     const fetchChapters = async () => {
@@ -393,6 +405,7 @@ const NewStoryTemplate = () => {
     setChapters(updated || []);
   };
 
+  // CRUD: Update Story Title
   const handleUpdateStoryTitle = async (updatedTitle: string) => {
     if (!storyTitleId || !updatedTitle.trim()) return;
     setSavingTitle(true);
@@ -410,12 +423,13 @@ const NewStoryTemplate = () => {
       });
       return;
     }
-    setMainTitle(updatedTitle); // update the UI
-    setEditingTitle(false);     // close the editor
-    setNewTitle(updatedTitle);  // reset the new title input
+    // Immediately reflect the update in UI (for snappy UX)
+    setMainTitle(updatedTitle);
+    setEditingTitle(false);
+    setNewTitle(updatedTitle);
     toast({ title: "Title updated!" });
 
-    // Fetch and insert a story_title_revision as before
+    // Insert new story_title_revision as before
     let nextRevision = 1;
     const { data: prevRevs } = await supabase
       .from("story_title_revisions")
@@ -436,6 +450,9 @@ const NewStoryTemplate = () => {
       language: "en"
     });
     fetchStoryTitleRevisions(storyTitleId);
+
+    // SAFETY: re-fetch the latest story (to prevent stale mainTitle from any effect)
+    fetchStoryTitleById(storyTitleId);
   };
 
   if (loading) {
