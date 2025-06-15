@@ -95,8 +95,8 @@ import ChapterEditor from "@/components/ChapterEditor";
 import LayoutOptionButtons from "@/components/LayoutOptionButtons";
 import RevisionCheckboxCell from "@/components/RevisionCheckboxCell";
 import { useAuth } from "@/contexts/AuthContext";
-
-const STORY_TITLE_MAIN = "Story of my life";
+import StorySelector from "@/components/StorySelector";
+import NewStoryDialog from "@/components/NewStoryDialog";
 
 const NewStoryTemplate = () => {
   const [storyTitleId, setStoryTitleId] = useState<string | null>(null);
@@ -106,7 +106,7 @@ const NewStoryTemplate = () => {
   const [addChapterMode, setAddChapterMode] = useState(false);
   const [newChapterTitle, setNewChapterTitle] = useState("");
   const [newChapterParagraphs, setNewChapterParagraphs] = useState<string[]>([]);
-  const [mainTitle, setMainTitle] = useState(STORY_TITLE_MAIN);
+  const [mainTitle, setMainTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [intro, setIntro] = useState("");
   const [comments, setComments] = useState<string[]>([]);
@@ -129,6 +129,7 @@ const NewStoryTemplate = () => {
   const [newTitle, setNewTitle] = useState("");
   const [savingTitle, setSavingTitle] = useState(false);
   const [storyTitleRevisions, setStoryTitleRevisions] = useState<any[]>([]);
+  const [stories, setStories] = useState<any[]>([]); // List of all user's stories
 
   const toggleSection = (section: string) => {
     switch(section) {
@@ -232,79 +233,78 @@ const NewStoryTemplate = () => {
     if (!error && data) setStoryTitleRevisions(data);
   };
 
-  // On mount: create or fetch story, insert initial revision if just created
+  // Fetch all user stories (Story List)
+  const fetchAllUserStories = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("story_title")
+      .select("*")
+      .eq("creator_id", user.id)
+      .order("created_at", { ascending: true });
+    if (!error && data) {
+      setStories(data);
+    }
+  };
+
+  // New: create a new story, set as selected
+  const handleCreateNewStory = async (title: string) => {
+    if (!user) return;
+    // Insert new story_title
+    const { data: inserted, error: insertErr } = await supabase
+      .from("story_title")
+      .insert({ title, creator_id: user.id })
+      .select()
+      .maybeSingle();
+    if (insertErr || !inserted) {
+      toast({
+        title: "Failed to create story",
+        description: insertErr?.message || "Unknown error",
+        variant: "destructive"
+      });
+      return;
+    }
+    // Insert initial revision for the new story
+    await supabase.from("story_title_revisions").insert({
+      story_title_id: inserted.story_title_id,
+      prev_title: null,
+      new_title: inserted.title,
+      created_by: user.id,
+      revision_number: 1,
+      revision_reason: "Initial creation",
+      language: "en"
+    });
+    // reload story list
+    await fetchAllUserStories();
+    // Select the new story
+    setStoryTitleId(inserted.story_title_id);
+    setMainTitle(inserted.title);
+    fetchStoryTitleRevisions(inserted.story_title_id);
+  };
+
+  // On mount or when user changes, fetch all stories and default to first story
   useEffect(() => {
-    const fetchOrCreateStoryTitle = async () => {
-      setLoading(true);
-
-      // ENSURE user is always present when creating a story
-      if (!user) {
-        toast({
-          title: "Not logged in",
-          description: "You must be logged in to create a new story.",
-          variant: "destructive"
-        });
-        setLoading(false);
-        return;
-      }
-
-      let { data: storyRow, error } = await supabase
-        .from("story_title")
-        .select()
-        .eq("title", STORY_TITLE_MAIN)
-        .eq("creator_id", user.id) // Only find story belonging to this user
-        .maybeSingle();
-      if (error) {
-        toast({
-          title: "DB Error",
-          description: error.message,
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
-      if (!storyRow) {
-        // Insert new story title *with creator_id always set*
-        const creator_id = user.id;
-        const { data: inserted, error: insertErr } = await supabase
-          .from("story_title")
-          .insert({ title: STORY_TITLE_MAIN, creator_id })
-          .select()
-          .maybeSingle();
-        if (insertErr) {
-          toast({
-            title: "Failed to create story",
-            description: insertErr.message,
-            variant: "destructive",
-          });
-          setLoading(false);
-          return;
-        }
-        storyRow = inserted;
-        // Insert initial revision entry for this story
-        await supabase.from("story_title_revisions").insert({
-          story_title_id: storyRow.story_title_id,
-          prev_title: null,
-          new_title: storyRow.title,
-          created_by: creator_id,
-          revision_number: 1,
-          revision_reason: "Initial creation",
-          language: "en"
-        });
-      }
-      setStoryTitleId(storyRow.story_title_id);
-      setMainTitle(storyRow.title);
+    if (!user) return;
+    const fetchForUser = async () => {
+      await fetchAllUserStories();
       setLoading(false);
-      if (storyRow.story_title_id) {
-        fetchStoryTitleRevisions(storyRow.story_title_id);
-      }
     };
-    fetchOrCreateStoryTitle();
+    fetchForUser();
   }, [user]);
 
-  // On storyTitleId change, fetch revisions
+  // Watch stories, pick default story if none selected
   useEffect(() => {
-    if (storyTitleId) fetchStoryTitleRevisions(storyTitleId);
+    if (!storyTitleId && stories.length > 0) {
+      setStoryTitleId(stories[0].story_title_id);
+      setMainTitle(stories[0].title);
+    }
+  }, [stories]);
+
+  // On storyTitleId change, load that story's title and revisions
+  useEffect(() => {
+    if (!storyTitleId) return;
+    const story = stories.find((s) => s.story_title_id === storyTitleId);
+    if (story) setMainTitle(story.title);
+    fetchStoryTitleRevisions(storyTitleId);
   }, [storyTitleId]);
 
   // Helper: fetch story title by ID and update mainTitle state
@@ -319,29 +319,28 @@ const NewStoryTemplate = () => {
     }
   };
 
-  // CRUD: Load All Chapters
+  // CRUD: Load All Chapters when story changes
   useEffect(() => {
-    const fetchChapters = async () => {
-      if (!storyTitleId) return;
-      setChaptersLoading(true);
-      const { data, error } = await supabase
-        .from("stories")
-        .select()
-        .eq("story_title_id", storyTitleId)
-        .order("created_at", { ascending: true });
-      if (error) {
-        toast({
-          title: "Failed to fetch chapters",
-          description: error.message,
-          variant: "destructive",
-        });
+    if (!storyTitleId) return;
+    setChaptersLoading(true);
+    supabase
+      .from("stories")
+      .select()
+      .eq("story_title_id", storyTitleId)
+      .order("created_at", { ascending: true })
+      .then(({ data, error }) => {
+        if (error) {
+          toast({
+            title: "Failed to fetch chapters",
+            description: error.message,
+            variant: "destructive",
+          });
+          setChaptersLoading(false);
+          return;
+        }
+        setChapters(data || []);
         setChaptersLoading(false);
-        return;
-      }
-      setChapters(data || []);
-      setChaptersLoading(false);
-    };
-    fetchChapters();
+      });
   }, [storyTitleId]);
 
   // CRUD: Add Chapter
@@ -473,6 +472,9 @@ const NewStoryTemplate = () => {
     setEditingTitle(false);
     setNewTitle(updateData[0].title);
 
+    // Refresh story list!
+    fetchAllUserStories();
+
     toast({ title: "Title updated!" });
 
     // Insert a new revision for the story_title
@@ -499,8 +501,14 @@ const NewStoryTemplate = () => {
     fetchStoryTitleById(storyTitleId);
   };
 
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center h-32">You must be logged in to use this template.</div>
+    );
+  }
+
   if (loading) {
-    return <div className="flex justify-center items-center h-32">Loading story...</div>;
+    return <div className="flex justify-center items-center h-32">Loading...</div>;
   }
 
   return (
@@ -509,7 +517,17 @@ const NewStoryTemplate = () => {
         <header>
           <CrowdlyHeader />
         </header>
-        
+
+        {/* New: Story Selection Bar */}
+        <div className="container mx-auto mb-4 mt-4 flex flex-wrap gap-4 items-center">
+          <StorySelector
+            stories={stories}
+            selectedStoryId={storyTitleId}
+            onSelect={(id) => setStoryTitleId(id)}
+          />
+          <NewStoryDialog onCreate={handleCreateNewStory} />
+        </div>
+
         <main className="flex-1 p-4">
           <div className="container mx-auto">
             <div className="flex justify-between items-center mb-6">
