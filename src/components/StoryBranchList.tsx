@@ -40,10 +40,12 @@ const StoryBranchList: React.FC<StoryBranchListProps> = ({ storyId }) => {
       setLoading(true);
       setError(null);
 
+      console.log("[BranchList] For StoryId: ", storyId);
+
       // Fetch all chapters for this story to find chapter_ids
       const { data: chapters, error: chaptersError } = await supabase
         .from("stories")
-        .select("chapter_id")
+        .select("chapter_id, chapter_title")
         .eq("story_title_id", storyId);
 
       if (chaptersError) {
@@ -74,9 +76,14 @@ const StoryBranchList: React.FC<StoryBranchListProps> = ({ storyId }) => {
       if (error) {
         setError("Failed to fetch branches.");
         setBranches([]);
+        console.log("[BranchList] Error fetching branches:", error);
       } else if (data && isMounted) {
         setBranches(data);
         console.log("[BranchList] Fetched branches:", data);
+        if (!data.length) {
+          // Show diagnostic in the UI
+          setError("No paragraph branches found for chapters in this story. (Check database links!)");
+        }
       }
       setLoading(false);
     };
@@ -159,7 +166,12 @@ const StoryBranchList: React.FC<StoryBranchListProps> = ({ storyId }) => {
             <div className="text-xs text-gray-400 mt-2">Add a chapter before you can see branches.</div>
           </div>
         ) : branches.length === 0 ? (
-          <div className="py-8 text-center text-gray-400 text-sm">No branches found for this story's chapters.</div>
+          <div className="py-8 text-center text-gray-400 text-sm">
+            No branches found for this story's chapters.<br />
+            <span className="text-xs text-gray-400">
+              (If you believe branches exist, please check Console logs for details below.)
+            </span>
+          </div>
         ) : (
           <div className="divide-y">
             {branches.map((branch) => (
