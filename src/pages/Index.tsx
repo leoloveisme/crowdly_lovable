@@ -169,13 +169,13 @@ const Index = () => {
           )}
 
           {/* Favorites Section */}
-          <section className="mb-14">
-            <div className="rounded-2xl shadow-lg bg-gradient-to-r from-pink-50 via-white to-indigo-50 dark:bg-gradient-to-br dark:from-indigo-900/80 dark:to-pink-900/60 mb-7 px-5 py-7 relative animate-fade-in">
-              <h2 className="text-3xl font-bold mb-2 flex items-center gap-2">
-                <Heart className="text-pink-500" size={26} />
+          <section className="mb-10">
+            <div className="rounded-xl shadow bg-gradient-to-r from-pink-50 via-white to-indigo-50 dark:bg-gradient-to-br dark:from-indigo-900/80 dark:to-pink-900/60 mb-5 px-4 py-5 relative animate-fade-in">
+              <h2 className="text-xl font-semibold mb-1 flex items-center gap-1">
+                <Heart className="text-pink-500" size={20} />
                 <EditableText id="main-subtitle">Favorites</EditableText>
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 max-w-3xl">
+              <p className="text-sm text-gray-600 dark:text-gray-300 max-w-2xl">
                 <EditableText id="favoriteStoriesDescriptionText">
                   Here will be your favorite stories, which you've added to your favorites. 
                   On this page they're only for you to see. The same functionality will be available in the User Profile with Visibililty options: public, private, for friends only
@@ -184,7 +184,7 @@ const Index = () => {
             </div>
           </section>
 
-          {/* Animated Section Separators */}
+          {/* Animated Section Separator */}
           <div className="my-12 flex items-center gap-2">
             <span className="flex-grow h-0.5 bg-gradient-to-r from-pink-400/50 to-indigo-400/10 rounded"></span>
             <span className="text-lg text-gray-600 dark:text-gray-300 font-semibold shrink-0 animate-fade-in">
@@ -197,33 +197,33 @@ const Index = () => {
           </div>
 
           {/* Stories to Live/Experience Section */}
-          <section className="mb-16">
+          <section className="mb-12">
             {/* Newest Stories */}
-            <Card className="mb-8 overflow-hidden hover-scale shadow-lg animate-fade-in">
-              <CardHeader className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/30 rounded-t-xl">
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="text-cyan-600" />
+            <Card className="mb-5 overflow-hidden hover-scale shadow animate-fade-in">
+              <CardHeader className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/30 rounded-t-xl px-4 py-2">
+                <CardTitle className="flex items-center gap-1 text-lg font-semibold">
+                  <Clock className="text-cyan-600" size={18} />
                   <EditableText id="newestStories">Newest</EditableText>
                 </CardTitle>
-                <CardDescription>Recently added stories</CardDescription>
+                <CardDescription className="text-xs mt-0.5">Recently added stories</CardDescription>
               </CardHeader>
-              <CardContent className="p-6 bg-white dark:bg-gray-800 rounded-b-xl">
+              <CardContent className="p-4 bg-white dark:bg-gray-800 rounded-b-xl">
                 {loadingStories ? (
-                  <div className="text-center text-gray-400 py-8">Loading...</div>
+                  <div className="text-center text-gray-400 py-6 text-sm">Loading...</div>
                 ) : newestStories.length === 0 ? (
-                  <div className="text-center text-gray-400 py-8">No stories found</div>
+                  <div className="text-center text-gray-400 py-6 text-sm">No stories found</div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {newestStories.map((story) => (
                       <Link
                         key={story.chapter_id}
                         to={`/story/${story.story_title_id}`}
-                        className="block rounded-lg bg-white dark:bg-slate-800/80 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition p-5 shadow ring-1 ring-indigo-100 dark:ring-indigo-900/30 hover-scale group"
+                        className="block rounded-md bg-white dark:bg-slate-800/80 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 transition p-4 shadow ring-1 ring-indigo-100 dark:ring-indigo-900/30 hover-scale group"
                         title={story.story_title}
                       >
-                        <div className="font-bold text-lg mb-1 truncate text-indigo-700 dark:text-indigo-100 group-hover:underline">{story.story_title}</div>
-                        <div className="text-sm text-gray-700 dark:text-gray-300">{story.chapter_title}</div>
-                        <div className="text-xs text-gray-400 mt-2">{new Date(story.created_at).toLocaleString()}</div>
+                        <div className="font-medium text-base mb-0.5 truncate text-indigo-700 dark:text-indigo-100 group-hover:underline">{story.story_title}</div>
+                        <div className="text-xs text-gray-700 dark:text-gray-300">{story.chapter_title}</div>
+                        <div className="text-[11px] text-gray-400 mt-1">{new Date(story.created_at).toLocaleString()}</div>
                       </Link>
                     ))}
                   </div>
@@ -232,39 +232,39 @@ const Index = () => {
             </Card>
 
             {/* Most Popular Stories */}
-            <Card className="mb-8 overflow-hidden hover-scale shadow-lg animate-fade-in">
-              <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/18 rounded-t-xl">
-                <CardTitle className="flex items-center gap-2">
-                  <Flame className="text-amber-600" />
+            <Card className="mb-5 overflow-hidden hover-scale shadow animate-fade-in">
+              <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/18 rounded-t-xl px-4 py-2">
+                <CardTitle className="flex items-center gap-1 text-lg font-semibold">
+                  <Flame className="text-amber-600" size={18} />
                   <EditableText id="mostPopularStories">Most popular</EditableText>
                 </CardTitle>
-                <CardDescription>Trending stories loved by our community</CardDescription>
+                <CardDescription className="text-xs mt-0.5">Trending stories loved by our community</CardDescription>
               </CardHeader>
-              <CardContent className="p-6 bg-white dark:bg-gray-800 rounded-b-xl">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <CardContent className="p-4 bg-white dark:bg-gray-800 rounded-b-xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Placeholder for popular stories */}
-                  <div className="h-32 rounded-lg bg-yellow-100 dark:bg-orange-900/20 flex items-center justify-center text-yellow-700 dark:text-yellow-300 font-semibold">Story preview</div>
-                  <div className="h-32 rounded-lg bg-yellow-100 dark:bg-orange-900/20 flex items-center justify-center text-yellow-700 dark:text-yellow-300 font-semibold">Story preview</div>
-                  <div className="h-32 rounded-lg bg-yellow-100 dark:bg-orange-900/20 flex items-center justify-center text-yellow-700 dark:text-yellow-300 font-semibold">Story preview</div>
+                  <div className="h-28 rounded bg-yellow-100 dark:bg-orange-900/20 flex items-center justify-center text-yellow-700 dark:text-yellow-300 text-base font-medium">Story preview</div>
+                  <div className="h-28 rounded bg-yellow-100 dark:bg-orange-900/20 flex items-center justify-center text-yellow-700 dark:text-yellow-300 text-base font-medium">Story preview</div>
+                  <div className="h-28 rounded bg-yellow-100 dark:bg-orange-900/20 flex items-center justify-center text-yellow-700 dark:text-yellow-300 text-base font-medium">Story preview</div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Most Active Stories */}
-            <Card className="mb-16 overflow-hidden hover-scale shadow-lg animate-fade-in">
-              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-t-xl">
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="text-green-600" />
+            <Card className="mb-8 overflow-hidden hover-scale shadow animate-fade-in">
+              <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-t-xl px-4 py-2">
+                <CardTitle className="flex items-center gap-1 text-lg font-semibold">
+                  <Zap className="text-green-600" size={18} />
                   <EditableText id="mostActiveStories">Most active</EditableText>
                 </CardTitle>
-                <CardDescription>Stories with ongoing activity and updates</CardDescription>
+                <CardDescription className="text-xs mt-0.5">Stories with ongoing activity and updates</CardDescription>
               </CardHeader>
-              <CardContent className="p-6 bg-white dark:bg-gray-800 rounded-b-xl">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <CardContent className="p-4 bg-white dark:bg-gray-800 rounded-b-xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Placeholder for active stories */}
-                  <div className="h-32 rounded-lg bg-green-100 dark:bg-emerald-900/20 flex items-center justify-center text-green-700 dark:text-green-300 font-semibold">Story preview</div>
-                  <div className="h-32 rounded-lg bg-green-100 dark:bg-emerald-900/20 flex items-center justify-center text-green-700 dark:text-green-300 font-semibold">Story preview</div>
-                  <div className="h-32 rounded-lg bg-green-100 dark:bg-emerald-900/20 flex items-center justify-center text-green-700 dark:text-green-300 font-semibold">Story preview</div>
+                  <div className="h-28 rounded bg-green-100 dark:bg-emerald-900/20 flex items-center justify-center text-green-700 dark:text-green-300 text-base font-medium">Story preview</div>
+                  <div className="h-28 rounded bg-green-100 dark:bg-emerald-900/20 flex items-center justify-center text-green-700 dark:text-green-300 text-base font-medium">Story preview</div>
+                  <div className="h-28 rounded bg-green-100 dark:bg-emerald-900/20 flex items-center justify-center text-green-700 dark:text-green-300 text-base font-medium">Story preview</div>
                 </div>
               </CardContent>
             </Card>
