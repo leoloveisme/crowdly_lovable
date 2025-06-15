@@ -9,6 +9,48 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      branch_revisions: {
+        Row: {
+          branch_id: string
+          created_at: string
+          created_by: string
+          id: string
+          language: string | null
+          new_branch_name: string
+          new_branch_paragraphs: string[]
+          prev_branch_name: string | null
+          prev_branch_paragraphs: string[] | null
+          revision_number: number
+          revision_reason: string | null
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          language?: string | null
+          new_branch_name: string
+          new_branch_paragraphs: string[]
+          prev_branch_name?: string | null
+          prev_branch_paragraphs?: string[] | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          language?: string | null
+          new_branch_name?: string
+          new_branch_paragraphs?: string[]
+          prev_branch_name?: string | null
+          prev_branch_paragraphs?: string[] | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Relationships: []
+      }
       chapter_comments: {
         Row: {
           chapter_id: string
@@ -98,6 +140,56 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "chapter_likes_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["chapter_id"]
+          },
+        ]
+      }
+      chapter_revisions: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          created_by: string
+          id: string
+          language: string | null
+          new_chapter_title: string
+          new_paragraphs: string[]
+          prev_chapter_title: string | null
+          prev_paragraphs: string[] | null
+          revision_number: number
+          revision_reason: string | null
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          language?: string | null
+          new_chapter_title: string
+          new_paragraphs: string[]
+          prev_chapter_title?: string | null
+          prev_paragraphs?: string[] | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          language?: string | null
+          new_chapter_title?: string
+          new_paragraphs?: string[]
+          prev_chapter_title?: string | null
+          prev_paragraphs?: string[] | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_revisions_chapter_id_fkey"
             columns: ["chapter_id"]
             isOneToOne: false
             referencedRelation: "stories"
@@ -230,6 +322,53 @@ export type Database = {
           },
         ]
       }
+      paragraph_revisions: {
+        Row: {
+          chapter_id: string
+          created_at: string
+          created_by: string
+          id: string
+          language: string | null
+          new_paragraph: string
+          paragraph_index: number
+          prev_paragraph: string | null
+          revision_number: number
+          revision_reason: string | null
+        }
+        Insert: {
+          chapter_id: string
+          created_at?: string
+          created_by: string
+          id?: string
+          language?: string | null
+          new_paragraph: string
+          paragraph_index: number
+          prev_paragraph?: string | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Update: {
+          chapter_id?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          language?: string | null
+          new_paragraph?: string
+          paragraph_index?: number
+          prev_paragraph?: string | null
+          revision_number?: number
+          revision_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paragraph_revisions_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["chapter_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -345,6 +484,50 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      story_title_revisions: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          language: string | null
+          new_title: string
+          prev_title: string | null
+          revision_number: number
+          revision_reason: string | null
+          story_title_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          language?: string | null
+          new_title: string
+          prev_title?: string | null
+          revision_number?: number
+          revision_reason?: string | null
+          story_title_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          language?: string | null
+          new_title?: string
+          prev_title?: string | null
+          revision_number?: number
+          revision_reason?: string | null
+          story_title_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_title_revisions_story_title_id_fkey"
+            columns: ["story_title_id"]
+            isOneToOne: false
+            referencedRelation: "story_title"
+            referencedColumns: ["story_title_id"]
+          },
+        ]
       }
       subscribers: {
         Row: {

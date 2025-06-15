@@ -134,10 +134,14 @@ const Story = () => {
   const handleSaveTitle = async () => {
     if (!titleInput.trim() || !story_id) return;
     setSavingTitle(true);
+    const prevTitle = story?.title ?? null;
+    const newTitle = titleInput.trim();
+
     const { error } = await supabase
       .from("story_title")
-      .update({ title: titleInput.trim() })
+      .update({ title: newTitle })
       .eq("story_title_id", story_id);
+
     setSavingTitle(false);
     if (error) {
       toast({ title: "Error", description: "Could not update title", variant: "destructive" });
@@ -145,6 +149,8 @@ const Story = () => {
       toast({ title: "Story Title updated", description: "The title has been changed." });
       setIsEditingTitle(false);
       fetchStoryAndChapters();
+      // Insert revision
+      await insertStoryTitleRevision(story_id, prevTitle, newTitle, user.id);
     }
   };
 
@@ -256,6 +262,152 @@ const Story = () => {
   // For chapter editor: if no user, render as read-only/disabled
   const canCRUDChapters = !!user;
 
+  // --- NEW: Fetch revision history for story title ---
+  const [storyTitleRevisions, setStoryTitleRevisions] = useState<any[]>([]);
+  const fetchStoryTitleRevisions = async () => {
+    if (!story_id) return;
+    const { data, error } = await supabase
+      .from("story_title_revisions")
+      .select("*")
+      .eq("story_title_id", story_id)
+      .order("revision_number", { ascending: true });
+    if (!error && data) setStoryTitleRevisions(data);
+  };
+
+  // --- NEW: Fetch chapter revisions for each chapter ---
+  const [chapterRevisions, setChapterRevisions] = useState<{ [chapterId: string]: any[] }>({});
+  const fetchChapterRevisions = async (chapterId: string) => {
+    const { data, error } = await supabase
+      .from("chapter_revisions")
+      .select("*")
+      .eq("chapter_id", chapterId)
+      .order("revision_number", { ascending: true });
+    if (!error && data) {
+      setChapterRevisions((prev) => ({ ...prev, [chapterId]: data }));
+    }
+  };
+
+  // --- NEW: Fetch paragraph revisions for each chapter ---
+  const [paragraphRevisions, setParagraphRevisions] = useState<{ [chapterId: string]: { [idx: number]: any[] } }>({});
+  const fetchParagraphRevisions = async (chapterId: string, paragraphIndex: number) => {
+    const { data, error } = await supabase
+      .from("paragraph_revisions")
+      .select("*")
+      .eq("chapter_id", chapterId)
+      .eq("paragraph_index", paragraphIndex)
+      .order("revision_number", { ascending: true });
+    if (!error && data) {
+      setParagraphRevisions((prev) => ({
+        ...prev,
+        [chapterId]: { ...prev[chapterId], [paragraphIndex]: data },
+      }));
+    }
+  };
+
+  // --- NEW: Insert revision for story title ---
+  const insertStoryTitleRevision = async (
+    storyTitleId: string,
+    prevTitle: string | null,
+    newTitle: string,
+    createdBy: string,
+    reason?: string,
+    language?: string
+  ) => {
+    // Fetch latest revision_number
+    const { data: lastRevs, error: revError } = await supabase
+      .from("story_title_revisions")
+      .select("revision_number")
+      .eq("story_title_id", storyTitleId)
+      .order("revision_number", { ascending: false })
+      .limit(1);
+    const nextRevision = (lastRevs && lastRevs[0]?.revision_number ? lastRevs[0].revision_number + 1 : 1);
+    await supabase.from("story_title_revisions").insert({
+      story_title_id: storyTitleId,
+      prev_title: prevTitle,
+      new_title: newTitle,
+      created_by: createdBy,
+      revision_number: nextRevision,
+      revision_reason: reason || null,
+      language: language || "en"
+    });
+    fetchStoryTitleRevisions();
+  };
+
+  // --- NEW: Insert revision for chapter ---
+  const insertChapterRevision = async (
+    chapterId: string,
+    prevTitle: string | null,
+    newTitle: string,
+    prevParagraphs: string[] | null,
+    newParagraphs: string[],
+    createdBy: string,
+    reason?: string,
+    language?: string
+  ) => {
+    // Fetch latest revision_number
+    const { data: lastRevs, error: revError } = await supabase
+      .from("chapter_revisions")
+      .select("revision_number")
+      .eq("chapter_id", chapterId)
+      .order("revision_number", { ascending: false })
+      .limit(1);
+    const nextRevision = (lastRevs && lastRevs[0]?.revision_number ? lastRevs[0].revision_number + 1 : 1);
+    await supabase.from("chapter_revisions").insert({
+      chapter_id: chapterId,
+      prev_chapter_title: prevTitle,
+      new_chapter_title: newTitle,
+      prev_paragraphs: prevParagraphs,
+      new_paragraphs: newParagraphs,
+      created_by: user.id,
+      revision_number: nextRevision,
+      revision_reason: reason || null,
+      language: language || "en"
+    });
+    fetchChapterRevisions(chapterId);
+  };
+
+  // --- NEW: Insert revision for paragraph ---
+  const insertParagraphRevision = async (
+    chapterId: string,
+    paragraphIndex: number,
+    prevParagraph: string | null,
+    newParagraph: string,
+    createdBy: string,
+    reason?: string,
+    language?: string
+  ) => {
+    // Fetch latest revision_number
+    const { data: lastRevs, error: revError } = await supabase
+      .from("paragraph_revisions")
+      .select("revision_number")
+      .eq("chapter_id", chapterId)
+      .eq("paragraph_index", paragraphIndex)
+      .order("revision_number", { ascending: false })
+      .limit(1);
+    const nextRevision = (lastRevs && lastRevs[0]?.revision_number ? lastRevs[0].revision_number + 1 : 1);
+    await supabase.from("paragraph_revisions").insert({
+      chapter_id: chapterId,
+      paragraph_index: paragraphIndex,
+      prev_paragraph: prevParagraph,
+      new_paragraph: newParagraph,
+      created_by: createdBy,
+      revision_number: nextRevision,
+      revision_reason: reason || null,
+      language: language || "en"
+    });
+    fetchParagraphRevisions(chapterId, paragraphIndex);
+  };
+
+  // --- Load revision data on mount ---
+  useEffect(() => {
+    if (story_id) {
+      fetchStoryTitleRevisions();
+    }
+    // Fetch chapters revision for all chapters
+    chapters.forEach((c) => fetchChapterRevisions(c.chapter_id));
+  // eslint-disable-next-line
+  }, [story_id, chapters.length]);
+
   if (loading) {
     return (
       <div className="flex flex-col min-h-screen">
@@ -283,6 +435,48 @@ const Story = () => {
       </div>
     );
   }
+
+  // --- NEW: Revision History UI, integrated under the "Revisions" tab ---
+  const RevisionsSection = () => (
+    <div className="p-6">
+      <h2 className="text-2xl font-semibold mb-4">Revision History</h2>
+      {/* Story Title revisions */}
+      <div className="mb-4">
+        <h3 className="font-bold">Story Title history</h3>
+        <ul className="bg-white border rounded p-2 shadow-sm">
+          {storyTitleRevisions.map((rev, i) => (
+            <li key={rev.id} className="py-1">
+              <span className="font-medium">{rev.new_title}</span>{" "}
+              <span className="text-xs text-gray-500">(By {rev.created_by?.slice(0, 8)} at {new Date(rev.created_at).toLocaleString()}, rev {rev.revision_number})</span>
+              {rev.revision_reason && (
+                <span className="ml-3 px-2 py-0.5 bg-gray-100 rounded text-xs text-gray-700">{rev.revision_reason}</span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+      {/* Chapter revisions */}
+      <div>
+        <h3 className="font-bold">Chapters history</h3>
+        {chapters.map((chapter) => (
+          <div key={chapter.chapter_id} className="mb-2">
+            <div className="font-semibold text-indigo-700">Ch. {chapter.chapter_title}</div>
+            <ul className="bg-white border rounded p-2">
+              {(chapterRevisions[chapter.chapter_id] || []).map((rev) => (
+                <li key={rev.id} className="py-1">
+                  <span className="font-medium">{rev.new_chapter_title}</span>{" "}
+                  <span className="text-xs text-gray-500">(By {rev.created_by?.slice(0, 8)} at {new Date(rev.created_at).toLocaleString()}, rev {rev.revision_number})</span>
+                  {rev.revision_reason && (
+                    <span className="ml-3 px-2 py-0.5 bg-gray-100 rounded text-xs text-gray-700">{rev.revision_reason}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col min-h-screen">
