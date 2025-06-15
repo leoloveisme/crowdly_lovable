@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Heart, BookOpen, Bookmark, Clock, Flame, Zap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -15,6 +15,8 @@ interface NewestStory {
   story_title: string;
   story_title_id: string;
 }
+
+const BranchList = React.lazy(() => import("@/components/BranchList"));
 
 const Index = () => {
   const { user, hasRole, roles } = useAuth();
@@ -280,19 +282,10 @@ const Index = () => {
           </div>
           <section className="mb-16">
             <div className="max-w-2xl mx-auto">
-              {/* Branches list and CRUD actions */}
-              {/*
-                Renders actual paragraph branches in DB.
-                Branch creation is handled on paragraph edit elsewhere in app.
-                */}
-              <React.Suspense fallback={<div>Loading branches...</div>}>
-                {/* Dynamically import to avoid main bundle bloat */}
-                {typeof window !== "undefined" &&
-                  (() => {
-                    const BranchList = require("@/components/BranchList").default;
-                    return <BranchList />;
-                  })()}
-              </React.Suspense>
+              {/* Render paragraph branches via lazy-loaded BranchList */}
+              <Suspense fallback={<div>Loading branches...</div>}>
+                <BranchList />
+              </Suspense>
             </div>
           </section>
 
