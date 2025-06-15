@@ -29,6 +29,7 @@ import {
 import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
 import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
+import ContributorStatsPopover from "@/components/ContributorStatsPopover";
 
 const StoryToLiveToExperience = () => {
   const { user, roles, hasRole } = useAuth();
@@ -388,6 +389,142 @@ const StoryToLiveToExperience = () => {
     );
   };
   
+  // Fetch chapters and contributors for this story:
+  useEffect(() => {
+    async function fetchContributorsAndStats() {
+      // Get the story title row by id from route slug if present
+      const url = window.location.pathname;
+      const storyIdMatch = url.match(/\/story\/([a-f0-9-]+)/);
+      let storyTitleId: string | null = null;
+      if (storyIdMatch) {
+        storyTitleId = storyIdMatch[1];
+      }
+
+      // Fetch story title, with initiator id
+      let _storyInitiatorId = null;
+      if (storyTitleId) {
+        const { data: storyTitleRow } = await supabase
+          .from("story_title")
+          .select("story_title_id, creator_id")
+          .eq("story_title_id", storyTitleId)
+          .maybeSingle();
+        setStoryInitiatorId(storyTitleRow?.creator_id || null);
+        _storyInitiatorId = storyTitleRow?.creator_id || null;
+      }
+
+      // Fetch chapters for this story
+      const { data: chaptersData } = await supabase
+        .from("stories")
+        .select("chapter_id, contributor_id, contribution_status, chapter_title, paragraphs")
+        .eq("story_title_id", storyTitleId);
+
+      if (!chaptersData) {
+        setContributors([]);
+        setContributorStats({});
+        return;
+      }
+
+      // Build contributors: map from id to stats and get distinct contributor_ids (exclude initiator)
+      const userStats: Record<string, {
+        id: string, name: string, storyStats: Record<string, number>, globalStats: Record<string, number>
+      }> = {};
+      const contributorIds = Array.from(
+        new Set(
+          chaptersData
+            .filter(
+              chapter =>
+                chapter.contributor_id &&
+                chapter.contributor_id !== _storyInitiatorId
+            )
+            .map(ch => ch.contributor_id)
+        )
+      );
+      if (!contributorIds.length) {
+        setContributors([]);
+        setContributorStats({});
+        return;
+      }
+
+      // Get contributor names from profile (minimal for now)
+      const { data: usersData } = await supabase
+        .from("profiles")
+        .select("id, first_name, last_name")
+        .in("id", contributorIds);
+
+      // Compute stats per user (story-specific)
+      contributorIds.forEach(cId => {
+        const userName =
+          (
+            usersData?.find((u: any) => u.id === cId)?.first_name ||
+            ""
+          ) +
+          " " +
+          (
+            usersData?.find((u: any) => u.id === cId)?.last_name ||
+            ""
+          );
+        // Chapters by user in story
+        const chaptersByUser = chaptersData.filter(ch => ch.contributor_id === cId);
+        const paragraphs = chaptersByUser.reduce((acc, ch) => acc + (Array.isArray(ch.paragraphs) ? ch.paragraphs.length : 0), 0);
+        const words = chaptersByUser.reduce(
+          (acc, c) =>
+            acc +
+            (Array.isArray(c.paragraphs)
+              ? c.paragraphs.reduce((w, p) => w + (typeof p === "string" ? p.split(/\s+/).length : 0), 0)
+              : 0),
+          0
+        );
+        // By approval status
+        const countByStatus = (status: string) => chaptersByUser.filter(ch => ch.contribution_status === status).length;
+        const paraByStatus = (status: string) =>
+          chaptersByUser
+            .filter(ch => ch.contribution_status === status)
+            .reduce((acc, ch) => acc + (Array.isArray(ch.paragraphs) ? ch.paragraphs.length : 0), 0);
+        const wordByStatus = (status: string) =>
+          chaptersByUser
+            .filter(ch => ch.contribution_status === status)
+            .reduce(
+              (acc, c) =>
+                acc +
+                (Array.isArray(c.paragraphs)
+                  ? c.paragraphs.reduce((w, p) => w + (typeof p === "string" ? p.split(/\s+/).length : 0), 0)
+                  : 0),
+              0
+            );
+
+        userStats[cId] = {
+          id: cId,
+          name: userName.trim() || "(unknown)",
+          storyStats: {
+            chapters_total: chaptersByUser.length,
+            paragraphs_total: paragraphs,
+            words_total: words,
+            chapters_approved_story: countByStatus("approved"),
+            paragraphs_approved_story: paraByStatus("approved"),
+            words_approved_story: wordByStatus("approved"),
+            chapters_rejected_story: countByStatus("rejected"),
+            paragraphs_rejected_story: paraByStatus("rejected"),
+            words_rejected_story: wordByStatus("rejected"),
+            chapters_undecided_story: countByStatus("undecided"),
+            paragraphs_undecided_story: paraByStatus("undecided"),
+            words_undecided_story: wordByStatus("undecided"),
+          },
+          globalStats: {}, // We'll fill global platform stats in a later step.
+        };
+      });
+
+      setContributors(
+        contributorIds.map(id => ({
+          id,
+          name: userStats[id].name,
+        }))
+      );
+      setContributorStats(userStats);
+    }
+
+    fetchContributorsAndStats();
+  }, [showAddChapter]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
@@ -901,6 +1038,28 @@ const StoryToLiveToExperience = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
+                    {contributors.length === 0 ? (
+                      <div className="text-gray-500 italic text-center">
+                        No contributors yet except the initiator.
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {contributors.map(c => (
+                          <div key={c.id}>
+                            <button
+                              className="text-blue-700 underline font-medium hover:text-blue-900"
+                              onClick={() =>
+                                setShowContributorPopover({ visible: true, contributor: contributorStats[c.id] })
+                              }
+                            >
+                              {c.name}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Old table for static/fake contributors, now hidden
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -929,6 +1088,14 @@ const StoryToLiveToExperience = () => {
                         ))}
                       </TableBody>
                     </Table>
+                    */}
+
+                    {showContributorPopover.visible && showContributorPopover.contributor && (
+                      <ContributorStatsPopover
+                        contributor={showContributorPopover.contributor}
+                        onClose={() => setShowContributorPopover({ visible: false, contributor: null })}
+                      />
+                    )}
                   </CardContent>
                 </Card>
               )}
