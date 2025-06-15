@@ -445,6 +445,10 @@ export type Database = {
         Row: {
           chapter_id: string
           chapter_title: string
+          contribution_status:
+            | Database["public"]["Enums"]["contribution_status"]
+            | null
+          contributor_id: string | null
           created_at: string
           paragraphs: string[]
           story_title_id: string
@@ -453,6 +457,10 @@ export type Database = {
         Insert: {
           chapter_id?: string
           chapter_title: string
+          contribution_status?:
+            | Database["public"]["Enums"]["contribution_status"]
+            | null
+          contributor_id?: string | null
           created_at?: string
           paragraphs?: string[]
           story_title_id: string
@@ -461,12 +469,23 @@ export type Database = {
         Update: {
           chapter_id?: string
           chapter_title?: string
+          contribution_status?:
+            | Database["public"]["Enums"]["contribution_status"]
+            | null
+          contributor_id?: string | null
           created_at?: string
           paragraphs?: string[]
           story_title_id?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "stories_contributor_id_fkey"
+            columns: ["contributor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "stories_story_title_id_fkey"
             columns: ["story_title_id"]
@@ -648,6 +667,7 @@ export type Database = {
         | "chief_editor"
         | "producer"
         | "contributor"
+      contribution_status: "approved" | "rejected" | "undecided"
       visibility_type: "public" | "private" | "anonymous"
     }
     CompositeTypes: {
@@ -774,6 +794,7 @@ export const Constants = {
         "producer",
         "contributor",
       ],
+      contribution_status: ["approved", "rejected", "undecided"],
       visibility_type: ["public", "private", "anonymous"],
     },
   },

@@ -29,6 +29,7 @@ import {
 import ResponsiveTabsTrigger from "@/components/ResponsiveTabsTrigger";
 import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
 import ParagraphBranchPopover from "@/components/ParagraphBranchPopover";
+import ContributorStatsPopover from "@/components/ContributorStatsPopover";
 
 const StoryforConsumers = () => {
   const { user } = useAuth();
@@ -81,13 +82,16 @@ const StoryforConsumers = () => {
   const [showBranchDialog, setShowBranchDialog] = useState(false);
   const [selectedParagraphForBranch, setSelectedParagraphForBranch] = useState<string | null>(null);
   
+  const [showContributorStats, setShowContributorStats] = useState<{ [userId: string]: boolean }>({});
+  const [selectedContributor, setSelectedContributor] = useState<any>(null);
+  
   const userName = user?.email?.split("@")[0] || "Guest";
   
   // Sample data for tables
   const contributorsData = [
-    { id: 1, name: "Lola Bridget", words: 5378, paragraphs: 15, chapters: 3 },
-    { id: 2, name: "James Smith", words: 4892, paragraphs: 12, chapters: 2 },
-    { id: 3, name: "Maria Garcia", words: 3256, paragraphs: 8, chapters: 1 }
+    { id: "user-1", name: "Lola Bridget", words: 5378, paragraphs: 15, chapters: 3 },
+    { id: "user-2", name: "James Smith", words: 4892, paragraphs: 12, chapters: 2 },
+    { id: "user-3", name: "Maria Garcia", words: 3256, paragraphs: 8, chapters: 1 }
   ];
   
   const revisionsData = [
@@ -286,6 +290,44 @@ const StoryforConsumers = () => {
     alert(`Branch "${branchName || "(no name)"}" created with ${paragraphs.length} paragraph(s):\n${paragraphs.map((p, i) => `[${i + 1}]: ${p}`).join("\n")}`);
   };
   
+  // Function to fetch stats (placeholder, real implementation will fetch/calculate from backend)
+  const getContributorStats = (contributorId: string) => {
+    // Replace with DB aggregation as soon as available
+    // For  now, return dummy numbers.
+    return {
+      id: contributorId,
+      name: contributorsData.find(c => c.id === contributorId)?.name ?? contributorId,
+      storyStats: {
+        chapters_total: 2,
+        paragraphs_total: 8,
+        words_total: 2600,
+        chapters_approved_story: 1,
+        paragraphs_approved_story: 5,
+        words_approved_story: 1700,
+        chapters_rejected_story: 0,
+        paragraphs_rejected_story: 0,
+        words_rejected_story: 0,
+        chapters_undecided_story: 1,
+        paragraphs_undecided_story: 3,
+        words_undecided_story: 900,
+      },
+      globalStats: {
+        chapters_platform: 6,
+        paragraphs_platform: 24,
+        words_platform: 9640,
+        chapters_approved_platform: 3,
+        paragraphs_approved_platform: 12,
+        words_approved_platform: 4800,
+        chapters_rejected_platform: 1,
+        paragraphs_rejected_platform: 4,
+        words_rejected_platform: 1700,
+        chapters_undecided_platform: 2,
+        paragraphs_undecided_platform: 8,
+        words_undecided_platform: 3140,
+      }
+    };
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <CrowdlyHeader />
@@ -834,7 +876,20 @@ const StoryforConsumers = () => {
                       <TableBody>
                         {contributorsData.map((contributor) => (
                           <TableRow key={contributor.id}>
-                            <TableCell className="font-medium">{contributor.name}</TableCell>
+                            <TableCell className="font-medium">
+                              <button
+                                className="text-blue-800 underline hover:text-blue-600"
+                                onClick={() => {
+                                  setSelectedContributor(getContributorStats(contributor.id));
+                                  setShowContributorStats(prev => ({
+                                    ...prev,
+                                    [contributor.id]: true
+                                  }));
+                                }}
+                              >
+                                {contributor.name}
+                              </button>
+                            </TableCell>
                             <TableCell>{contributor.words}</TableCell>
                             <TableCell>{contributor.paragraphs}</TableCell>
                             <TableCell>{contributor.chapters}</TableCell>
@@ -900,6 +955,19 @@ const StoryforConsumers = () => {
                 </Card>
               )}
             </Tabs>
+            {/* Contributor stats popover */}
+            {selectedContributor && showContributorStats[selectedContributor.id] && (
+              <ContributorStatsPopover
+                contributor={selectedContributor}
+                onClose={() => {
+                  setShowContributorStats(prev => ({
+                    ...prev,
+                    [selectedContributor.id]: false
+                  }));
+                  setSelectedContributor(null);
+                }}
+              />
+            )}
           </div>
         </div>
       </main>
