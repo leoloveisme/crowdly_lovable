@@ -416,11 +416,11 @@ const StoryToLiveToExperience = () => {
                           <EditableText id="clone-menu-item">Clone</EditableText>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center">
-                         
+                          <Plus className="mr-2 h-4 w-4" />
                           <EditableText id="add-chapter-item">Add chapter</EditableText>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="flex items-center">
-                          
+                          <Copy className="mr-2 h-4 w-4" />
                           <EditableText id="export-menu-item">Export</EditableText>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -599,7 +599,7 @@ const StoryToLiveToExperience = () => {
           {/* Main Content Area */}
           <div className="lg:col-span-3">
           
-            {/* Replace the old tabs with new responsive tabs */}
+            {/* Responsive Tabs for Story/Contributors/Revisions/Branches */}
             <Tabs defaultValue="story" className="w-full">
               <TabsList className="w-full mb-6 border-b overflow-x-auto flex justify-start">
                 <ResponsiveTabsTrigger 
@@ -631,52 +631,237 @@ const StoryToLiveToExperience = () => {
                   onClick={() => toggleSection('branches')}
                 />
               </TabsList>
-            
+              
               {/* Story Content */}
-              {(chapters[activeChapterIdx] && !showAddChapter) && (
+              {(activeSection === "story" || activeSection === "") && (
                 <div className="space-y-6">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="prose max-w-none">
-                        <h2 className="text-xl font-semibold mb-4">
-                          <EditableText id={`chapter-title-${chapters[activeChapterIdx].id}`}>
-                            {chapters[activeChapterIdx].title}
-                          </EditableText>
-                        </h2>
-                        {chapters[activeChapterIdx].paragraphs &&
-                          chapters[activeChapterIdx].paragraphs.map(
-                            (paragraph: string, idx: number) => (
-                              <div key={idx} className="mb-4">
-                                <EditableText id={`paragraph-${chapters[activeChapterIdx].id}-${idx}`}>
-                                  {paragraph}
-                                </EditableText>
-                              </div>
-                            )
-                          )}
-                        
-                        {/* Add like/dislike buttons for the chapter */}
-                        <div className="mt-8 pt-4 border-t flex items-center space-x-2">
-                          <button 
-                            onClick={() => handleChapterLike(chapters[activeChapterIdx].id)} 
-                            className="flex items-center text-sm text-gray-500 hover:text-blue-500"
-                          >
-                            <ThumbsUp className="h-5 w-5 mr-1" />
-                            <span>{chapterLikes[chapters[activeChapterIdx].id] || 0}</span>
-                          </button>
-                          <button 
-                            onClick={() => handleChapterDislike(chapters[activeChapterIdx].id)} 
-                            className="flex items-center text-sm text-gray-500 hover:text-red-500"
-                          >
-                            <ThumbsDown className="h-5 w-5 mr-1" />
-                            <span>{chapterDislikes[chapters[activeChapterIdx].id] || 0}</span>
-                          </button>
+                  {/* Only show text content if selected */}
+                  {selectedContentTypes.includes("text") && chapters[activeChapterIdx] && (
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="prose max-w-none">
+                          <h2 className="text-xl font-semibold mb-4">
+                            <EditableText id={`chapter-title-${chapters[activeChapterIdx].id}`}>
+                              {chapters[activeChapterIdx].title}
+                            </EditableText>
+                          </h2>
+                          {chapters[activeChapterIdx].paragraphs &&
+                            chapters[activeChapterIdx].paragraphs.map(
+                              (paragraph: string, idx: number) => (
+                                <div key={idx} className="mb-4">
+                                  <EditableText id={`paragraph-${chapters[activeChapterIdx].id}-${idx}`}>
+                                    {paragraph}
+                                  </EditableText>
+                                </div>
+                              )
+                            )}
+                          {/* Like/dislike and comments just for "text" (chapter) */}
+                          <div className="mt-8 pt-4 border-t flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleChapterLike(chapters[activeChapterIdx].id)} 
+                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            >
+                              <ThumbsUp className="h-5 w-5 mr-1" />
+                              <span>{chapterLikes[chapters[activeChapterIdx].id] || 0}</span>
+                            </button>
+                            <button 
+                              onClick={() => handleChapterDislike(chapters[activeChapterIdx].id)} 
+                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            >
+                              <ThumbsDown className="h-5 w-5 mr-1" />
+                              <span>{chapterDislikes[chapters[activeChapterIdx].id] || 0}</span>
+                            </button>
+                          </div>
+                          <CommentsSection targetId={chapters[activeChapterIdx].id} />
                         </div>
-                        
-                        {/* Add Comments section for chapter */}
-                        <CommentsSection targetId={chapters[activeChapterIdx].id} />
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Only show Images/Cartoon/Presentation player if selected */}
+                  {selectedContentTypes.includes("images") && (
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div>
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-medium flex items-center">
+                              <Image className="h-5 w-5 mr-2" />
+                              <EditableText id="presentation-title">Presentation / Cartoon</EditableText>
+                            </h3>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                <ZoomIn className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="bg-gray-200 h-64 flex flex-col items-center justify-center rounded">
+                            <div className="h-48 w-48 bg-gray-300 rounded flex items-center justify-center mb-4">
+                              <Play className="h-12 w-12 text-gray-500" />
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button variant="outline" size="sm">
+                                <EditableText id="prev-image">Previous</EditableText>
+                              </Button>
+                              <span className="text-sm">1 / 5</span>
+                              <Button variant="outline" size="sm">
+                                <EditableText id="next-image">Next</EditableText>
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-500 mt-2">
+                            <EditableText id="image-caption">Slide caption: Describe what is shown in the presentation slide.</EditableText>
+                          </p>
+                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleImageLike("presentation1")} 
+                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            >
+                              <ThumbsUp className="h-5 w-5 mr-1" />
+                              <span>{imageLikes.presentation1 || 0}</span>
+                            </button>
+                            <button 
+                              onClick={() => handleImageDislike("presentation1")} 
+                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            >
+                              <ThumbsDown className="h-5 w-5 mr-1" />
+                              <span>{imageDislikes.presentation1 || 0}</span>
+                            </button>
+                          </div>
+                          <CommentsSection targetId="presentation1" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Only show Audio player if selected */}
+                  {selectedContentTypes.includes("audio") && (
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div>
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-medium flex items-center">
+                              <AudioLines className="h-5 w-5 mr-2" />
+                              <EditableText id="audio-title">Audio Player</EditableText>
+                            </h3>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="bg-gray-100 p-4 rounded">
+                            <div className="flex items-center space-x-2 mb-3">
+                              <Button variant="outline" size="icon" className="h-10 w-10 rounded-full flex items-center justify-center">
+                                <Play className="h-6 w-6" />
+                              </Button>
+                              <div className="w-full">
+                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                  <div className="bg-primary h-full w-1/3 rounded-full"></div>
+                                </div>
+                                <div className="flex justify-between mt-1 text-xs text-gray-500">
+                                  <span>1:23</span>
+                                  <span>3:45</span>
+                                </div>
+                              </div>
+                              <Button variant="ghost" size="sm">
+                                <Volume className="h-5 w-5" />
+                              </Button>
+                            </div>
+                            <p className="text-sm text-gray-500 italic">
+                              <EditableText id="audio-description">Audio description: Narrative of Chapter 1, read by the author.</EditableText>
+                            </p>
+                          </div>
+                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleAudioLike("audio1")} 
+                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            >
+                              <ThumbsUp className="h-5 w-5 mr-1" />
+                              <span>{audioLikes.audio1 || 0}</span>
+                            </button>
+                            <button 
+                              onClick={() => handleAudioDislike("audio1")} 
+                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            >
+                              <ThumbsDown className="h-5 w-5 mr-1" />
+                              <span>{audioDislikes.audio1 || 0}</span>
+                            </button>
+                          </div>
+                          <CommentsSection targetId="audio1" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Only show Video player if selected */}
+                  {selectedContentTypes.includes("video") && (
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div>
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-medium flex items-center">
+                              <Video className="h-5 w-5 mr-2" />
+                              <EditableText id="video-title">Video Player</EditableText>
+                            </h3>
+                            <div className="flex space-x-2">
+                              <Button variant="ghost" size="sm">
+                                <ZoomIn className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm">
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="bg-gray-800 h-72 rounded flex flex-col items-center justify-center">
+                            <Play className="h-16 w-16 text-white opacity-70 hover:opacity-100 cursor-pointer" />
+                            <div className="absolute bottom-4 w-11/12 opacity-0 hover:opacity-100 transition-opacity">
+                              <div className="bg-gray-900 bg-opacity-70 p-2 rounded">
+                                <div className="bg-gray-300 h-2 rounded-full w-full overflow-hidden">
+                                  <div className="bg-primary h-full w-1/4 rounded-full"></div>
+                                </div>
+                                <div className="flex justify-between items-center mt-1">
+                                  <div className="flex items-center space-x-2">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                      <Play className="h-4 w-4" />
+                                    </Button>
+                                    <span className="text-xs text-gray-200">0:35 / 2:18</span>
+                                  </div>
+                                  <div className="flex items-center">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-white">
+                                      <Volume className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-500 mt-2">
+                            <EditableText id="video-caption">Video caption: Visual interpretation of Chapter 1 - The Beginning.</EditableText>
+                          </p>
+                          <div className="mt-6 pt-4 border-t flex items-center space-x-2">
+                            <button 
+                              onClick={() => handleVideoLike("video1")} 
+                              className="flex items-center text-sm text-gray-500 hover:text-blue-500"
+                            >
+                              <ThumbsUp className="h-5 w-5 mr-1" />
+                              <span>{videoLikes.video1 || 0}</span>
+                            </button>
+                            <button 
+                              onClick={() => handleVideoDislike("video1")} 
+                              className="flex items-center text-sm text-gray-500 hover:text-red-500"
+                            >
+                              <ThumbsDown className="h-5 w-5 mr-1" />
+                              <span>{videoDislikes.video1 || 0}</span>
+                            </button>
+                          </div>
+                          <CommentsSection targetId="video1" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
                   
                   {/* Dialog for creating a new branch */}
                   <Dialog open={showBranchDialog} onOpenChange={setShowBranchDialog}>
@@ -805,9 +990,8 @@ const StoryToLiveToExperience = () => {
         </div>
       </main>
 
-
       <Button variant="outline" size="sm" className="mt-4 w-full">
-      <EditableText id="add-chapter-btn">Next Chapter</EditableText>
+        <EditableText id="add-chapter-btn">Next Chapter</EditableText>
       </Button>
 
       
